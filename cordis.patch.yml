@@ -78,6 +78,14 @@
       config:
         timeoutMs: 10000
 
+    - id: dsh-wsl-github
+      name: dsh-wsl-github
+      config:
+        timeoutMs: 20000
+        appId: ""
+        privateKeyPath: ""
+        installationId: ""
+
     - id: dsh-wsl-notify
       name: dsh-wsl-notify
       config:
