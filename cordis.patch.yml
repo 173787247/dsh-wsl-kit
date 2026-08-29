@@ -1,0 +1,43 @@
+# dsh-wsl-kit — ready profile rows
+# Append to your DeepSeek Harness profile cordis.patch.yml after installing the plugins.
+# Install plugins first (see README); this file only configures them.
+
+- insert:
+    - id: dsh-wsl-env
+      name: dsh-wsl-env
+      config:
+        when: wsl
+        order: 15
+        extraNotes: ""
+
+    - id: dsh-wsl-net
+      name: dsh-wsl-net
+      config:
+        timeoutMs: 20000
+        probeTimeoutMs: 5000
+        injectChildProxy: true
+
+    - id: dsh-wsl-open
+      name: dsh-wsl-open
+      config:
+        enabled: true
+
+    - id: dsh-repeat-stop
+      name: dsh-repeat-stop
+      config:
+        enabled: true
+        threshold: 6
+        exclude:
+          - job_output
+          - job_list
+          - job_kill
+
+    - id: dsh-tool-budget
+      name: dsh-tool-budget
+      config:
+        enabled: true
+        maxCalls: 80
+        exclude:
+          - job_output
+          - job_list
+          - job_kill
