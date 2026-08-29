@@ -41,3 +41,50 @@
           - job_output
           - job_list
           - job_kill
+
+    - id: dsh-wsl-clipboard
+      name: dsh-wsl-clipboard
+      config:
+        timeoutMs: 15000
+        maxChars: 100000
+
+    - id: dsh-wsl-launch
+      name: dsh-wsl-launch
+      config:
+        timeoutMs: 20000
+
+    - id: dsh-wsl-path
+      name: dsh-wsl-path
+      config: {}
+
+    - id: dsh-wsl-gpu
+      name: dsh-wsl-gpu
+      config:
+        timeoutMs: 20000
+
+    - id: dsh-wsl-port
+      name: dsh-wsl-port
+      config:
+        timeoutMs: 15000
+        defaultPort: 3080
+
+    - id: dsh-wsl-distro
+      name: dsh-wsl-distro
+      config:
+        timeoutMs: 15000
+
+    - id: dsh-wsl-cred
+      name: dsh-wsl-cred
+      config:
+        timeoutMs: 10000
+
+    - id: dsh-wsl-notify
+      name: dsh-wsl-notify
+      config:
+        timeoutMs: 30000
+        maxLen: 500
+
+    - id: dsh-wsl-browser
+      name: dsh-wsl-browser
+      config:
+        timeoutMs: 15000

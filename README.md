@@ -6,69 +6,55 @@ This meta-repo does not ship plugin code. It documents the suite and provides a 
 
 ## What’s in the kit
 
+### Core (day-1)
+
 | Plugin | Role |
 |--------|------|
 | [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) | Inject WSL/Windows path & shell facts into the system prompt |
-| [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) | `net_doctor` — proxy / Node 24 fetch / DeepSeek+npm probes (+ copy-paste fix snippets) |
+| [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) | `net_doctor` — proxy / Node 24 fetch / DeepSeek+npm probes (+ fix snippets) |
 | [dsh-wsl-open](https://github.com/173787247/dsh-wsl-open) | Click Linux paths in chat → open in Windows |
 | [dsh-repeat-stop](https://github.com/173787247/dsh-repeat-stop) | Hard-stop consecutive identical tool calls |
-| [dsh-tool-budget](https://github.com/173787247/dsh-tool-budget) | Cap total tool calls per session (optional safety twin) |
+| [dsh-tool-budget](https://github.com/173787247/dsh-tool-budget) | Cap total tool calls per session |
 
-Related (not required for day-1 kit): [session-contract](https://github.com/173787247/session-contract).
+### Bridge & ergonomics
+
+| Plugin | Role |
+|--------|------|
+| [dsh-wsl-clipboard](https://github.com/173787247/dsh-wsl-clipboard) | `wsl_clipboard` — Windows clipboard get/set |
+| [dsh-wsl-launch](https://github.com/173787247/dsh-wsl-launch) | `win_launch` — allowlisted Windows apps |
+| [dsh-wsl-path](https://github.com/173787247/dsh-wsl-path) | `path_convert` — Linux ↔ Windows paths + `/mnt/c` caveats |
+| [dsh-wsl-browser](https://github.com/173787247/dsh-wsl-browser) | `win_open_url` — open http(s) in Windows browser |
+| [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | `win_notify` — Windows MessageBox when a long task finishes |
+
+### Diagnostics
+
+| Plugin | Role |
+|--------|------|
+| [dsh-wsl-gpu](https://github.com/173787247/dsh-wsl-gpu) | `gpu_doctor` — nvidia-smi / CUDA visibility |
+| [dsh-wsl-port](https://github.com/173787247/dsh-wsl-port) | `port_doctor` — listen + localhost forwarding hints |
+| [dsh-wsl-distro](https://github.com/173787247/dsh-wsl-distro) | `distro_info` — multi-distro / os-release facts |
+| [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | `cred_hint` — Git Credential Manager guidance (no secrets) |
+
+Related (optional): [session-contract](https://github.com/173787247/session-contract).
 
 ## Install (one-shot)
 
-Already running `dsh web`:
-
 ```sh
-dsh plugin --profile web add github:173787247/dsh-wsl-env
-dsh plugin --profile web add github:173787247/dsh-wsl-net
-dsh plugin --profile web add github:173787247/dsh-wsl-open
-dsh plugin --profile web add github:173787247/dsh-repeat-stop
-dsh plugin --profile web add github:173787247/dsh-tool-budget
+bash install.sh
+# or set DSH_PROFILE=web explicitly
 ```
 
-Or local checkouts:
-
-```sh
-KIT=/absolute/path/to/AIFullStackDevelopment
-dsh plugin --profile web add "$KIT/dsh-wsl-env"
-dsh plugin --profile web add "$KIT/dsh-wsl-net"
-dsh plugin --profile web add "$KIT/dsh-wsl-open"
-dsh plugin --profile web add "$KIT/dsh-repeat-stop"
-dsh plugin --profile web add "$KIT/dsh-tool-budget"
-```
+Or add individually — see `install.sh` for the full ordered list.
 
 Restart `dsh web`. Open a **new** session.
 
 ### Optional: merge the kit patch
 
-If you maintain a profile `cordis.patch.yml`, append the blocks from [`cordis.patch.yml`](./cordis.patch.yml) in this repo (or replace your rows for these plugin ids). Later layers that redefine a plugin `config` replace the whole object — restate every key you still want.
-
-## Verify
-
-1. **env** — Trajectory → SYSTEM → System Prompt → search `Windows Subsystem for Linux`.
-2. **net** — Tools lists `net_doctor`; ask to check DeepSeek/npm; read `fix` / `advice`.
-3. **open** — Agent writes a file under `/home/...`; path is clickable in chat.
-4. **repeat-stop** — identical tool spam eventually errors with `dsh-repeat-stop: blocked`.
-5. **tool-budget** — after the configured max calls, further tools are denied with `dsh-tool-budget: blocked`.
-
-## Recommended dsh start (Node 24 + proxy)
-
-If Clash/V2Ray runs on Windows and WSL needs the proxy:
-
-```sh
-export HTTP_PROXY=http://127.0.0.1:7890
-export HTTPS_PROXY=http://127.0.0.1:7890
-export NODE_USE_ENV_PROXY=1
-dsh web
-```
-
-`net_doctor` will print a ready-to-copy block when this is missing.
+Append blocks from [`cordis.patch.yml`](./cordis.patch.yml) into your profile. Later layers that redefine a plugin `config` replace the whole object — restate every key you still want.
 
 ## Topics
 
-On GitHub: `dsh-plugin`, `wsl`.
+On GitHub: `dsh-plugin`, `deepseek-harness`, `wsl`.
 
 ## License
 
