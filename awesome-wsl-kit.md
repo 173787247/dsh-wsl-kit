@@ -24,6 +24,7 @@ Browser on Windows, agent in WSL. Install the meta pack first: [dsh-wsl-kit](htt
 - [dsh-wsl-path](https://github.com/173787247/dsh-wsl-path) - Convert Linux ↔ Windows paths with `/mnt/c` caveats.
 - [dsh-wsl-browser](https://github.com/173787247/dsh-wsl-browser) - Open http(s) URLs in the Windows default browser.
 - [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) - Windows MessageBox when a long WSL task finishes.
+- [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) - GitHub App: current-repo open PRs + latest Actions (no secrets).
 - [dsh-wsl-gpu](https://github.com/173787247/dsh-wsl-gpu) - Probe nvidia-smi / GPU visibility inside WSL.
 - [dsh-wsl-port](https://github.com/173787247/dsh-wsl-port) - Port listen + Windows localhost forwarding doctor.
 - [dsh-wsl-distro](https://github.com/173787247/dsh-wsl-distro) - Current distro / multi-distro warnings.
@@ -48,6 +49,7 @@ Browser on Windows, agent in WSL. Install the meta pack first: [dsh-wsl-kit](htt
 - [dsh-wsl-path](https://github.com/173787247/dsh-wsl-path) - Linux ↔ Windows 路径转换与 `/mnt/c` 注意点。
 - [dsh-wsl-browser](https://github.com/173787247/dsh-wsl-browser) - 在 Windows 默认浏览器打开 http(s)。
 - [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) - 长任务结束后弹出 Windows 提示框。
+- [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) - GitHub App：当前仓库未关闭 PR + 最近一次 Actions（不回传密钥）。
 - [dsh-wsl-gpu](https://github.com/173787247/dsh-wsl-gpu) - 探测 WSL 内 nvidia-smi / GPU。
 - [dsh-wsl-port](https://github.com/173787247/dsh-wsl-port) - 端口监听与 Windows localhost 转发诊断。
 - [dsh-wsl-distro](https://github.com/173787247/dsh-wsl-distro) - 当前发行版 / 多 distro 提醒。

@@ -15,6 +15,7 @@ PLUGINS=(
   "github:173787247/dsh-wsl-port"
   "github:173787247/dsh-wsl-distro"
   "github:173787247/dsh-wsl-cred"
+  "github:173787247/dsh-wsl-github"
   "github:173787247/dsh-wsl-notify"
   "github:173787247/dsh-wsl-browser"
 )

@@ -35,6 +35,7 @@ You run `dsh web` inside WSL (Ubuntu, etc.) while Chat / Trajectory opens in a W
 | [dsh-wsl-path](https://github.com/173787247/dsh-wsl-path) | `path_convert` — Linux ↔ Windows paths + `/mnt/c` caveats |
 | [dsh-wsl-browser](https://github.com/173787247/dsh-wsl-browser) | `win_open_url` — open `http(s)` in the Windows browser |
 | [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | `win_notify` — Windows MessageBox when a long task finishes |
+| [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) | `github_repo_status` — GitHub App: open PRs + latest Actions (no secrets) |
 
 #### Diagnostics (install when needed)
 
@@ -73,7 +74,7 @@ Local checkouts (example):
 ```sh
 KIT=/absolute/path/to/AIFullStackDevelopment
 for p in dsh-wsl-env dsh-wsl-net dsh-wsl-open dsh-repeat-stop dsh-tool-budget \
-         dsh-wsl-clipboard dsh-wsl-launch dsh-wsl-path dsh-wsl-browser; do
+         dsh-wsl-clipboard dsh-wsl-launch dsh-wsl-path dsh-wsl-browser dsh-wsl-github; do
   dsh plugin --profile web add "$KIT/$p"
 done
 ```
@@ -108,12 +109,14 @@ Ask the agent to run `net_doctor` if API / npm still fails.
 | clipboard | Ask to copy a path to the Windows clipboard |
 | path | Ask to convert `/mnt/c/Users/...` ↔ `C:\Users\...` |
 | repeat-stop / budget | Spam identical tools → `dsh-*-*: blocked` in Trajectory |
+| github | Tools lists `github_app_hint` / `github_repo_status`; ask after App env is set |
 
 ### Security notes
 
 - Plugins run with your Harness permissions (files, network, Windows interop via PowerShell/`cmd`).
 - `win_launch` is **allowlisted**; extend `config.allowlist` deliberately.
 - `cred_hint` only prints helper configuration advice—never tokens.
+- `github_repo_status` uses a GitHub App installation token in memory; never paste the PEM into chat.
 - `win_notify` uses a blocking MessageBox; keep titles/bodies short and secret-free.
 
 ### Topics
@@ -155,6 +158,7 @@ MIT — same as the individual plugins.
 | [dsh-wsl-path](https://github.com/173787247/dsh-wsl-path) | `path_convert`：路径互转 + `/mnt/c` 注意点 |
 | [dsh-wsl-browser](https://github.com/173787247/dsh-wsl-browser) | `win_open_url`：在 Windows 默认浏览器打开链接 |
 | [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | `win_notify`：长任务结束后弹出 Windows 提示框 |
+| [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) | `github_repo_status`：GitHub App 查未关闭 PR 与最近一次 Actions（不回传密钥） |
 
 #### 诊断（按需）
 
@@ -203,6 +207,7 @@ API / npm 仍不通时，让 Agent 跑 `net_doctor`。
 - 插件与 Harness 同权（读文件、联网、经 PowerShell 调 Windows）。
 - `win_launch` 有白名单，扩 `allowlist` 时请谨慎。
 - `cred_hint` 只给配置建议，不回传 token。
+- `github_repo_status` 只在内存里换 GitHub App token，私钥不要贴进对话。
 - `win_notify` 会阻塞弹出 MessageBox，文案勿含密钥。
 
 ### 许可
