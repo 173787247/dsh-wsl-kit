@@ -93,6 +93,36 @@ dsh web
 | [dsh-wsl-distro](https://github.com/173787247/dsh-wsl-distro) | `distro_info`：多发行版提醒 |
 | [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | `cred_hint`：Git 凭据管理指引（**不**输出密钥） |
 
+### WSL UI 对应版
+
+| 插件 | 作用 |
+|------|------|
+| [dsh-wsl-workspace](https://github.com/173787247/dsh-wsl-workspace) | `wsl_workspace`：列出发行版并校验 Linux 工作区路径 |
+| [dsh-wsl-picker](https://github.com/173787247/dsh-wsl-picker) | `wsl_picker`：浏览 `/` 与 `/mnt` 选工作区 |
+| [dsh-wsl-tray](https://github.com/173787247/dsh-wsl-tray) | `wsl_tray`：Windows 托盘/快捷方式启动 `dsh web` |
+| [dsh-wsl-expose](https://github.com/173787247/dsh-wsl-expose) | `wsl_expose`：白名单 Windows portproxy 暴露 WSL 端口 |
+
+### 一梯队互通与诊断
+
+| 插件 | 作用 |
+|------|------|
+| [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) | `host_reach`：从 WSL 探测 Windows 主机服务（Ollama 等） |
+| [dsh-wsl-clock](https://github.com/173787247/dsh-wsl-clock) | `clock_doctor`：休眠后 WSL2 时钟漂移（TLS / token） |
+| [dsh-wsl-dns](https://github.com/173787247/dsh-wsl-dns) | `dns_doctor`：对比 WSL 与 Windows DNS |
+| [dsh-wsl-mnt](https://github.com/173787247/dsh-wsl-mnt) | `mnt_doctor`：工作区落在缓慢 `/mnt/c` 时告警 |
+| [dsh-wsl-editor](https://github.com/173787247/dsh-wsl-editor) | `win_editor`：用 Cursor / VS Code / Notepad 打开 Linux 路径 |
+| [dsh-wsl-shot](https://github.com/173787247/dsh-wsl-shot) | `win_shot`：把 Windows 剪贴板图片存进 WSL |
+
+### 二梯队扩展
+
+| 插件 | 作用 |
+|------|------|
+| [dsh-wsl-docker](https://github.com/173787247/dsh-wsl-docker) | `docker_doctor`：Docker Desktop 与 WSL context 混淆 |
+| [dsh-wsl-ssh-agent](https://github.com/173787247/dsh-wsl-ssh-agent) | `ssh_agent_hint`：把 Windows OpenSSH agent 转发进 WSL |
+| [dsh-wsl-encoding](https://github.com/173787247/dsh-wsl-encoding) | `encoding_doctor`：UTF-8 与 Windows 代码页问题 |
+| [dsh-wsl-wslconfig](https://github.com/173787247/dsh-wsl-wslconfig) | `wslconfig_hint`：只读建议 `.wslconfig` 内存 / mirrored 网络 |
+| [dsh-wsl-download](https://github.com/173787247/dsh-wsl-download) | `win_download`：从 Windows「下载」拷到 WSL 工作区 |
+
 可选相关：[session-contract](https://github.com/173787247/session-contract)。
 
 ## 推荐安装组合
@@ -102,7 +132,9 @@ dsh web
 | **最小** | env、net、open、repeat-stop |
 | **日常** | 最小 + tool-budget、clipboard、path、browser、launch |
 | **GitHub 日常** | 日常 + [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) + [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) |
-| **完整** | [`install.sh`](./install.sh) 里全部 |
+| **WSL UI** | 日常 + workspace、picker、tray、expose |
+| **诊断** | WSL UI + hostsvc、clock、dns、mnt、editor、shot |
+| **完整** | [`install.sh`](./install.sh) 全部（含二梯队） |
 
 ## 安装
 
@@ -122,8 +154,11 @@ bash install.sh
 ```sh
 KIT=/absolute/path/to/AIFullStackDevelopment
 for p in dsh-wsl-env dsh-wsl-net dsh-wsl-open dsh-repeat-stop dsh-tool-budget \
-         dsh-wsl-clipboard dsh-wsl-launch dsh-wsl-path dsh-wsl-browser dsh-wsl-github; do
-  dsh plugin --profile web add "$KIT/$p"
+         dsh-wsl-clipboard dsh-wsl-launch dsh-wsl-path dsh-wsl-browser dsh-wsl-github \
+         dsh-wsl-workspace dsh-wsl-picker dsh-wsl-tray dsh-wsl-expose \
+         dsh-wsl-hostsvc dsh-wsl-clock dsh-wsl-dns dsh-wsl-mnt dsh-wsl-editor dsh-wsl-shot \
+         dsh-wsl-docker dsh-wsl-ssh-agent dsh-wsl-encoding dsh-wsl-wslconfig dsh-wsl-download; do
+  dsh plugin --profile web add "link:$KIT/$p"
 done
 ```
 

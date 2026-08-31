@@ -18,6 +18,24 @@ PLUGINS=(
   "github:173787247/dsh-wsl-github"
   "github:173787247/dsh-wsl-notify"
   "github:173787247/dsh-wsl-browser"
+  # WSL UI counterparts
+  "github:173787247/dsh-wsl-workspace"
+  "github:173787247/dsh-wsl-picker"
+  "github:173787247/dsh-wsl-tray"
+  "github:173787247/dsh-wsl-expose"
+  # Tier 1 diagnostics / bridge
+  "github:173787247/dsh-wsl-hostsvc"
+  "github:173787247/dsh-wsl-clock"
+  "github:173787247/dsh-wsl-dns"
+  "github:173787247/dsh-wsl-mnt"
+  "github:173787247/dsh-wsl-editor"
+  "github:173787247/dsh-wsl-shot"
+  # Tier 2
+  "github:173787247/dsh-wsl-docker"
+  "github:173787247/dsh-wsl-ssh-agent"
+  "github:173787247/dsh-wsl-encoding"
+  "github:173787247/dsh-wsl-wslconfig"
+  "github:173787247/dsh-wsl-download"
 )
 for p in "${PLUGINS[@]}"; do
   echo "==> dsh plugin --profile ${PROFILE} add ${p}"
