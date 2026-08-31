@@ -106,7 +106,7 @@ dsh web
 
 | 插件 | 作用 |
 |------|------|
-| [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) | `host_reach`：从 WSL 探测 Windows 主机服务（Ollama 等） |
+| [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) | `host_reach`：探测 Windows 上 Ollama / LM Studio / vLLM / llama-server，给出 `baseURL` |
 | [dsh-wsl-clock](https://github.com/173787247/dsh-wsl-clock) | `clock_doctor`：休眠后 WSL2 时钟漂移（TLS / token） |
 | [dsh-wsl-dns](https://github.com/173787247/dsh-wsl-dns) | `dns_doctor`：对比 WSL 与 Windows DNS |
 | [dsh-wsl-mnt](https://github.com/173787247/dsh-wsl-mnt) | `mnt_doctor`：工作区落在缓慢 `/mnt/c` 时告警 |
@@ -135,6 +135,8 @@ dsh web
 | **WSL UI** | 日常 + workspace、picker、tray、expose |
 | **诊断** | WSL UI + hostsvc、clock、dns、mnt、editor、shot |
 | **完整** | [`install.sh`](./install.sh) 全部（含二梯队） |
+
+本地 OpenAI 兼容后端（Ollama / LM Studio / vLLM / llama-server）：先跑 `host_reach`，再把 [`examples/local-llm-providers.settings.yaml`](./examples/local-llm-providers.settings.yaml) 合并进 `~/.dsh/settings.yaml`。
 
 ## 安装
 

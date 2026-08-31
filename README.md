@@ -106,7 +106,7 @@ Do **not** paste `GITHUB_APP_*` values or the PEM into chat.
 
 | Plugin | Role |
 |--------|------|
-| [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) | `host_reach` — probe Windows-host services (Ollama, etc.) from WSL |
+| [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) | `host_reach` — probe Ollama / LM Studio / vLLM / llama-server on Windows; suggest `baseURL` |
 | [dsh-wsl-clock](https://github.com/173787247/dsh-wsl-clock) | `clock_doctor` — WSL2 clock drift after sleep (TLS / tokens) |
 | [dsh-wsl-dns](https://github.com/173787247/dsh-wsl-dns) | `dns_doctor` — compare WSL vs Windows DNS |
 | [dsh-wsl-mnt](https://github.com/173787247/dsh-wsl-mnt) | `mnt_doctor` — warn when workspace sits on slow `/mnt/c` |
@@ -135,6 +135,8 @@ Optional related: [session-contract](https://github.com/173787247/session-contra
 | **WSL UI** | Daily + workspace, picker, tray, expose |
 | **Doctors** | WSL UI + hostsvc, clock, dns, mnt, editor, shot |
 | **Full** | Everything in [`install.sh`](./install.sh) (includes Tier 2) |
+
+Local OpenAI-compatible backends (Ollama / LM Studio / vLLM / llama-server): run `host_reach`, then merge [`examples/local-llm-providers.settings.yaml`](./examples/local-llm-providers.settings.yaml) into `~/.dsh/settings.yaml`.
 
 ## Install
 
