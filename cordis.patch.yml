@@ -96,3 +96,81 @@
       name: dsh-wsl-browser
       config:
         timeoutMs: 15000
+
+    - id: dsh-wsl-workspace
+      name: dsh-wsl-workspace
+      config:
+        timeoutMs: 15000
+
+    - id: dsh-wsl-picker
+      name: dsh-wsl-picker
+      config:
+        timeoutMs: 15000
+        maxEntries: 200
+
+    - id: dsh-wsl-tray
+      name: dsh-wsl-tray
+      config:
+        timeoutMs: 30000
+
+    - id: dsh-wsl-expose
+      name: dsh-wsl-expose
+      config:
+        timeoutMs: 30000
+        defaultPort: 3080
+
+    - id: dsh-wsl-hostsvc
+      name: dsh-wsl-hostsvc
+      config:
+        timeoutMs: 15000
+
+    - id: dsh-wsl-clock
+      name: dsh-wsl-clock
+      config:
+        timeoutMs: 15000
+        maxSkewSec: 30
+
+    - id: dsh-wsl-dns
+      name: dsh-wsl-dns
+      config:
+        timeoutMs: 20000
+
+    - id: dsh-wsl-mnt
+      name: dsh-wsl-mnt
+      config:
+        timeoutMs: 10000
+
+    - id: dsh-wsl-editor
+      name: dsh-wsl-editor
+      config:
+        timeoutMs: 20000
+
+    - id: dsh-wsl-shot
+      name: dsh-wsl-shot
+      config:
+        timeoutMs: 30000
+
+    - id: dsh-wsl-docker
+      name: dsh-wsl-docker
+      config:
+        timeoutMs: 20000
+
+    - id: dsh-wsl-ssh-agent
+      name: dsh-wsl-ssh-agent
+      config:
+        timeoutMs: 15000
+
+    - id: dsh-wsl-encoding
+      name: dsh-wsl-encoding
+      config:
+        timeoutMs: 15000
+
+    - id: dsh-wsl-wslconfig
+      name: dsh-wsl-wslconfig
+      config:
+        timeoutMs: 10000
+
+    - id: dsh-wsl-download
+      name: dsh-wsl-download
+      config:
+        timeoutMs: 30000

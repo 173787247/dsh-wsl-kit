@@ -93,6 +93,36 @@ Do **not** paste `GITHUB_APP_*` values or the PEM into chat.
 | [dsh-wsl-distro](https://github.com/173787247/dsh-wsl-distro) | `distro_info` — multi-distro / `os-release` facts |
 | [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | `cred_hint` — Git Credential Manager guidance (**never** dumps secrets) |
 
+### WSL UI counterparts
+
+| Plugin | Role |
+|--------|------|
+| [dsh-wsl-workspace](https://github.com/173787247/dsh-wsl-workspace) | `wsl_workspace` — list distros + validate a Linux workspace path |
+| [dsh-wsl-picker](https://github.com/173787247/dsh-wsl-picker) | `wsl_picker` — browse `/` and `/mnt` for workspace picking |
+| [dsh-wsl-tray](https://github.com/173787247/dsh-wsl-tray) | `wsl_tray` — Windows tray/shortcut launcher for `dsh web` |
+| [dsh-wsl-expose](https://github.com/173787247/dsh-wsl-expose) | `wsl_expose` — allowlisted Windows portproxy for a WSL port |
+
+### Tier 1 bridge & doctors
+
+| Plugin | Role |
+|--------|------|
+| [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) | `host_reach` — probe Windows-host services (Ollama, etc.) from WSL |
+| [dsh-wsl-clock](https://github.com/173787247/dsh-wsl-clock) | `clock_doctor` — WSL2 clock drift after sleep (TLS / tokens) |
+| [dsh-wsl-dns](https://github.com/173787247/dsh-wsl-dns) | `dns_doctor` — compare WSL vs Windows DNS |
+| [dsh-wsl-mnt](https://github.com/173787247/dsh-wsl-mnt) | `mnt_doctor` — warn when workspace sits on slow `/mnt/c` |
+| [dsh-wsl-editor](https://github.com/173787247/dsh-wsl-editor) | `win_editor` — open a Linux path in Cursor / VS Code / Notepad |
+| [dsh-wsl-shot](https://github.com/173787247/dsh-wsl-shot) | `win_shot` — save Windows clipboard image into WSL |
+
+### Tier 2 extras
+
+| Plugin | Role |
+|--------|------|
+| [dsh-wsl-docker](https://github.com/173787247/dsh-wsl-docker) | `docker_doctor` — Docker Desktop vs WSL context confusion |
+| [dsh-wsl-ssh-agent](https://github.com/173787247/dsh-wsl-ssh-agent) | `ssh_agent_hint` — forward Windows OpenSSH agent into WSL |
+| [dsh-wsl-encoding](https://github.com/173787247/dsh-wsl-encoding) | `encoding_doctor` — UTF-8 vs Windows code-page issues |
+| [dsh-wsl-wslconfig](https://github.com/173787247/dsh-wsl-wslconfig) | `wslconfig_hint` — read-only `.wslconfig` memory / mirrored networking advice |
+| [dsh-wsl-download](https://github.com/173787247/dsh-wsl-download) | `win_download` — copy from Windows Downloads into the WSL workspace |
+
 Optional related: [session-contract](https://github.com/173787247/session-contract).
 
 ## Recommended install sets
@@ -102,7 +132,9 @@ Optional related: [session-contract](https://github.com/173787247/session-contra
 | **Minimal** | env, net, open, repeat-stop |
 | **Daily** | Minimal + tool-budget, clipboard, path, browser, launch |
 | **GitHub day** | Daily + [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) + [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) |
-| **Full** | Everything in [`install.sh`](./install.sh) |
+| **WSL UI** | Daily + workspace, picker, tray, expose |
+| **Doctors** | WSL UI + hostsvc, clock, dns, mnt, editor, shot |
+| **Full** | Everything in [`install.sh`](./install.sh) (includes Tier 2) |
 
 ## Install
 
@@ -122,8 +154,11 @@ Local checkouts (example):
 ```sh
 KIT=/absolute/path/to/AIFullStackDevelopment
 for p in dsh-wsl-env dsh-wsl-net dsh-wsl-open dsh-repeat-stop dsh-tool-budget \
-         dsh-wsl-clipboard dsh-wsl-launch dsh-wsl-path dsh-wsl-browser dsh-wsl-github; do
-  dsh plugin --profile web add "$KIT/$p"
+         dsh-wsl-clipboard dsh-wsl-launch dsh-wsl-path dsh-wsl-browser dsh-wsl-github \
+         dsh-wsl-workspace dsh-wsl-picker dsh-wsl-tray dsh-wsl-expose \
+         dsh-wsl-hostsvc dsh-wsl-clock dsh-wsl-dns dsh-wsl-mnt dsh-wsl-editor dsh-wsl-shot \
+         dsh-wsl-docker dsh-wsl-ssh-agent dsh-wsl-encoding dsh-wsl-wslconfig dsh-wsl-download; do
+  dsh plugin --profile web add "link:$KIT/$p"
 done
 ```
 
