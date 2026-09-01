@@ -13,7 +13,8 @@ This is a **meta-repo** (docs + install script + [`cordis.patch.yml`](./cordis.p
 **Prereq:** `dsh` works inside WSL (profile usually `web`).
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh | KIT_SET=daily bash
+curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh \
+  | KIT_SET=daily bash
 ```
 
 Then:

@@ -13,7 +13,8 @@
 **前提：** WSL 里已能运行 `dsh`（通常 profile = `web`）。
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh | KIT_SET=daily bash
+curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh \
+  | KIT_SET=daily bash
 ```
 
 然后：
