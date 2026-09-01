@@ -2,7 +2,7 @@
 
 **一句话：** Agent 在 WSL 里跑 DeepSeek Harness，聊天在 Windows 浏览器——路径、代理、剪贴板、打开文件都要跨系统时，装这个套件。
 
-本仓是**元仓**（文档 + 安装脚本 + [`cordis.patch.yml`](./cordis.patch.yml)），不含插件运行时代码。子插件均为英文 `README.md` + 中文 `README.zh.md`。
+本仓是**元仓**（文档 + 安装脚本 + [`cordis.patch.yml`](./cordis.patch.yml)），不含插件运行时代码。各子插件仓库另附英文 `README.md` 与中文 `README.zh.md`。
 
 [English → README.md](./README.md)
 
