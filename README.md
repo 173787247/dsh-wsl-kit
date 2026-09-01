@@ -2,7 +2,7 @@
 
 **One line:** DeepSeek Harness agent in WSL, chat in a Windows browser — install this kit when paths, proxy, clipboard, and “open that file” must cross the OS boundary.
 
-This is a **meta-repo** (docs + install script + [`cordis.patch.yml`](./cordis.patch.yml)). It does not ship plugin runtimes. Each plugin has English `README.md` + Chinese `README.zh.md`.
+This is a **meta-repo** (docs + install script + [`cordis.patch.yml`](./cordis.patch.yml)). It does not ship plugin runtimes. Each plugin repo ships English `README.md` and Chinese `README.zh.md`.
 
 [中文说明 → README.zh.md](./README.zh.md)
 
