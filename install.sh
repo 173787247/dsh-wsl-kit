@@ -55,6 +55,7 @@ LLM_SET=(
   "github:173787247/dsh-wsl-env"
   "github:173787247/dsh-wsl-net"
   "github:173787247/dsh-wsl-hostsvc"
+  "github:173787247/dsh-wsl-docker"
   "github:173787247/dsh-wsl-dns"
   "github:173787247/dsh-wsl-clock"
   "github:173787247/dsh-wsl-gpu"
