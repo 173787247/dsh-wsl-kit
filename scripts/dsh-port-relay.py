@@ -1,29 +1,25 @@
 #!/usr/bin/env python3
-"""HTTP relay: Windows → *:3081 → 127.0.0.1:3080 with Host rewritten to :3080.
+"""TCP/HTTP relay: Windows → *:3081 → 127.0.0.1:3080.
 
-dsh only binds 127.0.0.1 and rejects --host 0.0.0.0. The browser trust fence
-also expects Host: 127.0.0.1:3080; accessing via :3081 otherwise gets reset.
+Do NOT rewrite the Host header. dsh's browser-trust fence requires
+Origin host === Host header host; the page is served from :3081 so both
+must stay 127.0.0.1:3081. Loopback Host already passes the fence.
 """
 from __future__ import annotations
 
-import re
 import socket
 import threading
 
 LISTEN = ("::", 3081)
 TARGET = ("127.0.0.1", 3080)
-HOST_REWRITE = re.compile(rb"(?im)^Host:\s*[^\r\n]*\r\n")
 
 
-def pipe(src: socket.socket, dst: socket.socket, rewrite_host: bool = False) -> None:
+def pipe(src: socket.socket, dst: socket.socket) -> None:
     try:
         while True:
             data = src.recv(65536)
             if not data:
                 break
-            if rewrite_host:
-                data = HOST_REWRITE.sub(b"Host: 127.0.0.1:3080\r\n", data, count=1)
-                rewrite_host = False
             dst.sendall(data)
     except Exception:
         pass
@@ -59,8 +55,8 @@ def handle(client: socket.socket) -> None:
             pass
         return
 
-    threading.Thread(target=pipe, args=(upstream, client, False), daemon=True).start()
-    pipe(client, upstream, rewrite_host=True)
+    threading.Thread(target=pipe, args=(upstream, client), daemon=True).start()
+    pipe(client, upstream)
 
 
 def main() -> None:
@@ -72,7 +68,7 @@ def main() -> None:
         pass
     sock.bind(LISTEN)
     sock.listen(64)
-    print(f"relay {LISTEN} -> {TARGET} (Host -> 127.0.0.1:3080)", flush=True)
+    print(f"relay {LISTEN} -> {TARGET} (Host unchanged)", flush=True)
     while True:
         client, _ = sock.accept()
         threading.Thread(target=handle, args=(client,), daemon=True).start()
