@@ -164,8 +164,6 @@ dsh web
 
 原则：**该开新仓才开**；默认继续做深现有插件 + kit 文档。
 
-发帖草稿（可复制到 DeepSeek Discussions）：[docs/DISCUSSIONS-wsl-first.zh.md](./docs/DISCUSSIONS-wsl-first.zh.md)。
-
 ---
 
 ## 安全
