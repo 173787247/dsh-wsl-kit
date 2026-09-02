@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install dsh-wsl-kit plugins into the current dsh profile (GitHub sources).
 #
-#   KIT_SET=daily|github|full   (default: full — keeps old curl|bash behavior)
+#   KIT_SET=daily|github|full|llm   (default: full — keeps old curl|bash behavior)
 #   DSH_PROFILE=web             (default: web)
 #
 # Examples:
@@ -51,9 +51,27 @@ FULL_EXTRA=(
   "github:173787247/dsh-wsl-download"
 )
 
+LLM_SET=(
+  "github:173787247/dsh-wsl-env"
+  "github:173787247/dsh-wsl-net"
+  "github:173787247/dsh-wsl-hostsvc"
+  "github:173787247/dsh-wsl-dns"
+  "github:173787247/dsh-wsl-clock"
+  "github:173787247/dsh-wsl-gpu"
+  "github:173787247/dsh-wsl-port"
+  "github:173787247/dsh-wsl-expose"
+  "github:173787247/dsh-wsl-tray"
+  "github:173787247/dsh-wsl-open"
+  "github:173787247/dsh-wsl-path"
+  "github:173787247/dsh-wsl-browser"
+)
+
 PLUGINS=("${DAILY[@]}")
 case "${KIT_SET}" in
   daily) ;;
+  llm)
+    PLUGINS=("${LLM_SET[@]}")
+    ;;
   github)
     PLUGINS+=("${GITHUB_EXTRA[@]}")
     ;;
@@ -61,7 +79,7 @@ case "${KIT_SET}" in
     PLUGINS+=("${GITHUB_EXTRA[@]}" "${FULL_EXTRA[@]}")
     ;;
   *)
-    echo "Unknown KIT_SET=${KIT_SET} (use daily|github|full)" >&2
+    echo "Unknown KIT_SET=${KIT_SET} (use daily|github|full|llm)" >&2
     exit 1
     ;;
 esac
