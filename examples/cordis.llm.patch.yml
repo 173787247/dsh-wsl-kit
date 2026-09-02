@@ -1,0 +1,36 @@
+# LLM-focused overrides for KIT_SET=llm (merge into ~/.dsh/profiles/web/cordis.patch.yml).
+# Plugin bundles already auto-load; this only tweaks timeouts / defaults.
+
+- id: dsh-wsl-env
+  config:
+    when: wsl
+    order: 15
+    extraNotes: "Prefer host_reach before guessing Ollama baseURL. Keep OLLAMA_API_KEY set when starting dsh web."
+
+- id: dsh-wsl-net
+  config:
+    timeoutMs: 20000
+    probeTimeoutMs: 5000
+    injectChildProxy: true
+
+- id: dsh-wsl-hostsvc
+  config:
+    timeoutMs: 20000
+
+- id: dsh-wsl-tray
+  config:
+    timeoutMs: 30000
+
+- id: dsh-wsl-expose
+  config:
+    timeoutMs: 30000
+    defaultPort: 3080
+
+- id: dsh-wsl-dns
+  config:
+    timeoutMs: 20000
+
+- id: dsh-wsl-clock
+  config:
+    timeoutMs: 15000
+    maxSkewSec: 30
