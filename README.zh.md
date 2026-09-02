@@ -27,6 +27,7 @@ curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/instal
 |----------|------|
 | **日常（默认推荐）** | `KIT_SET=daily bash install.sh` |
 | 日常 + GitHub App / 凭据 | `KIT_SET=github bash install.sh` |
+| **本地 LLM + 网络诊断** | `KIT_SET=llm bash install.sh` |
 | 全家桶 | `KIT_SET=full bash install.sh`（或不设 `KIT_SET`，兼容旧行为） |
 
 本地克隆后：`KIT_SET=daily bash install.sh`
@@ -56,6 +57,7 @@ curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/instal
 |------|------|--------|
 | **日常** | env、net、open、repeat-stop、tool-budget、clipboard、path、browser、launch | 绝大多数 WSL + Windows 浏览器用户 |
 | **GitHub 日常** | 日常 + [github](https://github.com/173787247/dsh-wsl-github) + [cred](https://github.com/173787247/dsh-wsl-cred) | 还要查 PR/Actions、修 `git push` 凭据 |
+| **本地 LLM** | env、net、hostsvc、dns、clock、gpu、port、expose、tray、open、path、browser | Windows Ollama/LM Studio + WSL dsh |
 | **完整** | [`install.sh`](./install.sh) 全部 | 诊断 GPU/Docker/时钟、托盘启动、portproxy 等 |
 
 **不要**一上来装完整套——先日常跑通，再按痛点加插件。
@@ -140,6 +142,12 @@ dsh web
 可选相关：[session-contract](https://github.com/173787247/session-contract)。
 
 </details>
+
+---
+
+## 故障树
+
+连不上 Ollama、API、git push 时先看 **[docs/TROUBLESHOOTING.zh.md](./docs/TROUBLESHOOTING.zh.md)**（含 `host_reach` → `net_doctor` → `dns` → `clock` 顺序）。
 
 ---
 
