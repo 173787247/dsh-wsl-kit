@@ -151,6 +151,21 @@ dsh web
 
 ---
 
+## kit 之外怎么长
+
+| 方向 | 建议 | 是否新仓 / awesome |
+|------|------|-------------------|
+| 子插件 README | 顶栏统一链本 kit + `KIT_SET` 档位 | 已统一；不进 awesome |
+| hostsvc / docker 做深 | Unsloth、Flash-Next、vLLM:8000、ctx | **不新开仓**，加深现有插件 |
+| DeepSeek Discussions | 「WSL-first dsh」固定帖链本 kit | 推广，非插件 |
+| session-contract | 与 repeat-stop 审计会话 | 可选相关，已链 |
+| Skills（Oryxos/GO/课仓） | 工作区约定 | Skill ≠ 插件 |
+| MCP / 钉钉 / OpenClaw | 独立产品线 | **别硬塞进 WSL 分类**；需要时再新开仓 |
+
+原则：**该开新仓才开**；默认继续做深现有插件 + kit 文档。
+
+---
+
 ## 安全
 
 - 插件与 Harness 同权（读文件、联网、经 PowerShell 调 Windows）。
