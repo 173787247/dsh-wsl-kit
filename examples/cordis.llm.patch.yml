@@ -17,6 +17,11 @@
   config:
     timeoutMs: 20000
 
+- id: dsh-wsl-docker
+  config:
+    timeoutMs: 20000
+    focus: vllm
+
 - id: dsh-wsl-tray
   config:
     timeoutMs: 30000

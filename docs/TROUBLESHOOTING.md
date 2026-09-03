@@ -2,6 +2,8 @@
 
 When the agent runs in WSL and the browser is on Windows, failures are often cross-system networking—not dsh itself. Match symptoms to tools; avoid blind restarts.
 
+Full fault tree (中文): [TROUBLESHOOTING.zh.md](./TROUBLESHOOTING.zh.md).
+
 ## Quick map
 
 | Symptom | Tool first | Plugin |
@@ -12,9 +14,25 @@ When the agent runs in WSL and the browser is on Windows, failures are often cro
 | git push / GitHub 401 | `github_app_hint` + `cred_doctor` | github + cred |
 | DNS weirdness | `wsl_dns` | dsh-wsl-dns |
 | TLS clock skew | `wsl_clock` | dsh-wsl-clock |
-| Browser cannot open WSL dsh web | `wsl_expose` advise | dsh-wsl-expose |
+| Browser cannot open WSL dsh web | See §0; then `wsl_expose` | dsh-wsl-expose |
+| `CONTEXT_WINDOW_EXCEEDED` | Align settings `contextWindow` with Ollama `num_ctx` (≥32768 when many plugins) | hostsvc + settings |
 
-See [TROUBLESHOOTING.zh.md](./TROUBLESHOOTING.zh.md) for the full fault tree (中文).
+## 0. Windows browser ↔ WSL dsh (required)
+
+dsh **must not** bind `--host 0.0.0.0`; it listens on `127.0.0.1:3080` only. Use the relay on Windows:
+
+```text
+ERR_CONNECTION_REFUSED / blank page
+  → Wrong port (:3000 is GenericAgent) or only :3080 open?
+  → bash scripts/restart-dsh-web.sh
+  → Open http://127.0.0.1:3081/
+
+ERR_CONNECTION_RESET (relay up, dsh down)
+  → Same restart; confirm both 3080 and 3081 are listening
+
+/api 403 (Host rewrite broke Origin)
+  → Do not rewrite Host; keep Host: 127.0.0.1:3081 + --trusted-host
+```
 
 ## Recommended install for local LLM
 
@@ -23,4 +41,4 @@ curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/instal
   | KIT_SET=llm bash
 ```
 
-Restart `dsh web` and open a **new session** after install.
+Then run [`scripts/restart-dsh-web.sh`](../scripts/restart-dsh-web.sh) and open a **new session**.

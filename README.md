@@ -19,14 +19,16 @@ curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/instal
 
 Then:
 
-1. Restart `dsh web`
-2. Open a **new** session (old sessions keep the old toolset)
-3. Optionally merge [`cordis.patch.yml`](./cordis.patch.yml) into your profile (a later plugin `config` **replaces** the whole object — restate every key you still need)
+1. Restart via [`scripts/restart-dsh-web.sh`](./scripts/restart-dsh-web.sh) (starts dsh on `:3080` **and** the Windows relay on `:3081`)
+2. In Windows open **http://127.0.0.1:3081/** (not `:3080` — dsh binds loopback inside WSL only)
+3. Open a **new** session (old sessions keep the old toolset)
+4. Optionally merge [`cordis.patch.yml`](./cordis.patch.yml) into your profile (a later plugin `config` **replaces** the whole object — restate every key you still need)
 
 | Want | Command |
 |------|---------|
 | **Daily (recommended)** | `KIT_SET=daily bash install.sh` |
 | Daily + GitHub App / credentials | `KIT_SET=github bash install.sh` |
+| **Local LLM + network doctor** | `KIT_SET=llm bash install.sh` |
 | Everything | `KIT_SET=full bash install.sh` (or omit `KIT_SET` — same as before) |
 
 From a local clone: `KIT_SET=daily bash install.sh`
@@ -56,6 +58,7 @@ Smoke: in a new session ask “run `net_doctor`” and “copy this path to the 
 |-----|----------|-----|
 | **Daily** | env, net, open, repeat-stop, tool-budget, clipboard, path, browser, launch | Most WSL + Windows-browser users |
 | **GitHub day** | Daily + [github](https://github.com/173787247/dsh-wsl-github) + [cred](https://github.com/173787247/dsh-wsl-cred) | Also need PR/Actions status and `git push` credential hints |
+| **LLM** | env, net, hostsvc, docker, dns, clock, gpu, port, expose, tray, open, path, browser | Local Ollama / vLLM / Unsloth + connectivity |
 | **Full** | Everything in [`install.sh`](./install.sh) | GPU/Docker/clock doctors, tray, portproxy, etc. |
 
 **Do not** start with Full — get Daily working, then add plugins for specific pains.

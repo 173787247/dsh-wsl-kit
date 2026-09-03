@@ -19,9 +19,10 @@ curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/instal
 
 然后：
 
-1. 重启 `dsh web`
-2. 开一个**新会话**（旧会话仍是旧工具集）
-3. 可选：把 [`cordis.patch.yml`](./cordis.patch.yml) 合并进 profile（后写的插件 `config` 会**整段替换**，键要写全）
+1. 用 [`scripts/restart-dsh-web.sh`](./scripts/restart-dsh-web.sh) 重启（`:3080` dsh + `:3081` Windows 中继）
+2. Windows 浏览器打开 **http://127.0.0.1:3081/**（不要用 `:3080`——dsh 只绑 WSL 环回）
+3. 开一个**新会话**（旧会话仍是旧工具集）
+4. 可选：把 [`cordis.patch.yml`](./cordis.patch.yml) 合并进 profile（后写的插件 `config` 会**整段替换**，键要写全）
 
 | 想装什么 | 命令 |
 |----------|------|
@@ -57,7 +58,7 @@ curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/instal
 |------|------|--------|
 | **日常** | env、net、open、repeat-stop、tool-budget、clipboard、path、browser、launch | 绝大多数 WSL + Windows 浏览器用户 |
 | **GitHub 日常** | 日常 + [github](https://github.com/173787247/dsh-wsl-github) + [cred](https://github.com/173787247/dsh-wsl-cred) | 还要查 PR/Actions、修 `git push` 凭据 |
-| **本地 LLM** | env、net、hostsvc、dns、clock、gpu、port、expose、tray、open、path、browser | Windows Ollama/LM Studio + WSL dsh |
+| **本地 LLM** | env、net、hostsvc、docker、dns、clock、gpu、port、expose、tray、open、path、browser | Ollama / vLLM / Unsloth + 连通性 |
 | **完整** | [`install.sh`](./install.sh) 全部 | 诊断 GPU/Docker/时钟、托盘启动、portproxy 等 |
 
 **不要**一上来装完整套——先日常跑通，再按痛点加插件。
