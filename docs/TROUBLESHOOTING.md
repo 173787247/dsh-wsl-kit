@@ -8,6 +8,7 @@ Full fault tree (中文): [TROUBLESHOOTING.zh.md](./TROUBLESHOOTING.zh.md).
 
 | Symptom | Tool first | Plugin |
 |---------|------------|--------|
+| DeepSeek Search / `TypeError: fetch failed` | `net_doctor` (need `NODE_USE_ENV_PROXY=1` + proxy port OPEN) → `restart-dsh-web.sh` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
 | Local LLM unreachable / ctx errors | `host_reach` | [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) |
 | DeepSeek API / npm timeout | `net_doctor` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
 | ModelScope / Hugging Face | `net_doctor` target=`registry` | dsh-wsl-net |
