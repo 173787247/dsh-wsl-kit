@@ -8,7 +8,8 @@ Agent 在 WSL、浏览器在 Windows 时，问题常出在「跨系统网络」�
 |------|----------|------|
 | DeepSeek Search / `TypeError: fetch failed` | `net_doctor`（确认 **dsh 进程** `NODE_USE_ENV_PROXY=1` + 代理端口 OPEN）→ `check-dsh-health.sh` / `restart-dsh-web.sh` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
 | GPU / 显存 / 推理端口互斥 | `gpu_doctor` | [dsh-wsl-gpu](https://github.com/173787247/dsh-wsl-gpu) |
-| Ollama / 本地模型 API 404、连不上、ctx 报错 | `host_reach`（看 `ctxReports` / `ctxMatch`） | [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) |
+| 浏览器打不开 WSL 里的 dsh web | `check-dsh-health.sh` → `port_doctor` → `restart-dsh-web.sh` →（仅 LAN/非本机）`wsl_expose`；见 §0 | [dsh-wsl-port](https://github.com/173787247/dsh-wsl-port) / [expose](https://github.com/173787247/dsh-wsl-expose) |
+| Ollama / 本地模型 API 404、连不上、ctx 报错 | `host_reach`（看 `apiReady` / `ctxReports`）→ 可选 `docker_doctor` | [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) |
 | settings `contextWindow` > Ollama 真实 `num_ctx` | `host_reach` → 降 settings 或抬 `OLLAMA_NUM_CTX` | dsh-wsl-hostsvc |
 | DeepSeek API / npm install 超时 | `net_doctor` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
 | ModelScope / Hugging Face 拉模型失败 | `net_doctor` target=`registry` | dsh-wsl-net |
@@ -17,7 +18,6 @@ Agent 在 WSL、浏览器在 Windows 时，问题常出在「跨系统网络」�
 | WSL 与 Windows 对同一主机 A 记录不一致 | `dns_doctor`（对比两侧；再 `net_doctor` / `wslconfig_hint`） | dsh-wsl-dns |
 | TLS / 证书时间错误；休眠后 skew；GitHub App JWT 异常 | `clock_doctor`（必要时 `wsl --shutdown`） | [dsh-wsl-clock](https://github.com/173787247/dsh-wsl-clock) |
 | 仓库 / 工作区开在 Desktop、Downloads（`/mnt/c/...`） | `wsl_workspace` + `mnt_doctor` | [dsh-wsl-workspace](https://github.com/173787247/dsh-wsl-workspace) |
-| 浏览器打不开 WSL 里的 dsh web | 见下方 §0；再 `wsl_expose` | [dsh-wsl-expose](https://github.com/173787247/dsh-wsl-expose) |
 | Agent 乱用 Windows 路径 | （自动） | [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) |
 | `CONTEXT_WINDOW_EXCEEDED` / prompt 过大 | settings `contextWindow` 与 Ollama `num_ctx` 对齐（插件多时建议 ≥32768） | hostsvc + settings |
 | 工具行为像旧版 / 列表缺插件 | `bash scripts/check-plugin-versions.sh` → `dsh plugin add` + `restart-dsh-web.sh` | [dsh-wsl-kit](https://github.com/173787247/dsh-wsl-kit) |
@@ -30,12 +30,14 @@ dsh **禁止** `--host 0.0.0.0`，只绑 `127.0.0.1:3080`。Windows 侧请用中
 
 ```text
 ERR_CONNECTION_REFUSED / 空白
-  → 是否开了 :3000（GenericAgent）或只开了 :3080？
+  → bash scripts/check-dsh-health.sh
+  → 聊天里跑 port_doctor（3080/3081）看 uiPlaybook
   → bash scripts/restart-dsh-web.sh
-  → 浏览器打开 http://127.0.0.1:3081/
+  → 浏览器打开 http://127.0.0.1:3081/（勿 :3000；勿裸 :3080 除非已验证 mirrored）
+  → 仅 LAN / 非本机 UI 才用 wsl_expose；本机不要 netsh portproxy
 
 ERR_CONNECTION_RESET（中继在、dsh 挂）
-  → 同上重启；确认 ss 里 3080 与 3081 都在听
+  → 同上：health → port_doctor → restart；确认 ss 里 3080 与 3081 都在听
 
 /api 403（曾改写 Host → Origin 不一致）
   → 不要改写 Host；中继保持 Host: 127.0.0.1:3081 + --trusted-host
