@@ -150,7 +150,9 @@ Related: [session-contract](https://github.com/173787247/session-contract).
 |-------|-------|--------|
 | Install drift | [`check-plugin-versions.sh`](./scripts/check-plugin-versions.sh); install mnt/encoding/ssh-agent | Done this round |
 | Startup health | `net` 0.5.1 process env + [`check-dsh-health.sh`](./scripts/check-dsh-health.sh) + tray 0.2.2 | Done this round |
-| Local LLM probes | `hostsvc` 0.4 ctx + `docker` 0.2.1 :8000/GPU | Done this round |
+| Local LLM probes | `hostsvc` 0.4.2 `apiReady` + `docker` 0.2.2 HTTP 404 | Done this round |
+| Browser / UI relay | `port` 0.2.1 `uiPlaybook` + `expose` 0.2.1 + health fault tree | Done this round |
+| path/cred floor | Install to sibling 0.2; version-check floors | Done this round |
 | Prior verticals | dns/clock/workspace/distro/github → 0.2 | Done previously |
 | Thin UX plugins | `browser` / `clipboard` / `launch` / `editor` / `shot` / `notify` / `picker` | Deferred |
 | MCP / DingTalk / OpenClaw | Separate product lines | Do not force into WSL plugins |

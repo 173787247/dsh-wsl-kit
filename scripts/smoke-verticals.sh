@@ -30,7 +30,8 @@ echo "smoke-verticals: ROOT=${ROOT}"
 failed=0
 for repo in \
   dsh-wsl-dns dsh-wsl-clock dsh-wsl-workspace dsh-wsl-distro dsh-wsl-github \
-  dsh-wsl-net dsh-wsl-hostsvc dsh-wsl-docker dsh-wsl-tray
+  dsh-wsl-net dsh-wsl-hostsvc dsh-wsl-docker dsh-wsl-tray \
+  dsh-wsl-path dsh-wsl-cred dsh-wsl-port dsh-wsl-expose
 do
   if need_dir "${repo}"; then
     if ! run_tests "${repo}"; then
@@ -103,13 +104,30 @@ checks.push("net");
 
 const host = await load("dsh-wsl-hostsvc/lib/providers.js");
 if (host.compareCtx(131072, 8192).ctxMatch !== "mismatch") throw new Error("hostsvc compareCtx failed");
+const models404 = await host.fetchOpenAiModels("http://127.0.0.1:8000/v1", {
+  fetchFn: async () => ({ ok: false, status: 404, json: async () => ({}) }),
+});
+if (models404.apiReady !== false || models404.tcpOpen !== true) {
+  throw new Error("hostsvc fetchOpenAiModels 404 apiReady failed");
+}
 checks.push("hostsvc");
 
 const dock = await load("dsh-wsl-docker/lib/docker.js");
 if (!dock.containerHasGpuRuntime({ HostConfig: { Runtime: "nvidia" } })) {
   throw new Error("docker containerHasGpuRuntime failed");
 }
+const hints404 = dock.buildVllmHints([], {
+  daemonOk: true,
+  portHealth: { ok: false, status: 404, url: "http://127.0.0.1:8000/v1/models", error: "" },
+});
+if (!hints404.some((h) => /404/.test(h))) throw new Error("docker 404 hint failed");
 checks.push("docker");
+
+const port = await load("dsh-wsl-port/lib/port.js");
+if (!port.buildUiPlaybook(3081).some((s) => /check-dsh-health/i.test(s))) {
+  throw new Error("port buildUiPlaybook failed");
+}
+checks.push("port");
 
 const tray = await load("dsh-wsl-tray/lib/tray.js");
 const kit = tray.resolveKitPath({

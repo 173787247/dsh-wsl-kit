@@ -159,7 +159,9 @@ dsh web
 | 子插件 README | 顶栏统一链本 kit + `KIT_SET` 档位 | 已统一；不进 awesome |
 | 安装漂移治理 | [`check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) + 补装 mnt/encoding/ssh-agent | ✅ 本轮 |
 | 启动健康 | `net` 0.5.1 进程 env + [`check-dsh-health.sh`](./scripts/check-dsh-health.sh) + tray 0.2.2 | ✅ 本轮 |
-| 本地推理探测 | `hostsvc` 0.4 ctx + `docker` 0.2.1 :8000/GPU | ✅ 本轮 |
+| 本地推理探测 | `hostsvc` 0.4.2 `apiReady` + `docker` 0.2.2 HTTP 404 | ✅ 本轮 |
+| 浏览器打不开 | `port` 0.2.1 `uiPlaybook` + `expose` 0.2.1 + health 故障树 | ✅ 本轮 |
+| path/cred 升齐 | 本机装到仓内 0.2；version-check 地板 | ✅ 本轮 |
 | 连通性/工作区/GitHub | dns/clock/workspace/distro/github → 0.2 | ✅ 上轮 |
 | UX 薄插件 | `browser` / `clipboard` / `launch` / `editor` / `shot` / `notify` / `picker` | **暂缓** |
 | DeepSeek Discussions | 「WSL-first dsh」固定帖链本 kit | 推广，非插件 |
