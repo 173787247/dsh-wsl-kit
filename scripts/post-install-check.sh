@@ -3,6 +3,9 @@ set -euo pipefail
 export PATH="${HOME}/.local/bin:/usr/local/bin:${PATH}"
 echo "=== dsh web ==="
 pgrep -af 'node.*/dsh web' || echo "dsh-web-down"
+echo "=== plugin versions (see also check-plugin-versions.sh) ==="
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+bash "${SCRIPT_DIR}/check-plugin-versions.sh" || true
 echo "=== plugins ==="
 dsh plugin --profile web list 2>&1 | sed -n '/dependencies:/,/packages/p' || true
 echo "=== tray ==="
