@@ -157,16 +157,15 @@ dsh web
 | 方向 | 建议 | 是否新仓 / awesome |
 |------|------|-------------------|
 | 子插件 README | 顶栏统一链本 kit + `KIT_SET` 档位 | 已统一；不进 awesome |
-| 连通性收尾 | `dns_doctor` / `clock_doctor` → **0.2** | ✅ 本轮完成；不进 awesome |
-| 工作区卫生 | `wsl_workspace` / `distro_info` → **0.2** | ✅ 本轮完成 |
-| GitHub 提示 | `github_app_hint` env 存在性 + 分工 → **0.2** | ✅ 本轮完成（无真实 App e2e） |
-| 离线冒烟 | [`scripts/smoke-verticals.sh`](./scripts/smoke-verticals.sh) | ✅ 本轮 |
-| hostsvc / docker 做深 | Unsloth、Flash-Next、vLLM:8000、ctx | **不新开仓**，按需加深 |
-| UX 薄插件 | `browser` / `clipboard` / `launch` / `editor` / `shot` / `notify` / `picker` | **暂缓**（日常 UX，差异化弱） |
+| 安装漂移治理 | [`check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) + 补装 mnt/encoding/ssh-agent | ✅ 本轮 |
+| 启动健康 | `net` 0.5.1 进程 env + [`check-dsh-health.sh`](./scripts/check-dsh-health.sh) + tray 0.2.2 | ✅ 本轮 |
+| 本地推理探测 | `hostsvc` 0.4 ctx + `docker` 0.2.1 :8000/GPU | ✅ 本轮 |
+| 连通性/工作区/GitHub | dns/clock/workspace/distro/github → 0.2 | ✅ 上轮 |
+| UX 薄插件 | `browser` / `clipboard` / `launch` / `editor` / `shot` / `notify` / `picker` | **暂缓** |
 | DeepSeek Discussions | 「WSL-first dsh」固定帖链本 kit | 推广，非插件 |
 | session-contract | 与 repeat-stop 审计会话 | 可选相关，已链 |
 | Skills（Oryxos/GO/课仓） | 工作区约定 | Skill ≠ 插件 |
-| MCP / 钉钉 / OpenClaw | 独立产品线 | **别硬塞进 WSL 分类**；需要时再新开仓 |
+| MCP / 钉钉 / OpenClaw | 独立产品线 | **别硬塞进 WSL 分类** |
 
 原则：**该开新仓才开**；默认继续做深现有插件 + kit 文档。
 

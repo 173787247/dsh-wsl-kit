@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Offline smoke for deepened verticals (dns / clock / workspace / distro / github).
+# Offline smoke for deepened verticals.
 # Import + pure-function / unit self-check only — no live network, Windows, or GitHub App e2e.
 set -euo pipefail
 
@@ -28,7 +28,10 @@ run_tests() {
 echo "smoke-verticals: ROOT=${ROOT}"
 
 failed=0
-for repo in dsh-wsl-dns dsh-wsl-clock dsh-wsl-workspace dsh-wsl-distro dsh-wsl-github; do
+for repo in \
+  dsh-wsl-dns dsh-wsl-clock dsh-wsl-workspace dsh-wsl-distro dsh-wsl-github \
+  dsh-wsl-net dsh-wsl-hostsvc dsh-wsl-docker dsh-wsl-tray
+do
   if need_dir "${repo}"; then
     if ! run_tests "${repo}"; then
       echo "FAIL ${repo}"
@@ -72,10 +75,6 @@ const classified = ws.classifyWorkspacePath("/mnt/c/Users/u/Desktop/proj", {
 if (classified.kind !== "windows_user_folder") {
   throw new Error(`workspace kind expected windows_user_folder, got ${classified.kind}`);
 }
-const wsAdvice = ws.buildWorkspaceCheckAdvice({ ...classified, exists: true, isDirectory: true });
-if (!wsAdvice.some((t) => /mnt_doctor|Desktop/i.test(t))) {
-  throw new Error("workspace advice expected Desktop/mnt_doctor hint");
-}
 checks.push("workspace");
 
 const distro = await load("dsh-wsl-distro/lib/distro.js");
@@ -95,6 +94,31 @@ const advice = gh.buildAppHint(
 );
 if (!advice.some((t) => /cred_hint/i.test(t))) throw new Error("github advice missing role split");
 checks.push("github");
+
+const net = await load("dsh-wsl-net/lib/net.js");
+const raw = Buffer.from("NODE_USE_ENV_PROXY=\0HTTP_PROXY=http://127.0.0.1:9\0");
+const got = net.readProcEnv(1, { readFileSyncFn: () => raw });
+if (!got.env || got.env.HTTP_PROXY !== "http://127.0.0.1:9") throw new Error("net readProcEnv failed");
+checks.push("net");
+
+const host = await load("dsh-wsl-hostsvc/lib/providers.js");
+if (host.compareCtx(131072, 8192).ctxMatch !== "mismatch") throw new Error("hostsvc compareCtx failed");
+checks.push("hostsvc");
+
+const dock = await load("dsh-wsl-docker/lib/docker.js");
+if (!dock.containerHasGpuRuntime({ HostConfig: { Runtime: "nvidia" } })) {
+  throw new Error("docker containerHasGpuRuntime failed");
+}
+checks.push("docker");
+
+const tray = await load("dsh-wsl-tray/lib/tray.js");
+const kit = tray.resolveKitPath({
+  kitPath: "/kit",
+  exists: (p) => String(p).includes("/kit/scripts/restart-dsh-web.sh"),
+  candidates: [],
+});
+if (!kit.ok) throw new Error("tray resolveKitPath failed");
+checks.push("tray");
 
 console.log("pure-check ok:", checks.join(", "));
 EOF

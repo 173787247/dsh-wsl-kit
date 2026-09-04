@@ -8,8 +8,9 @@ Full fault tree (中文): [TROUBLESHOOTING.zh.md](./TROUBLESHOOTING.zh.md).
 
 | Symptom | Tool first | Plugin |
 |---------|------------|--------|
-| DeepSeek Search / `TypeError: fetch failed` | `net_doctor` (need `NODE_USE_ENV_PROXY=1` + proxy port OPEN) → `restart-dsh-web.sh` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
-| Local LLM unreachable / ctx errors | `host_reach` | [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) |
+| DeepSeek Search / `TypeError: fetch failed` | `net_doctor` (confirm **dsh process** `NODE_USE_ENV_PROXY=1` + proxy OPEN) → `check-dsh-health.sh` / `restart-dsh-web.sh` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
+| Local LLM unreachable / ctx errors | `host_reach` (see `ctxReports` / `ctxMatch`) | [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) |
+| settings `contextWindow` > Ollama `num_ctx` | `host_reach` → lower settings or raise `OLLAMA_NUM_CTX` | dsh-wsl-hostsvc |
 | DeepSeek API / npm timeout | `net_doctor` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
 | ModelScope / Hugging Face | `net_doctor` target=`registry` | dsh-wsl-net |
 | git push / GitHub 401 | `github_app_hint` + `cred_doctor` | github + cred |
@@ -19,6 +20,7 @@ Full fault tree (中文): [TROUBLESHOOTING.zh.md](./TROUBLESHOOTING.zh.md).
 | Workspace on Desktop/Downloads (`/mnt/c/...`) | `wsl_workspace` + `mnt_doctor` | [dsh-wsl-workspace](https://github.com/173787247/dsh-wsl-workspace) |
 | Browser cannot open WSL dsh web | See §0; then `wsl_expose` | dsh-wsl-expose |
 | `CONTEXT_WINDOW_EXCEEDED` | Align settings `contextWindow` with Ollama `num_ctx` (≥32768 when many plugins) | hostsvc + settings |
+| Tools behave like an old build / plugin missing | `bash scripts/check-plugin-versions.sh` → `dsh plugin add` + `restart-dsh-web.sh` | [dsh-wsl-kit](https://github.com/173787247/dsh-wsl-kit) |
 
 ## 0. Windows browser ↔ WSL dsh (required)
 
