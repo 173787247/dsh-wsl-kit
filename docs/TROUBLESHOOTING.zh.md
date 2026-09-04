@@ -6,6 +6,7 @@ Agent 在 WSL、浏览器在 Windows 时，问题常出在「跨系统网络」�
 
 | 症状 | 先跑什么 | 插件 |
 |------|----------|------|
+| DeepSeek Search / `TypeError: fetch failed` | `net_doctor`（确认 `NODE_USE_ENV_PROXY=1` + 代理端口 OPEN）→ `restart-dsh-web.sh` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
 | GPU / 显存 / 推理端口互斥 | `gpu_doctor` | [dsh-wsl-gpu](https://github.com/173787247/dsh-wsl-gpu) |
 | Ollama / 本地模型 API 404、连不上、ctx 报错 | `host_reach` | [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) |
 | DeepSeek API / npm install 超时 | `net_doctor` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
