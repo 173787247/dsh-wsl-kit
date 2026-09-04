@@ -13,8 +13,10 @@ Full fault tree (中文): [TROUBLESHOOTING.zh.md](./TROUBLESHOOTING.zh.md).
 | DeepSeek API / npm timeout | `net_doctor` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
 | ModelScope / Hugging Face | `net_doctor` target=`registry` | dsh-wsl-net |
 | git push / GitHub 401 | `github_app_hint` + `cred_doctor` | github + cred |
-| DNS weirdness | `wsl_dns` | dsh-wsl-dns |
-| TLS clock skew | `wsl_clock` | dsh-wsl-clock |
+| DNS weirdness | `dns_doctor` | [dsh-wsl-dns](https://github.com/173787247/dsh-wsl-dns) |
+| WSL vs Windows A-record mismatch for same host | `dns_doctor` (then `net_doctor` / `wslconfig_hint`) | dsh-wsl-dns |
+| TLS clock skew / post-sleep skew / GitHub App JWT oddities | `clock_doctor` (then `wsl --shutdown` if needed) | [dsh-wsl-clock](https://github.com/173787247/dsh-wsl-clock) |
+| Workspace on Desktop/Downloads (`/mnt/c/...`) | `wsl_workspace` + `mnt_doctor` | [dsh-wsl-workspace](https://github.com/173787247/dsh-wsl-workspace) |
 | Browser cannot open WSL dsh web | See §0; then `wsl_expose` | dsh-wsl-expose |
 | `CONTEXT_WINDOW_EXCEEDED` | Align settings `contextWindow` with Ollama `num_ctx` (≥32768 when many plugins) | hostsvc + settings |
 
