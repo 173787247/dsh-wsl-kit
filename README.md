@@ -144,6 +144,17 @@ Related: [session-contract](https://github.com/173787247/session-contract).
 
 ---
 
+## Beyond the kit (growth)
+
+| Track | Notes | Status |
+|-------|-------|--------|
+| Connectivity | `dns_doctor` / `clock_doctor` → **0.2** | Done this round |
+| Workspace hygiene | `wsl_workspace` / `distro_info` → **0.2** | Done this round |
+| GitHub hint | `github_app_hint` env existence + role split → **0.2** | Done (no live App e2e) |
+| Offline smoke | [`scripts/smoke-verticals.sh`](./scripts/smoke-verticals.sh) | Done |
+| Thin UX plugins | `browser` / `clipboard` / `launch` / `editor` / `shot` / `notify` / `picker` | Deferred |
+| MCP / DingTalk / OpenClaw | Separate product lines | Do not force into WSL plugins |
+
 ## Security
 
 - Plugins share your Harness permissions (files, network, Windows via PowerShell/`cmd`).

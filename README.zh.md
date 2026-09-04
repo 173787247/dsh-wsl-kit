@@ -157,7 +157,12 @@ dsh web
 | 方向 | 建议 | 是否新仓 / awesome |
 |------|------|-------------------|
 | 子插件 README | 顶栏统一链本 kit + `KIT_SET` 档位 | 已统一；不进 awesome |
-| hostsvc / docker 做深 | Unsloth、Flash-Next、vLLM:8000、ctx | **不新开仓**，加深现有插件 |
+| 连通性收尾 | `dns_doctor` / `clock_doctor` → **0.2** | ✅ 本轮完成；不进 awesome |
+| 工作区卫生 | `wsl_workspace` / `distro_info` → **0.2** | ✅ 本轮完成 |
+| GitHub 提示 | `github_app_hint` env 存在性 + 分工 → **0.2** | ✅ 本轮完成（无真实 App e2e） |
+| 离线冒烟 | [`scripts/smoke-verticals.sh`](./scripts/smoke-verticals.sh) | ✅ 本轮 |
+| hostsvc / docker 做深 | Unsloth、Flash-Next、vLLM:8000、ctx | **不新开仓**，按需加深 |
+| UX 薄插件 | `browser` / `clipboard` / `launch` / `editor` / `shot` / `notify` / `picker` | **暂缓**（日常 UX，差异化弱） |
 | DeepSeek Discussions | 「WSL-first dsh」固定帖链本 kit | 推广，非插件 |
 | session-contract | 与 repeat-stop 审计会话 | 可选相关，已链 |
 | Skills（Oryxos/GO/课仓） | 工作区约定 | Skill ≠ 插件 |

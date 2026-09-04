@@ -12,8 +12,10 @@ Agent 在 WSL、浏览器在 Windows 时，问题常出在「跨系统网络」�
 | DeepSeek API / npm install 超时 | `net_doctor` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
 | ModelScope / Hugging Face 拉模型失败 | `net_doctor` target=`registry` | dsh-wsl-net |
 | git push / GitHub API 401 | `github_app_hint` + `cred_doctor` | github + cred |
-| DNS 解析怪、证书像被劫持 | `wsl_dns` | [dsh-wsl-dns](https://github.com/173787247/dsh-wsl-dns) |
-| TLS / 证书时间错误 | `wsl_clock` | [dsh-wsl-clock](https://github.com/173787247/dsh-wsl-clock) |
+| DNS 解析怪、证书像被劫持 | `dns_doctor` | [dsh-wsl-dns](https://github.com/173787247/dsh-wsl-dns) |
+| WSL 与 Windows 对同一主机 A 记录不一致 | `dns_doctor`（对比两侧；再 `net_doctor` / `wslconfig_hint`） | dsh-wsl-dns |
+| TLS / 证书时间错误；休眠后 skew；GitHub App JWT 异常 | `clock_doctor`（必要时 `wsl --shutdown`） | [dsh-wsl-clock](https://github.com/173787247/dsh-wsl-clock) |
+| 仓库 / 工作区开在 Desktop、Downloads（`/mnt/c/...`） | `wsl_workspace` + `mnt_doctor` | [dsh-wsl-workspace](https://github.com/173787247/dsh-wsl-workspace) |
 | 浏览器打不开 WSL 里的 dsh web | 见下方 §0；再 `wsl_expose` | [dsh-wsl-expose](https://github.com/173787247/dsh-wsl-expose) |
 | Agent 乱用 Windows 路径 | （自动） | [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) |
 | `CONTEXT_WINDOW_EXCEEDED` / prompt 过大 | settings `contextWindow` 与 Ollama `num_ctx` 对齐（插件多时建议 ≥32768） | hostsvc + settings |
@@ -85,9 +87,10 @@ Node 24 的 fetch **默认忽略**代理；`dsh-wsl-net` 会给子进程注入 `
 
 1. **host_reach** — 本地推理端口
 2. **net_doctor** — 外网 HTTPS + registry
-3. **wsl_dns** — 解析异常
-4. **wsl_clock** — 时间漂移
-5. **wsl_expose** — 仅当 Windows 浏览器访问不到 WSL 内 web
+3. **dns_doctor** — 解析异常 / WSL↔Windows A 记录不一致
+4. **clock_doctor** — 时间漂移（TLS / App JWT）
+5. **wsl_workspace** — 工作区是否误开在 Desktop/`/mnt`
+6. **wsl_expose** — 仅当 Windows 浏览器访问不到 WSL 内 web
 
 `host_reach` 返回的 `connectivityPlaybook` 字段与上表一致。
 
