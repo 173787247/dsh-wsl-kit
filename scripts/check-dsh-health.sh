@@ -10,13 +10,24 @@ code() {
   curl --noproxy '*' -s -o /dev/null -w '%{http_code}' --connect-timeout 2 "$1" || echo fail
 }
 
+# dsh ≥0.1.2: bare / is 401 until ?token= from the launch URL (303 after auth).
+# 200/3xx/401 = HTTP stack up. Connection fail / 502 = down.
+# shellcheck source=dsh-web-alive.inc.sh
+source "${SCRIPT_DIR}/dsh-web-alive.inc.sh"
+
 echo "=== ports ==="
 c3080="$(code http://127.0.0.1:3080/)"
 c3081="$(code http://127.0.0.1:3081/)"
 echo "3080=${c3080} 3081=${c3081}"
-if [[ "$c3080" != "200" || "$c3081" != "200" ]]; then
-  echo "FAIL: open http://127.0.0.1:3081/ after bash ${SCRIPT_DIR}/restart-dsh-web.sh"
+if ! dsh_http_up "$c3080" || ! dsh_http_up "$c3081"; then
+  echo "FAIL: open the URL from bash ${SCRIPT_DIR}/restart-dsh-web.sh (3081 + token on dsh ≥0.1.2)"
   fail=1
+else
+  ui="$(dsh_write_ui_url /tmp/dsh-web.log)"
+  echo "ui=${ui}"
+  if [[ "$c3080" == "401" || "$c3081" == "401" ]]; then
+    echo "NOTE: 401 is expected without ?token= (dsh 0.1.2+). Use ui= above, not bare :3081."
+  fi
 fi
 
 echo "=== dsh web process ==="

@@ -31,8 +31,12 @@ ERR_CONNECTION_REFUSED / blank page
   → bash scripts/check-dsh-health.sh
   → port_doctor on 3080/3081 (uiPlaybook)
   → bash scripts/restart-dsh-web.sh
-  → Open http://127.0.0.1:3081/ (not :3000; not bare :3080 unless mirrored verified)
+  → Open the printed ui= URL (dsh ≥0.1.2 needs ?token=; bare :3081 is 401)
+  → not :3000; not bare :3080 unless mirrored verified
   → wsl_expose only for LAN / non-local UI — no netsh portproxy for local dsh UI
+
+HTTP 401 Unauthorized
+  → Expected on dsh 0.1.2+: one-shot launch token. Use restart output or /tmp/dsh-ui-url
 
 ERR_CONNECTION_RESET (relay up, dsh down)
   → Same: health → port_doctor → restart; confirm both 3080 and 3081 are listening

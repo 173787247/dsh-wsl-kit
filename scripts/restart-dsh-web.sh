@@ -36,4 +36,9 @@ sleep 1
 echo "relay=$(pgrep -n -f dsh-port-relay.py || echo none)"
 curl --noproxy '*' -s -o /dev/null -w "3080=%{http_code} " --connect-timeout 3 http://127.0.0.1:3080/ || echo -n "3080=fail "
 curl --noproxy '*' -s -o /dev/null -w "3081=%{http_code}\n" --connect-timeout 3 http://127.0.0.1:3081/ || echo "3081=fail"
-echo "OK — open http://127.0.0.1:3081/"
+# shellcheck source=dsh-web-alive.inc.sh
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/dsh-web-alive.inc.sh"
+ui="$(dsh_write_ui_url /tmp/dsh-web.log)"
+echo "OK — open ${ui}"
+echo "(dsh ≥0.1.2: bare :3081 is 401; token is one-shot per process, also in /tmp/dsh-ui-url)"

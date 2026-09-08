@@ -20,7 +20,7 @@ curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/instal
 Then:
 
 1. Restart via [`scripts/restart-dsh-web.sh`](./scripts/restart-dsh-web.sh) (starts dsh on `:3080` **and** the Windows relay on `:3081`)
-2. In Windows open **http://127.0.0.1:3081/** (not `:3080` — dsh binds loopback inside WSL only)
+2. In Windows open the **URL printed by `restart-dsh-web.sh`** (dsh ≥0.1.2 includes `?token=`; bare `:3081` is 401. Not `:3080`)
 3. Open a **new** session (old sessions keep the old toolset)
 4. Optionally merge [`cordis.patch.yml`](./cordis.patch.yml) into your profile (a later plugin `config` **replaces** the whole object — restate every key you still need)
 
@@ -149,9 +149,9 @@ Related: [session-contract](https://github.com/173787247/session-contract).
 | Track | Notes | Status |
 |-------|-------|--------|
 | Install drift | [`check-plugin-versions.sh`](./scripts/check-plugin-versions.sh); install mnt/encoding/ssh-agent | Done this round |
-| Startup health | `net` 0.5.1 process env + [`check-dsh-health.sh`](./scripts/check-dsh-health.sh) + tray 0.2.2 | Done this round |
+| Startup health | `check-dsh-health` accepts 401 + tray 0.2.3 token URL | Done this round |
 | Local LLM probes | `hostsvc` 0.4.2 `apiReady` + `docker` 0.2.2 HTTP 404 | Done this round |
-| Browser / UI relay | `port` 0.2.1 `uiPlaybook` + `expose` 0.2.1 + health fault tree | Done this round |
+| Browser / UI relay | `port` 0.2.2 token + `expose` 0.2.2 + dsh 0.1.2 auth | Done this round |
 | path/cred floor | Install to sibling 0.2; version-check floors | Done this round |
 | Prior verticals | dns/clock/workspace/distro/github → 0.2 | Done previously |
 | Thin UX plugins | `browser` / `clipboard` / `launch` / `editor` / `shot` / `notify` / `picker` | Deferred |

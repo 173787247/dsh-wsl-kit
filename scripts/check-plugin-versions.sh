@@ -19,13 +19,13 @@ declare -A FLOOR=(
   [dsh-wsl-hostsvc]=0.4.2
   [dsh-wsl-docker]=0.2.2
   [dsh-wsl-gpu]=0.2.1
-  [dsh-wsl-tray]=0.2.2
+  [dsh-wsl-tray]=0.2.3
   [dsh-wsl-mnt]=0.2.0
   [dsh-wsl-encoding]=0.2.0
   [dsh-wsl-ssh-agent]=0.2.0
   [dsh-wsl-path]=0.2.0
   [dsh-wsl-cred]=0.2.0
-  [dsh-wsl-port]=0.2.1
+  [dsh-wsl-port]=0.2.2
 )
 
 TRACKED=(

@@ -33,8 +33,12 @@ ERR_CONNECTION_REFUSED / 空白
   → bash scripts/check-dsh-health.sh
   → 聊天里跑 port_doctor（3080/3081）看 uiPlaybook
   → bash scripts/restart-dsh-web.sh
-  → 浏览器打开 http://127.0.0.1:3081/（勿 :3000；勿裸 :3080 除非已验证 mirrored）
+  → 浏览器打开脚本打印的 ui=（dsh ≥0.1.2 必须带 ?token=；裸 :3081 是 401）
+  → 勿 :3000；勿裸 :3080 除非已验证 mirrored
   → 仅 LAN / 非本机 UI 才用 wsl_expose；本机不要 netsh portproxy
+
+HTTP 401（页面写 Unauthorized）
+  → 正常：0.1.2+ 一次性 launch token。用 restart 打印的 URL 或 /tmp/dsh-ui-url，不要收藏裸 :3081
 
 ERR_CONNECTION_RESET（中继在、dsh 挂）
   → 同上：health → port_doctor → restart；确认 ss 里 3080 与 3081 都在听

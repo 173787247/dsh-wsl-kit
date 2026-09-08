@@ -20,7 +20,7 @@ curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/instal
 然后：
 
 1. 用 [`scripts/restart-dsh-web.sh`](./scripts/restart-dsh-web.sh) 重启（`:3080` dsh + `:3081` Windows 中继）
-2. Windows 浏览器打开 **http://127.0.0.1:3081/**（不要用 `:3080`——dsh 只绑 WSL 环回）
+2. Windows 浏览器打开 **`restart-dsh-web.sh` 打印的 URL**（dsh ≥0.1.2 带 `?token=`；裸 `:3081` 是 401。不要用 `:3080`）
 3. 开一个**新会话**（旧会话仍是旧工具集）
 4. 可选：把 [`cordis.patch.yml`](./cordis.patch.yml) 合并进 profile（后写的插件 `config` 会**整段替换**，键要写全）
 
@@ -158,9 +158,9 @@ dsh web
 |------|------|-------------------|
 | 子插件 README | 顶栏统一链本 kit + `KIT_SET` 档位 | 已统一；不进 awesome |
 | 安装漂移治理 | [`check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) + 补装 mnt/encoding/ssh-agent | ✅ 本轮 |
-| 启动健康 | `net` 0.5.1 进程 env + [`check-dsh-health.sh`](./scripts/check-dsh-health.sh) + tray 0.2.2 | ✅ 本轮 |
+| 启动健康 | `net` 0.5.1 进程 env + [`check-dsh-health.sh`](./scripts/check-dsh-health.sh) 认 401 + tray 0.2.3 token URL | ✅ 本轮 |
 | 本地推理探测 | `hostsvc` 0.4.2 `apiReady` + `docker` 0.2.2 HTTP 404 | ✅ 本轮 |
-| 浏览器打不开 | `port` 0.2.1 `uiPlaybook` + `expose` 0.2.1 + health 故障树 | ✅ 本轮 |
+| 浏览器打不开 | `port` 0.2.2 token + `expose` 0.2.2 + dsh 0.1.2 鉴权 | ✅ 本轮 |
 | path/cred 升齐 | 本机装到仓内 0.2；version-check 地板 | ✅ 本轮 |
 | 连通性/工作区/GitHub | dns/clock/workspace/distro/github → 0.2 | ✅ 上轮 |
 | UX 薄插件 | `browser` / `clipboard` / `launch` / `editor` / `shot` / `notify` / `picker` | **暂缓** |
