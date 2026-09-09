@@ -3,7 +3,9 @@ set -euo pipefail
 export PATH="${HOME}/.local/bin:/usr/local/bin:${PATH}"
 export NODE_USE_ENV_PROXY=1
 export OLLAMA_API_KEY="${OLLAMA_API_KEY:-ollama}"
-export NO_PROXY="127.0.0.1,localhost,${NO_PROXY:-}"
+# Loopback only. Inheriting Clash RFC1918 NO_PROXY globs (10.*, 172.16.*, …)
+# makes Node fetch bypass the proxy and TRANSPORT-timeout api.deepseek.com.
+export NO_PROXY="127.0.0.1,localhost"
 export no_proxy="$NO_PROXY"
 
 pkill -f 'node.*/dsh web' 2>/dev/null || true

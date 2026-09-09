@@ -9,6 +9,7 @@ Full fault tree (中文): [TROUBLESHOOTING.zh.md](./TROUBLESHOOTING.zh.md).
 | Symptom | Tool first | Plugin |
 |---------|------------|--------|
 | DeepSeek Search / `TypeError: fetch failed` | `net_doctor` (confirm **dsh process** `NODE_USE_ENV_PROXY=1` + proxy OPEN) → `check-dsh-health.sh` / `restart-dsh-web.sh` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
+| `web_fetch` still `TypeError: fetch failed` (API works) | Install [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch), restart web, **new session** | [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) |
 | Local LLM unreachable / ctx / HTTP 404 on /v1/models | `host_reach` (`apiReady` / `ctxReports`) → optional `docker_doctor` | [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) |
 | settings `contextWindow` > Ollama `num_ctx` | `host_reach` → lower settings or raise `OLLAMA_NUM_CTX` | dsh-wsl-hostsvc |
 | DeepSeek API / npm timeout | `net_doctor` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |

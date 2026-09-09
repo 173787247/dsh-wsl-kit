@@ -40,13 +40,14 @@ From a local clone: `KIT_SET=daily bash install.sh`
 | Pain | Tool | Plugin |
 |------|------|--------|
 | Proxy / Node 24 blocks DeepSeek or npm | `net_doctor` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
+| `web_fetch` `TypeError: fetch failed` | Install [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) + `restart-dsh-web.sh` | [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) |
 | Open a Linux path from chat on Windows | (clickable paths) | [dsh-wsl-open](https://github.com/173787247/dsh-wsl-open) |
 | Path convert / slow `/mnt/c` | `path_convert` | [dsh-wsl-path](https://github.com/173787247/dsh-wsl-path) |
 | Windows clipboard | `wsl_clipboard` | [dsh-wsl-clipboard](https://github.com/173787247/dsh-wsl-clipboard) |
 | Open a PR / docs URL in Windows | `win_open_url` | [dsh-wsl-browser](https://github.com/173787247/dsh-wsl-browser) |
 | Agent forgets it is in WSL | (system prompt inject) | [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) |
 
-**Daily** = table above + `win_launch` + `dsh-repeat-stop` + `dsh-tool-budget` (9 plugins).
+**Daily** = table above + `win_launch` + `dsh-repeat-stop` + `dsh-tool-budget` + `dsh-wsl-fetch`.
 
 Smoke: in a new session ask “run `net_doctor`” and “copy this path to the Windows clipboard”.
 
@@ -99,6 +100,7 @@ Local OpenAI-compatible backends on Windows: add [dsh-wsl-hostsvc](https://githu
 |--------|------|
 | [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) | Inject WSL/Windows facts into the system prompt |
 | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) | `net_doctor` |
+| [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) | Proxy-aware `web_fetch` |
 | [dsh-wsl-open](https://github.com/173787247/dsh-wsl-open) | Open Linux paths from chat on Windows |
 | [dsh-repeat-stop](https://github.com/173787247/dsh-repeat-stop) | Hard-stop identical tool loops |
 | [dsh-tool-budget](https://github.com/173787247/dsh-tool-budget) | Cap tool calls per session |

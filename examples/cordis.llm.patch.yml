@@ -13,6 +13,11 @@
     probeTimeoutMs: 5000
     injectChildProxy: true
 
+- id: dsh-wsl-fetch
+  config:
+    timeoutMs: 30000
+    maxRedirects: 5
+
 - id: dsh-wsl-hostsvc
   config:
     timeoutMs: 20000

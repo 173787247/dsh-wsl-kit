@@ -17,6 +17,12 @@
         probeTimeoutMs: 5000
         injectChildProxy: true
 
+    - id: dsh-wsl-fetch
+      name: dsh-wsl-fetch
+      config:
+        timeoutMs: 30000
+        maxRedirects: 5
+
     - id: dsh-wsl-open
       name: dsh-wsl-open
       config:
