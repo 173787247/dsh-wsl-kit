@@ -11,7 +11,7 @@ PROFILE_NM="${HOME}/.dsh/profiles/web/node_modules"
 # Minimum expected versions when sibling checkout is absent
 declare -A FLOOR=(
   [dsh-wsl-net]=0.5.1
-  [dsh-wsl-fetch]=0.1.0
+  [dsh-wsl-fetch]=0.1.1
   [dsh-wsl-dns]=0.2.0
   [dsh-wsl-clock]=0.2.0
   [dsh-wsl-workspace]=0.2.0

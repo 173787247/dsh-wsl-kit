@@ -22,6 +22,7 @@
       config:
         timeoutMs: 30000
         maxRedirects: 5
+        retries: 2
 
     - id: dsh-wsl-open
       name: dsh-wsl-open

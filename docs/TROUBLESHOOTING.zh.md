@@ -7,7 +7,7 @@ Agent 在 WSL、浏览器在 Windows 时，问题常出在「跨系统网络」�
 | 症状 | 先跑什么 | 插件 |
 |------|----------|------|
 | DeepSeek Search / `TypeError: fetch failed` | `net_doctor`（确认 **dsh 进程** `NODE_USE_ENV_PROXY=1` + 代理端口 OPEN）→ `check-dsh-health.sh` / `restart-dsh-web.sh` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
-| `web_fetch` 仍 `TypeError: fetch failed`（API 已通） | 装 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch)，重启 web，**新会话** | [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) |
+| `web_fetch` 仍偶发 `fetch failed`（插件已挂） | 确认 Clash `:16006`；升级 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch)≥0.1.1（重试+www 跳转）；**新会话**换源再抓 | [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) |
 | GPU / 显存 / 推理端口互斥 | `gpu_doctor` | [dsh-wsl-gpu](https://github.com/173787247/dsh-wsl-gpu) |
 | 浏览器打不开 WSL 里的 dsh web | `check-dsh-health.sh` → `port_doctor` → `restart-dsh-web.sh` →（仅 LAN/非本机）`wsl_expose`；见 §0 | [dsh-wsl-port](https://github.com/173787247/dsh-wsl-port) / [expose](https://github.com/173787247/dsh-wsl-expose) |
 | Ollama / 本地模型 API 404、连不上、ctx 报错 | `host_reach`（看 `apiReady` / `ctxReports`）→ 可选 `docker_doctor` | [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) |
