@@ -3,6 +3,13 @@ set -euo pipefail
 export PATH="${HOME}/.local/bin:/usr/local/bin:${PATH}"
 export NODE_USE_ENV_PROXY=1
 export OLLAMA_API_KEY="${OLLAMA_API_KEY:-ollama}"
+# Optional local secrets (chmod 600). Used by llm-pi-ai apiKeyEnv e.g. GLM53_API_KEY.
+if [ -f "${HOME}/.dsh/glm53.env" ]; then
+  set -a
+  # shellcheck disable=SC1091
+  . "${HOME}/.dsh/glm53.env"
+  set +a
+fi
 # Loopback only. Inheriting Clash RFC1918 NO_PROXY globs (10.*, 172.16.*, …)
 # makes Node fetch bypass the proxy and TRANSPORT-timeout api.deepseek.com.
 export NO_PROXY="127.0.0.1,localhost"

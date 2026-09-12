@@ -1,10 +1,12 @@
 # Paste under llm-pi-ai.providers in ~/.dsh/settings.yaml (WSL).
+# Cloud DeepSeek V4.1 Flash is NOT here — use official llm-deepseek model id `deepseek-flash`.
 # 1) Run host_reach (profile=all) from a DSH session and copy a reachable baseURL.
 # 2) Set a dummy key in the shell that starts dsh web, e.g.:
 #      export OLLAMA_API_KEY=ollama
 #      export LMSTUDIO_API_KEY=lmstudio
 #      export VLLM_API_KEY=vllm
 #      export LLAMA_API_KEY=llama
+#    Optional third-party keys: ~/.dsh/glm53.env (sourced by restart-dsh-web.sh).
 # 3) Model ids must match what the server lists (ollama list / LM Studio / vLLM / llama-server).
 # 4) On Windows, bind the server beyond 127.0.0.1 if WSL cannot reach it
 #    (OLLAMA_HOST=0.0.0.0:11434, LM Studio "Serve on local network", etc.).

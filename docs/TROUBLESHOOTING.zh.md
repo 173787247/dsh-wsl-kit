@@ -2,17 +2,23 @@
 
 Agent 在 WSL、浏览器在 Windows 时，问题常出在「跨系统网络」而不是 dsh 本身。按症状选工具，不要盲重启。
 
+英文版：[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)。套件总览：[README.zh.md](../README.zh.md)。
+
+**已验证：** dsh `0.1.5-rc.1`，日常套件含 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) ≥0.1.1。云端 Flash 模型 id：**`deepseek-flash`**（V4.1 Flash）。
+
 ## 快速对照
 
 | 症状 | 先跑什么 | 插件 |
 |------|----------|------|
 | DeepSeek Search / `TypeError: fetch failed` | `net_doctor`（确认 **dsh 进程** `NODE_USE_ENV_PROXY=1` + 代理端口 OPEN）→ `check-dsh-health.sh` / `restart-dsh-web.sh` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
-| `web_fetch` 仍偶发 `fetch failed`（插件已挂） | 确认 Clash `:16006`；升级 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch)≥0.1.1（重试+www 跳转）；**新会话**换源再抓 | [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) |
+| `web_fetch` 仍偶发 `fetch failed`（插件已挂） | 确认 Clash；升级 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch)≥0.1.1（重试+www 跳转）；**新会话**换源再抓 | [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) |
+| UI 变红但日志有 `web_fetch via proxy` | 单 URL 代理/TLS/站点失败，不是「没装插件」 | dsh-wsl-fetch |
+| 经 Clash 访问 Workers / Cloudflare **403 error 1010** | 对该域名加 Clash **DIRECT**（站点 WAF），或改用 Windows 侧可通路径 | — |
 | GPU / 显存 / 推理端口互斥 | `gpu_doctor` | [dsh-wsl-gpu](https://github.com/173787247/dsh-wsl-gpu) |
 | 浏览器打不开 WSL 里的 dsh web | `check-dsh-health.sh` → `port_doctor` → `restart-dsh-web.sh` →（仅 LAN/非本机）`wsl_expose`；见 §0 | [dsh-wsl-port](https://github.com/173787247/dsh-wsl-port) / [expose](https://github.com/173787247/dsh-wsl-expose) |
 | Ollama / 本地模型 API 404、连不上、ctx 报错 | `host_reach`（看 `apiReady` / `ctxReports`）→ 可选 `docker_doctor` | [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) |
 | settings `contextWindow` > Ollama 真实 `num_ctx` | `host_reach` → 降 settings 或抬 `OLLAMA_NUM_CTX` | dsh-wsl-hostsvc |
-| DeepSeek API / npm install 超时 | `net_doctor` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
+| DeepSeek API / npm install 超时 | `net_doctor`；确认 `NO_PROXY` 仅回环（见 `restart-dsh-web.sh`） | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
 | ModelScope / Hugging Face 拉模型失败 | `net_doctor` target=`registry` | dsh-wsl-net |
 | git push / GitHub API 401 | `github_app_hint` + `cred_doctor` | github + cred |
 | DNS 解析怪、证书像被劫持 | `dns_doctor` | [dsh-wsl-dns](https://github.com/173787247/dsh-wsl-dns) |
@@ -20,6 +26,8 @@ Agent 在 WSL、浏览器在 Windows 时，问题常出在「跨系统网络」�
 | TLS / 证书时间错误；休眠后 skew；GitHub App JWT 异常 | `clock_doctor`（必要时 `wsl --shutdown`） | [dsh-wsl-clock](https://github.com/173787247/dsh-wsl-clock) |
 | 仓库 / 工作区开在 Desktop、Downloads（`/mnt/c/...`） | `wsl_workspace` + `mnt_doctor` | [dsh-wsl-workspace](https://github.com/173787247/dsh-wsl-workspace) |
 | Agent 乱用 Windows 路径 | （自动） | [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) |
+| 简单问题也一直 “Deep diving” | **新开会话**且不要开 Agent Teams（实验功能，工具链重） | 上游 Agent Teams |
+| 模型名过时 / 选错 | V4.1 Flash 用 **`deepseek-flash`**；`deepseek-v4-flash` 仅临时别名 | `~/.dsh/settings.yaml` |
 | `CONTEXT_WINDOW_EXCEEDED` / prompt 过大 | settings `contextWindow` 与 Ollama `num_ctx` 对齐（插件多时建议 ≥32768） | hostsvc + settings |
 | 工具行为像旧版 / 列表缺插件 | `bash scripts/check-plugin-versions.sh` → `dsh plugin add` + `restart-dsh-web.sh` | [dsh-wsl-kit](https://github.com/173787247/dsh-wsl-kit) |
 
@@ -64,7 +72,7 @@ host_reach (profile=all)
         → 改 Modelfile PARAMETER num_ctx 后 recreate；再改 settings.yaml
 ```
 
-**推荐安装：** `KIT_SET=llm`（见 [install.sh](./install.sh)）
+**推荐安装：** `KIT_SET=llm`（见 [install.sh](../install.sh)）。第三方密钥可选：`~/.dsh/glm53.env` 由 `restart-dsh-web.sh` 自动 source。
 
 ---
 
@@ -75,11 +83,15 @@ net_doctor (target=all)
   ├─ HTTP_PROXY 有值但 NODE_USE_ENV_PROXY 不是 1
   │     → export NODE_USE_ENV_PROXY=1 后重启 dsh web
   ├─ 无代理且 probe FAIL
-  │     → Windows Clash/V2Ray mixed port → http://127.0.0.1:7890
-  └─ npm OK 但 deepseek FAIL → 代理规则未放行 api.deepseek.com
+  │     → Windows Clash/V2Ray mixed port → http://127.0.0.1:7890（或你的端口）
+  ├─ npm OK 但 deepseek FAIL → 代理规则未放行 api.deepseek.com
+  └─ 继承了 Clash 的 NO_PROXY=10.*,172.16.* …
+        → Node 会错误地绕过代理；用 restart-dsh-web.sh 的回环-only NO_PROXY
 ```
 
-Node 24 的 fetch **默认忽略**代理；`dsh-wsl-net` 会给子进程注入 `NODE_USE_ENV_PROXY=1`，但 **dsh 主进程**仍需你手动 export。
+Node 24 的 fetch **默认忽略**代理；`dsh-wsl-net` 会给子进程注入 `NODE_USE_ENV_PROXY=1`，但 **dsh 主进程**仍需该环境变量（用 `restart-dsh-web.sh`）。
+
+`web_fetch` 是另一路：装 **dsh-wsl-fetch**，进程内用 `ProxyAgent`。
 
 ---
 
@@ -109,10 +121,10 @@ Node 24 的 fetch **默认忽略**代理；`dsh-wsl-net` 会给子进程注入 `
 
 | KIT_SET | 用途 |
 |---------|------|
-| `daily` | 日常 WSL+浏览器 |
+| `daily` | 日常 WSL+浏览器（含 fetch） |
 | `github` | daily + GitHub App |
-| `llm` | 本地模型 + 网络诊断 + 托盘/暴露 |
-| `full` | 全部 30 插件 |
+| `llm` | 本地模型 + 网络诊断 + 托盘/暴露（含 fetch） |
+| `full` | install.sh 全部插件 |
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh \
