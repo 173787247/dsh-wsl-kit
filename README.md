@@ -176,7 +176,7 @@ Order of play: `host_reach` → `net_doctor` → `dns_doctor` → `clock_doctor`
 | [dsh-wsl-wslconfig](https://github.com/173787247/dsh-wsl-wslconfig) | `wslconfig_hint` |
 | [dsh-wsl-download](https://github.com/173787247/dsh-wsl-download) | `win_download` |
 
-Related: [session-contract](https://github.com/173787247/session-contract). Awesome listing snippet: [`awesome-wsl-kit.md`](./awesome-wsl-kit.md). Fetch awesome PR: [awesome-dsh-plugin#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736).
+Related: [session-contract](https://github.com/173787247/session-contract). Awesome listing snippet: [`awesome-wsl-kit.md`](./awesome-wsl-kit.md). Fetch is listed on awesome ([#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736) merged).
 
 </details>
 
@@ -187,7 +187,7 @@ Related: [session-contract](https://github.com/173787247/session-contract). Awes
 | Track | Notes | Status |
 |-------|-------|--------|
 | dsh 0.1.5-rc.1 + `deepseek-flash` | Docs / settings; kit install path unchanged | Documented this round |
-| `dsh-wsl-fetch` ≥0.1.1 in Daily/LLM | Retries, shared ProxyAgent, www↔apex | Done; awesome PR open |
+| `dsh-wsl-fetch` ≥0.1.2 in Daily/LLM | Retries, shared ProxyAgent, www↔apex, failure advice | Done; [awesome listed](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) |
 | Install drift | [`check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) | Done |
 | Startup health | `check-dsh-health` accepts 401 + tray token URL | Done |
 | Local LLM probes | `hostsvc` `apiReady` + `docker` HTTP 404 | Done |

@@ -178,7 +178,7 @@ export NODE_USE_ENV_PROXY=1
 | [dsh-wsl-wslconfig](https://github.com/173787247/dsh-wsl-wslconfig) | `wslconfig_hint` |
 | [dsh-wsl-download](https://github.com/173787247/dsh-wsl-download) | `win_download` |
 
-可选相关：[session-contract](https://github.com/173787247/session-contract)。awesome 片段：[`awesome-wsl-kit.md`](./awesome-wsl-kit.md)。fetch 收录 PR：[awesome-dsh-plugin#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736)。
+可选相关：[session-contract](https://github.com/173787247/session-contract)。awesome 片段：[`awesome-wsl-kit.md`](./awesome-wsl-kit.md)。fetch 已收录 awesome（[#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736) 已合）。
 
 </details>
 
@@ -189,7 +189,7 @@ export NODE_USE_ENV_PROXY=1
 | 方向 | 建议 | 状态 |
 |------|------|------|
 | dsh 0.1.5-rc.1 + `deepseek-flash` | 文档 / settings；安装路径不变 | 本轮文档 |
-| Daily/LLM 含 fetch ≥0.1.1 | 重试、共享 ProxyAgent、www↔apex | 已做；awesome PR 开放中 |
+| Daily/LLM 含 fetch ≥0.1.2 | 重试、共享 ProxyAgent、www↔apex、失败 advice | 已做；[awesome 已收录](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) |
 | 安装漂移治理 | [`check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) | ✅ |
 | 启动健康 | `check-dsh-health` 认 401 + tray token URL | ✅ |
 | 本地推理探测 | `hostsvc` `apiReady` + `docker` HTTP 404 | ✅ |
