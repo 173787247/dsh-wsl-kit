@@ -10,17 +10,17 @@ PROFILE_NM="${HOME}/.dsh/profiles/web/node_modules"
 
 # Minimum expected versions when sibling checkout is absent
 declare -A FLOOR=(
-  [dsh-wsl-net]=0.5.1
-  [dsh-wsl-fetch]=0.1.1
+  [dsh-wsl-net]=0.5.2
+  [dsh-wsl-fetch]=0.1.2
   [dsh-wsl-dns]=0.2.0
   [dsh-wsl-clock]=0.2.0
   [dsh-wsl-workspace]=0.2.0
   [dsh-wsl-distro]=0.2.0
   [dsh-wsl-github]=0.2.0
-  [dsh-wsl-hostsvc]=0.4.2
+  [dsh-wsl-hostsvc]=0.4.3
   [dsh-wsl-docker]=0.2.2
-  [dsh-wsl-gpu]=0.2.1
-  [dsh-wsl-tray]=0.2.3
+  [dsh-wsl-gpu]=0.2.2
+  [dsh-wsl-tray]=0.2.4
   [dsh-wsl-mnt]=0.2.0
   [dsh-wsl-encoding]=0.2.0
   [dsh-wsl-ssh-agent]=0.2.0
@@ -104,7 +104,7 @@ done
 
 echo ""
 if [[ "$failed" -ne 0 ]]; then
-  echo "RESULT: drift detected â€” dsh plugin --profile web add github:173787247/<name> then bash scripts/restart-dsh-web.sh"
+  echo "RESULT: drift detected â€?dsh plugin --profile web add github:173787247/<name> then bash scripts/restart-dsh-web.sh"
   echo "Also see scripts/post-install-check.sh for process/settings."
   exit 1
 fi

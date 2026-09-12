@@ -25,8 +25,24 @@ if ! dsh_http_up "$c3080" || ! dsh_http_up "$c3081"; then
 else
   ui="$(dsh_write_ui_url /tmp/dsh-web.log)"
   echo "ui=${ui}"
+  echo "OPEN_THIS_URL=${ui}"
+  if [[ -f /tmp/dsh-ui-url ]]; then
+    echo "ui_file=/tmp/dsh-ui-url"
+  fi
   if [[ "$c3080" == "401" || "$c3081" == "401" ]]; then
-    echo "NOTE: 401 is expected without ?token= (dsh 0.1.2+). Use ui= above, not bare :3081."
+    echo "NOTE: 401 is expected without ?token= (dsh 0.1.2+). Use OPEN_THIS_URL above, not bare :3081."
+  fi
+  if [[ "$ui" == *token=* ]]; then
+    if command -v clip.exe >/dev/null 2>&1; then
+      printf '%s' "$ui" | clip.exe && echo "clipboard=OPEN_THIS_URL (Windows clip.exe)"
+    elif command -v xclip >/dev/null 2>&1; then
+      printf '%s' "$ui" | xclip -selection clipboard && echo "clipboard=OPEN_THIS_URL (xclip)"
+    else
+      echo "clipboard=skip (no clip.exe/xclip) — copy OPEN_THIS_URL manually"
+    fi
+  else
+    echo "WARN: ui URL has no token — bash ${SCRIPT_DIR}/restart-dsh-web.sh"
+    fail=1
   fi
 fi
 
