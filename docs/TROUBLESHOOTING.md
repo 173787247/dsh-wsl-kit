@@ -65,7 +65,7 @@ host_reach (profile=all)
         → settings contextWindow must be ≤ real Ollama n_ctx; raise both to ≥32768 when possible
 ```
 
-**Install:** `KIT_SET=llm` (see [install.sh](../install.sh)). Optional third-party keys: `~/.dsh/glm53.env` sourced by `restart-dsh-web.sh`.
+**Install:** `KIT_SET=llm` (see [install.sh](../install.sh)).
 
 ## 2. HTTPS / proxy / npm
 

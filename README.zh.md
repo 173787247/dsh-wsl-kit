@@ -56,7 +56,6 @@ curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/instal
 
 - `NODE_USE_ENV_PROXY=1`，`OLLAMA_API_KEY` 默认 `ollama`
 - `NO_PROXY` **仅** `127.0.0.1,localhost`（不要继承 Clash 的 RFC1918 `NO_PROXY` 通配，否则 Node 绕过代理，访问 `api.deepseek.com` 会 TRANSPORT 超时）
-- 若存在 `~/.dsh/glm53.env`（建议 `chmod 600`）则 source，导出 `GLM53_API_KEY` 供 `llm-pi-ai` 的 `apiKeyEnv`
 - GitHub App：启动前自行 `source "$HOME/.dsh/dsh-wsl-github.env"`
 
 ---

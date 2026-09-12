@@ -56,7 +56,6 @@ From a local clone: `KIT_SET=daily bash install.sh`
 
 - `NODE_USE_ENV_PROXY=1`, `OLLAMA_API_KEY` default `ollama`
 - `NO_PROXY=127.0.0.1,localhost` only (do **not** inherit Clash RFC1918 `NO_PROXY` globs — they make Node skip the proxy and timeout on `api.deepseek.com`)
-- Optional `~/.dsh/glm53.env` (`chmod 600`) if present — exports `GLM53_API_KEY` for `llm-pi-ai` `apiKeyEnv`
 - Optional: `source "$HOME/.dsh/dsh-wsl-github.env"` yourself before start when using GitHub App plugins
 
 ---

@@ -6,7 +6,6 @@
 #      export LMSTUDIO_API_KEY=lmstudio
 #      export VLLM_API_KEY=vllm
 #      export LLAMA_API_KEY=llama
-#    Optional third-party keys: ~/.dsh/glm53.env (sourced by restart-dsh-web.sh).
 # 3) Model ids must match what the server lists (ollama list / LM Studio / vLLM / llama-server).
 # 4) On Windows, bind the server beyond 127.0.0.1 if WSL cannot reach it
 #    (OLLAMA_HOST=0.0.0.0:11434, LM Studio "Serve on local network", etc.).

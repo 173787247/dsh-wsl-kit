@@ -72,7 +72,7 @@ host_reach (profile=all)
         → 改 Modelfile PARAMETER num_ctx 后 recreate；再改 settings.yaml
 ```
 
-**推荐安装：** `KIT_SET=llm`（见 [install.sh](../install.sh)）。第三方密钥可选：`~/.dsh/glm53.env` 由 `restart-dsh-web.sh` 自动 source。
+**推荐安装：** `KIT_SET=llm`（见 [install.sh](../install.sh)）。
 
 ---
 
