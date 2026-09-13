@@ -46,6 +46,7 @@ Browser on Windows, agent in WSL. Install the meta pack first: [dsh-wsl-kit](htt
 - [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) - 向 system prompt 注入 WSL/Windows 路径与 shell 事实。
 - [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) - `net_doctor`：代理 / Node 24 fetch / DeepSeek+npm 探测 + 可复制修复脚本。
 - [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) - 让 `web_fetch` 走 Windows 代理（不再直连公网 IP；≥0.1.1 重试 + www↔裸域）。
+- [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) - 可选：WSL 驱动 Obscura 无头浏览器（不在 Daily；不替代 `web_fetch`）。
 - [dsh-wsl-open](https://github.com/173787247/dsh-wsl-open) - 聊天里的 Linux 路径一键用 Windows 打开。
 - [dsh-wsl-clipboard](https://github.com/173787247/dsh-wsl-clipboard) - 从 WSL 读写 Windows 剪贴板。
 - [dsh-wsl-launch](https://github.com/173787247/dsh-wsl-launch) - 白名单启动 Windows 应用。
