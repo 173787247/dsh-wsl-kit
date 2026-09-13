@@ -176,7 +176,9 @@ Order of play: `host_reach` → `net_doctor` → `dns_doctor` → `clock_doctor`
 | [dsh-wsl-wslconfig](https://github.com/173787247/dsh-wsl-wslconfig) | `wslconfig_hint` |
 | [dsh-wsl-download](https://github.com/173787247/dsh-wsl-download) | `win_download` |
 
-Related: [session-contract](https://github.com/173787247/session-contract). Awesome listing snippet: [`awesome-wsl-kit.md`](./awesome-wsl-kit.md). Fetch is listed on awesome ([#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736) merged).
+Related: [session-contract](https://github.com/173787247/session-contract). Awesome listing snippet: [`awesome-wsl-kit.md`](./awesome-wsl-kit.md).
+
+**Awesome status (2026-09):** **32** plugins under `173787247` are listed (including [fetch](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) [#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736) and [obscura](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-obscura.yml) [#4903](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4903)). This **kit meta-repo is not** submitted to awesome — install via this repo / `install.sh`.
 
 </details>
 
@@ -188,6 +190,8 @@ Related: [session-contract](https://github.com/173787247/session-contract). Awes
 |-------|-------|--------|
 | dsh 0.1.5-rc.1 + `deepseek-flash` | Docs / settings; kit install path unchanged | Documented this round |
 | `dsh-wsl-fetch` ≥0.1.2 in Daily/LLM | Retries, shared ProxyAgent, www↔apex, failure advice | Done; [awesome listed](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) |
+| `dsh-wsl-obscura` (optional) | Headless Obscura tools; not in Daily `KIT_SET` | Done; [awesome listed](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-obscura.yml) |
+| Suite on awesome | 32 plugin entries; **kit itself not listed** | Current |
 | Install drift | [`check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) | Done |
 | Startup health | `check-dsh-health` accepts 401 + tray token URL | Done |
 | Local LLM probes | `hostsvc` `apiReady` + `docker` HTTP 404 | Done |

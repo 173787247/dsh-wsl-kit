@@ -19,6 +19,7 @@ Browser on Windows, agent in WSL. Install the meta pack first: [dsh-wsl-kit](htt
 - [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) - Inject WSL/Windows path and shell facts into the system prompt.
 - [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) - `net_doctor` tool: proxy / Node 24 fetch / DeepSeek+npm probes + copy-paste fix scripts.
 - [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) - Proxy-aware `web_fetch` for WSL (undici ProxyAgent through Windows Clash; ≥0.1.1 retries + www↔apex).
+- [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) - Optional Obscura headless tools from WSL (not Daily `KIT_SET`; not a `web_fetch` replacement).
 - [dsh-wsl-open](https://github.com/173787247/dsh-wsl-open) - Click Linux paths in chat to open them in Windows.
 - [dsh-wsl-clipboard](https://github.com/173787247/dsh-wsl-clipboard) - Read/write the Windows clipboard from WSL.
 - [dsh-wsl-launch](https://github.com/173787247/dsh-wsl-launch) - Launch allowlisted Windows apps (`code`, Explorer, browsers…).

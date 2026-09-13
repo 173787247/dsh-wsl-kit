@@ -178,7 +178,9 @@ export NODE_USE_ENV_PROXY=1
 | [dsh-wsl-wslconfig](https://github.com/173787247/dsh-wsl-wslconfig) | `wslconfig_hint` |
 | [dsh-wsl-download](https://github.com/173787247/dsh-wsl-download) | `win_download` |
 
-可选相关：[session-contract](https://github.com/173787247/session-contract)。awesome 片段：[`awesome-wsl-kit.md`](./awesome-wsl-kit.md)。fetch 已收录 awesome（[#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736) 已合）。
+可选相关：[session-contract](https://github.com/173787247/session-contract)。awesome 片段：[`awesome-wsl-kit.md`](./awesome-wsl-kit.md)。
+
+**Awesome 现状（2026-09）：** `173787247` 下已收录 **32** 个插件（含 [fetch](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) [#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736)、[obscura](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-obscura.yml) [#4903](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4903)）。**本 kit 元仓不进 awesome** — 用本仓 / `install.sh` 安装。
 
 </details>
 
@@ -190,6 +192,8 @@ export NODE_USE_ENV_PROXY=1
 |------|------|------|
 | dsh 0.1.5-rc.1 + `deepseek-flash` | 文档 / settings；安装路径不变 | 本轮文档 |
 | Daily/LLM 含 fetch ≥0.1.2 | 重试、共享 ProxyAgent、www↔apex、失败 advice | 已做；[awesome 已收录](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) |
+| `dsh-wsl-obscura`（可选） | Obscura 无头工具；不在 Daily `KIT_SET` | 已做；[awesome 已收录](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-obscura.yml) |
+| 套件 awesome 盘点 | 插件 32 条；**kit 本身不收录** | 当前 |
 | 安装漂移治理 | [`check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) | ✅ |
 | 启动健康 | `check-dsh-health` 认 401 + tray token URL | ✅ |
 | 本地推理探测 | `hostsvc` `apiReady` + `docker` HTTP 404 | ✅ |
