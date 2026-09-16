@@ -8,14 +8,101 @@
 
 ---
 
+## 这些东西怎么拼在一起
+
+本仓不是运行时。`install.sh` 把插件装进 dsh 的 `web` profile。聊天在 Windows，agent 和工具在 WSL。可选的 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) **不在** `install.sh` 里，它是另外的出站长连接桥。OryxOS 只给这座桥当协议参照，kit 运行时不调用 OryxOS。
+
+```mermaid
+flowchart TB
+  subgraph win [Windows]
+    browser["浏览器 :3081/?token="]
+    host["剪贴板 / 资源管理器 / 默认浏览器"]
+  end
+  subgraph wslbox [WSL]
+    relay["端口中继"]
+    dsh["dsh web :3080"]
+    subgraph plugins [本 kit 的插件]
+      daily["日常：env net fetch open clipboard path browser launch"]
+      guards["repeat-stop + tool-budget"]
+      more["可选：github cred notify + 诊断"]
+    end
+    im["dsh-wsl-im — 可选"]
+  end
+  llm["DeepSeek API 或本机 Ollama"]
+  chats["飞书 / 企微 / 钉钉 / QQ"]
+
+  browser --> relay --> dsh
+  dsh --> plugins
+  dsh --> llm
+  plugins --> host
+  chats --> im --> dsh
+```
+
+| 边界 | 谁负责 |
+|------|--------|
+| Windows 界面 | 浏览器开 `:3081`，URL 带一次性 `?token=`（裸 `:3081` 是 401；`:3080` 只给 WSL） |
+| Agent | WSL 里的 `dsh web`，工具走插件 `ctx` |
+| 跨系统 | 日常插件（`path`、`open`、`clipboard`、`browser`、`launch`、`net`、`fetch`） |
+| IM | `dsh-wsl-im` 出站 WS/Stream/Gateway → `ctx.agents`。每个 IM 一个工作区，每个聊天一条会话 |
+| OryxOS | 不在链路里。只对齐飞书 / 企微 / 钉钉 / QQ 的字段名 |
+
+## 插件版本
+
+下面是 **2026-09-16** 本机兄弟仓的 `package.json`。[`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) 里的地板是下限，不是这份快照。`dsh-wsl-im` 的 `0.2.4` 是正在登记四个 IM 工作区的本地分支（[PR #4](https://github.com/173787247/dsh-wsl-im/pull/4)）；合进 `master` 之前发布版仍是 `0.2.3`。
+
+当天本机 dsh 是 **`0.1.6-alpha.1`**（`alpha` 标签）。本文下面兼容表里较早记下的 npm `latest` 仍是 **`0.1.5-rc.1`**。脚本仍按 dsh **≥0.1.2** 编写。
+
+### 日常
+
+| 插件 | 版本 | 档位 |
+|------|------|------|
+| [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) | 0.3.0 | daily |
+| [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) | 0.5.2 | daily |
+| [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) | 0.1.2 | daily |
+| [dsh-wsl-open](https://github.com/173787247/dsh-wsl-open) | 0.2.0 | daily |
+| [dsh-repeat-stop](https://github.com/173787247/dsh-repeat-stop) | 0.1.2 | daily |
+| [dsh-tool-budget](https://github.com/173787247/dsh-tool-budget) | 0.1.2 | daily |
+| [dsh-wsl-clipboard](https://github.com/173787247/dsh-wsl-clipboard) | 0.1.0 | daily |
+| [dsh-wsl-path](https://github.com/173787247/dsh-wsl-path) | 0.2.0 | daily |
+| [dsh-wsl-browser](https://github.com/173787247/dsh-wsl-browser) | 0.1.0 | daily |
+| [dsh-wsl-launch](https://github.com/173787247/dsh-wsl-launch) | 0.1.0 | daily |
+
+### GitHub 附加与可选
+
+| 插件 | 版本 | 档位 |
+|------|------|------|
+| [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) | 0.2.0 | github |
+| [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | 0.2.0 | github |
+| [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | 0.1.0 | github |
+| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 本地 0.2.4 / master 0.2.3 | 不在 `install.sh` |
+| [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | 不在日常套件 |
+
+### 完整套件其余插件
+
+| 插件 | 版本 | 插件 | 版本 |
+|------|------|------|------|
+| [gpu](https://github.com/173787247/dsh-wsl-gpu) | 0.2.2 | [port](https://github.com/173787247/dsh-wsl-port) | 0.2.2 |
+| [distro](https://github.com/173787247/dsh-wsl-distro) | 0.2.0 | [workspace](https://github.com/173787247/dsh-wsl-workspace) | 0.2.0 |
+| [picker](https://github.com/173787247/dsh-wsl-picker) | 0.1.0 | [tray](https://github.com/173787247/dsh-wsl-tray) | 0.2.4 |
+| [expose](https://github.com/173787247/dsh-wsl-expose) | 0.2.2 | [hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) | 0.4.3 |
+| [clock](https://github.com/173787247/dsh-wsl-clock) | 0.2.0 | [dns](https://github.com/173787247/dsh-wsl-dns) | 0.2.0 |
+| [mnt](https://github.com/173787247/dsh-wsl-mnt) | 0.2.0 | [editor](https://github.com/173787247/dsh-wsl-editor) | 0.1.0 |
+| [shot](https://github.com/173787247/dsh-wsl-shot) | 0.1.0 | [docker](https://github.com/173787247/dsh-wsl-docker) | 0.2.2 |
+| [ssh-agent](https://github.com/173787247/dsh-wsl-ssh-agent) | 0.2.0 | [encoding](https://github.com/173787247/dsh-wsl-encoding) | 0.2.0 |
+| [wslconfig](https://github.com/173787247/dsh-wsl-wslconfig) | 0.2.0 | [download](https://github.com/173787247/dsh-wsl-download) | 0.2.0 |
+
+共用库 [dsh-wsl-common](https://github.com/173787247/dsh-wsl-common) `0.1.0` 不是 `KIT_SET` 的一项。
+
+---
+
 ## 兼容性（2026-09）
 
 | 项 | 现状 |
 |----|------|
-| **dsh** | 已在 **`0.1.5-rc.1`** 验证（2026-09-10 时 npm `latest`；尚无非 rc 的 `0.1.5`）。脚本按 dsh **≥0.1.2** 的 UI 一次性 `?token=`（`:3081`）编写。 |
+| **dsh** | 套件级已在 **`0.1.5-rc.1`** 验证（2026-09-10 时 npm `latest`；尚无非 rc 的 `0.1.5`）。本机 2026-09-16 冒烟用的是 **`0.1.6-alpha.1`**（`alpha` 标签；升级时 `latest` 仍是 `0.1.5-rc.1`）。脚本按 dsh **≥0.1.2** 的 UI 一次性 `?token=`（`:3081`）编写。 |
 | **DeepSeek V4.1 Flash** | 官方 API 模型 id 为 **`deepseek-flash`**。旧名 `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` 暂时会路由到 V4.1 Flash。**本 kit 不写死模型**——在 `~/.dsh/settings.yaml` 的 `llm-deepseek` / 默认模型里改。 |
 | **Agent Teams** | 可选实验包（`@deepseek-ai/dsh-experimental-agent-team-profile`，与 dsh 同版本线）。**不在** `install.sh` 里。开了 Teams 会出现更长的 “Deep diving”；测模型请先用普通新会话。 |
-| **插件** | 版本地板见 [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh)。日常套件含 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**。 |
+| **插件** | 快照见上文 [插件版本](#插件版本)（2026-09-16 兄弟仓）。地板见 [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh)。日常套件含 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**。 |
 
 ### 子插件 README 约定
 

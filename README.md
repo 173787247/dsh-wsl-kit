@@ -8,14 +8,101 @@ This is a **meta-repo** (docs + install script + [`cordis.patch.yml`](./cordis.p
 
 ---
 
+## How the pieces fit
+
+The kit is not a runtime. `install.sh` clones plugins into the dsh `web` profile. Chat stays on Windows; the agent and tools stay in WSL. Optional [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) is **not** in `install.sh` — it is a separate long-connection bridge. OryxOS is a protocol reference for that bridge only; the kit does not call OryxOS.
+
+```mermaid
+flowchart TB
+  subgraph win [Windows]
+    browser["Browser :3081/?token="]
+    host["Clipboard / Explorer / default browser"]
+  end
+  subgraph wslbox [WSL]
+    relay["port relay"]
+    dsh["dsh web :3080"]
+    subgraph plugins [Plugins from this kit]
+      daily["Daily: env net fetch open clipboard path browser launch"]
+      guards["repeat-stop + tool-budget"]
+      more["Optional: github cred notify + doctors"]
+    end
+    im["dsh-wsl-im — optional"]
+  end
+  llm["DeepSeek API or local Ollama"]
+  chats["Feishu / WeCom / DingTalk / QQ"]
+
+  browser --> relay --> dsh
+  dsh --> plugins
+  dsh --> llm
+  plugins --> host
+  chats --> im --> dsh
+```
+
+| Boundary | Who owns it |
+|----------|-------------|
+| Windows UI | Browser on `:3081` with a one-shot `?token=` (bare `:3081` is 401; `:3080` is WSL-only) |
+| Agent | `dsh web` inside WSL, tools via plugin `ctx` |
+| Cross-OS | Daily plugins (`path`, `open`, `clipboard`, `browser`, `launch`, `net`, `fetch`) |
+| IM | `dsh-wsl-im` outbound WS/Stream/Gateway → `ctx.agents`. One workspace per IM, one session per chat |
+| OryxOS | Not in the path. Field names for Feishu / WeCom / DingTalk / QQ only |
+
+## Plugin versions
+
+Sibling checkout versions on **2026-09-16**. Floors enforced by [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) are the minimum, not this snapshot. `dsh-wsl-im` `0.2.4` is the local branch that registers the four IM workspaces ([PR #4](https://github.com/173787247/dsh-wsl-im/pull/4)); published `master` is `0.2.3` until that merges.
+
+Local dsh line the same day: **`0.1.6-alpha.1`** (`alpha` tag). npm `latest` noted earlier in this file was still **`0.1.5-rc.1`**. Scripts still assume dsh **≥0.1.2**.
+
+### Daily
+
+| Plugin | Version | Set |
+|--------|---------|-----|
+| [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) | 0.3.0 | daily |
+| [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) | 0.5.2 | daily |
+| [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) | 0.1.2 | daily |
+| [dsh-wsl-open](https://github.com/173787247/dsh-wsl-open) | 0.2.0 | daily |
+| [dsh-repeat-stop](https://github.com/173787247/dsh-repeat-stop) | 0.1.2 | daily |
+| [dsh-tool-budget](https://github.com/173787247/dsh-tool-budget) | 0.1.2 | daily |
+| [dsh-wsl-clipboard](https://github.com/173787247/dsh-wsl-clipboard) | 0.1.0 | daily |
+| [dsh-wsl-path](https://github.com/173787247/dsh-wsl-path) | 0.2.0 | daily |
+| [dsh-wsl-browser](https://github.com/173787247/dsh-wsl-browser) | 0.1.0 | daily |
+| [dsh-wsl-launch](https://github.com/173787247/dsh-wsl-launch) | 0.1.0 | daily |
+
+### GitHub add-on and optional
+
+| Plugin | Version | Set |
+|--------|---------|-----|
+| [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) | 0.2.0 | github |
+| [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | 0.2.0 | github |
+| [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | 0.1.0 | github |
+| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.2.4 local / 0.2.3 master | not in `install.sh` |
+| [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | not in Daily |
+
+### Full-set extras
+
+| Plugin | Version | Plugin | Version |
+|--------|---------|--------|---------|
+| [gpu](https://github.com/173787247/dsh-wsl-gpu) | 0.2.2 | [port](https://github.com/173787247/dsh-wsl-port) | 0.2.2 |
+| [distro](https://github.com/173787247/dsh-wsl-distro) | 0.2.0 | [workspace](https://github.com/173787247/dsh-wsl-workspace) | 0.2.0 |
+| [picker](https://github.com/173787247/dsh-wsl-picker) | 0.1.0 | [tray](https://github.com/173787247/dsh-wsl-tray) | 0.2.4 |
+| [expose](https://github.com/173787247/dsh-wsl-expose) | 0.2.2 | [hostsvc](https://github.com/173787247/dsh-wsl-hostsvc) | 0.4.3 |
+| [clock](https://github.com/173787247/dsh-wsl-clock) | 0.2.0 | [dns](https://github.com/173787247/dsh-wsl-dns) | 0.2.0 |
+| [mnt](https://github.com/173787247/dsh-wsl-mnt) | 0.2.0 | [editor](https://github.com/173787247/dsh-wsl-editor) | 0.1.0 |
+| [shot](https://github.com/173787247/dsh-wsl-shot) | 0.1.0 | [docker](https://github.com/173787247/dsh-wsl-docker) | 0.2.2 |
+| [ssh-agent](https://github.com/173787247/dsh-wsl-ssh-agent) | 0.2.0 | [encoding](https://github.com/173787247/dsh-wsl-encoding) | 0.2.0 |
+| [wslconfig](https://github.com/173787247/dsh-wsl-wslconfig) | 0.2.0 | [download](https://github.com/173787247/dsh-wsl-download) | 0.2.0 |
+
+Shared helper [dsh-wsl-common](https://github.com/173787247/dsh-wsl-common) `0.1.0` is a library, not a `KIT_SET` entry.
+
+---
+
 ## Compatibility (2026-09)
 
 | Piece | Status |
 |-------|--------|
-| **dsh** | Verified with **`0.1.5-rc.1`** (npm `latest` as of 2026-09-10; no non-rc `0.1.5` yet). Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). |
+| **dsh** | Suite-verified with **`0.1.5-rc.1`** (npm `latest` as of 2026-09-10; no non-rc `0.1.5` yet). This machine smoke-tested **`0.1.6-alpha.1`** on 2026-09-16 (`alpha` tag; `latest` was still `0.1.5-rc.1` when upgraded). Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). |
 | **DeepSeek V4.1 Flash** | Official API model id is **`deepseek-flash`**. Legacy `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` temporarily route to V4.1 Flash. **Not configured by this kit** — set under `llm-deepseek` / default model in `~/.dsh/settings.yaml`. |
 | **Agent Teams** | Opt-in experimental package (`@deepseek-ai/dsh-experimental-agent-team-profile`, same line as your dsh). **Not** part of `install.sh`. Expect longer “Deep diving” turns; use a fresh non-Teams session to smoke-test models. |
-| **Plugins** | Floor versions: [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh). Daily includes [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**. |
+| **Plugins** | Snapshot: [Plugin versions](#plugin-versions) (sibling checkouts 2026-09-16). Floor: [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh). Daily includes [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**. |
 
 ### Plugin README policy
 
