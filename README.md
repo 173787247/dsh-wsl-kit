@@ -10,7 +10,7 @@ This is a **meta-repo** (docs + install script + [`cordis.patch.yml`](./cordis.p
 
 ## How the pieces fit
 
-The kit is not a runtime. `install.sh` clones plugins into the dsh `web` profile. Chat stays on Windows; the agent and tools stay in WSL. Optional [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) is **not** in `install.sh` — it is a separate long-connection bridge. OryxOS is a protocol reference for that bridge only; the kit does not call OryxOS.
+The kit is not a runtime. `install.sh` clones plugins into the dsh `web` profile. Chat stays on Windows; the agent and tools stay in WSL. Optional [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) is **not** in `install.sh` — it is a separate long-connection bridge.
 
 ```mermaid
 flowchart TB
@@ -44,7 +44,6 @@ flowchart TB
 | Agent | `dsh web` inside WSL, tools via plugin `ctx` |
 | Cross-OS | Daily plugins (`path`, `open`, `clipboard`, `browser`, `launch`, `net`, `fetch`) |
 | IM | `dsh-wsl-im` outbound WS/Stream/Gateway → `ctx.agents`. One workspace per IM, one session per chat |
-| OryxOS | Not in the path. Field names for Feishu / WeCom / DingTalk / QQ only |
 
 ## Plugin versions
 

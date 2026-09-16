@@ -10,7 +10,7 @@
 
 ## 这些东西怎么拼在一起
 
-本仓不是运行时。`install.sh` 把插件装进 dsh 的 `web` profile。聊天在 Windows，agent 和工具在 WSL。可选的 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) **不在** `install.sh` 里，它是另外的出站长连接桥。OryxOS 只给这座桥当协议参照，kit 运行时不调用 OryxOS。
+本仓不是运行时。`install.sh` 把插件装进 dsh 的 `web` profile。聊天在 Windows，agent 和工具在 WSL。可选的 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) **不在** `install.sh` 里，它是另外的出站长连接桥。
 
 ```mermaid
 flowchart TB
@@ -44,7 +44,6 @@ flowchart TB
 | Agent | WSL 里的 `dsh web`，工具走插件 `ctx` |
 | 跨系统 | 日常插件（`path`、`open`、`clipboard`、`browser`、`launch`、`net`、`fetch`） |
 | IM | `dsh-wsl-im` 出站 WS/Stream/Gateway → `ctx.agents`。每个 IM 一个工作区，每个聊天一条会话 |
-| OryxOS | 不在链路里。只对齐飞书 / 企微 / 钉钉 / QQ 的字段名 |
 
 ## 插件版本
 
