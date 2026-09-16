@@ -270,21 +270,17 @@ Related: [session-contract](https://github.com/173787247/session-contract). Awes
 
 ---
 
-## Beyond the kit (growth)
+## Beyond the kit
 
-| Track | Notes | Status |
-|-------|-------|--------|
-| dsh 0.1.5-rc.1 + `deepseek-flash` | Docs / settings; kit install path unchanged | Documented this round |
-| `dsh-wsl-fetch` ≥0.1.2 in Daily/LLM | Retries, shared ProxyAgent, www↔apex, failure advice | Done; [awesome listed](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) |
-| `dsh-wsl-obscura` (optional) | Headless Obscura tools; not in Daily `KIT_SET` | Done; [awesome listed](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-obscura.yml) |
-| Suite on awesome | 32 plugin entries; **kit itself not listed** | Current |
-| Install drift | [`check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) | Done |
-| Startup health | `check-dsh-health` accepts 401 + tray token URL | Done |
-| Local LLM probes | `hostsvc` `apiReady` + `docker` HTTP 404 | Done |
-| Browser / UI relay | `port` / `expose` + dsh ≥0.1.2 auth | Done |
-| Thin UX plugins | editor / shot / notify / picker deepen | Deferred |
-| Agent Teams | Upstream experimental; not kit | Out of scope |
-| MCP / DingTalk / OpenClaw | Separate product lines | Do not force into WSL plugins |
+Do not reopen work that already shipped (`fetch` 0.1.2, `obscura`, version floors, 401 health, `hostsvc` `apiReady`, `:3081` token relay). A new repo only for a new product. DingTalk does not get one.
+
+| Track | Plan | Status (2026-09-17) |
+|-------|------|---------------------|
+| Feishu / WeCom / DingTalk / QQ | Already [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im). Keep deepening that repo. Do **not** add it to `install.sh` — long connections need credentials and `HTTPS_PROXY`, and WSL has no direct egress to those hosts. | Shipping. Published `master` is 0.2.3 (text/image on the four IMs). Per-IM workspaces are [PR #4](https://github.com/173787247/dsh-wsl-im/pull/4) (0.2.4, open). Awesome listing is [PR #5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222) (open, not merged). |
+| MCP | Use upstream [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md) in `cordis.patch.yml`. One instance per server. Not a WSL plugin. | Out of kit |
+| OpenClaw | Separate runtime. Do not port its channels into this kit. A bot can hold only one long connection, so do not run it beside `dsh-wsl-im` on the same bot. | Out of kit |
+| Agent Teams | Upstream experimental package. Not part of `install.sh`. | Out of kit |
+| Thin UX | editor / shot / notify / picker | Deferred |
 
 ## Security
 

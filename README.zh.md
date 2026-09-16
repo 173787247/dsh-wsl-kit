@@ -274,21 +274,15 @@ export NODE_USE_ENV_PROXY=1
 
 ## kit 之外怎么长
 
-| 方向 | 建议 | 状态 |
-|------|------|------|
-| dsh 0.1.5-rc.1 + `deepseek-flash` | 文档 / settings；安装路径不变 | 本轮文档 |
-| Daily/LLM 含 fetch ≥0.1.2 | 重试、共享 ProxyAgent、www↔apex、失败 advice | 已做；[awesome 已收录](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) |
-| `dsh-wsl-obscura`（可选） | Obscura 无头工具；不在 Daily `KIT_SET` | 已做；[awesome 已收录](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-obscura.yml) |
-| 套件 awesome 盘点 | 插件 32 条；**kit 本身不收录** | 当前 |
-| 安装漂移治理 | [`check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) | ✅ |
-| 启动健康 | `check-dsh-health` 认 401 + tray token URL | ✅ |
-| 本地推理探测 | `hostsvc` `apiReady` + `docker` HTTP 404 | ✅ |
-| 浏览器打不开 | `port` / `expose` + dsh ≥0.1.2 鉴权 | ✅ |
-| UX 薄插件加深 | editor / shot / notify / picker | **暂缓** |
-| Agent Teams | 上游实验包，不进 kit | 范围外 |
-| MCP / 钉钉 / OpenClaw | 独立产品线 | **别硬塞进 WSL 分类** |
+已经落地的不要再当新方向重开（`fetch` 0.1.2、`obscura`、版本地板、401 健康检查、`hostsvc` `apiReady`、`:3081` token 中继）。只有新产品才开新仓。钉钉没有自己的仓。
 
-原则：**该开新仓才开**；默认继续做深现有插件 + kit 文档。
+| 方向 | 规划 | 现状（2026-09-17） |
+|------|------|-------------------|
+| 飞书 / 企微 / 钉钉 / QQ | 已是 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)。继续在那个仓做深，**不要**放进 `install.sh`。长连接要凭证和 `HTTPS_PROXY`，WSL 直连这几家会超时。 | 已在用。发布版 `master` 是 0.2.3（四家文字和图片已通）。按 IM 拆工作区是 [PR #4](https://github.com/173787247/dsh-wsl-im/pull/4)（0.2.4，未合）。awesome 收录是 [PR #5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222)（开着，未合）。 |
+| MCP | 用上游 [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md)，写在 `cordis.patch.yml`，一台服务器一个实例。不是 WSL 插件。 | 不进 kit |
+| OpenClaw | 独立运行时。不要把它的渠道搬进本 kit。同一个 Bot 只能一条长连接，不要和 `dsh-wsl-im` 同时挂同一个 Bot。 | 不进 kit |
+| Agent Teams | 上游实验包，不进 `install.sh`。 | 不进 kit |
+| 薄 UX | editor / shot / notify / picker | 暂缓 |
 
 ---
 
