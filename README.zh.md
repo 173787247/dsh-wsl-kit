@@ -1,34 +1,38 @@
 # dsh-wsl-kit
 
-**涓€鍙ヨ瘽锛?* Agent 鍦?WSL 閲岃窇 DeepSeek Harness锛岃亰澶╁湪 Windows 娴忚鍣ㄢ€斺€旇矾寰勩€佷唬鐞嗐€佸壀璐存澘銆佹墦寮€鏂囦欢閮借璺ㄧ郴缁熸椂锛岃杩欎釜濂椾欢銆?
-鏈粨鏄?*鍏冧粨**锛堟枃妗?+ 瀹夎鑴氭湰 + [`cordis.patch.yml`](./cordis.patch.yml)锛夛紝涓嶅惈鎻掍欢杩愯鏃朵唬鐮併€傚悇瀛愭彃浠朵粨搴撳彟闄勮嫳鏂?`README.md` 涓庝腑鏂?`README.zh.md`銆?
-[English 鈫?README.md](./README.md)
+**一句话：** Agent 在 WSL 里跑 DeepSeek Harness，聊天在 Windows 浏览器——路径、代理、剪贴板、打开文件都要跨系统时，装这个套件。
+
+本仓是**元仓**（文档 + 安装脚本 + [`cordis.patch.yml`](./cordis.patch.yml)），不含插件运行时代码。各子插件仓库另附英文 `README.md` 与中文 `README.zh.md`。
+
+[English → README.md](./README.md)
 
 ---
 
-## 杩欎簺涓滆タ鎬庝箞鎷煎湪涓€璧?
-鏈粨涓嶆槸杩愯鏃躲€俙install.sh` 鎶婃彃浠惰杩?dsh 鐨?`web` profile銆傝亰澶╁湪 Windows锛宎gent 鍜屽伐鍏峰湪 WSL銆傚彲閫夌殑 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)銆乕dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 涓?[dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) **涓嶅湪** `install.sh` 閲屻€?
+## 这些东西怎么拼在一起
+
+本仓不是运行时。`install.sh` 把插件装进 dsh 的 `web` profile。聊天在 Windows，agent 和工具在 WSL。可选的 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)、[dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 与 [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) **不在** `install.sh` 里。
+
 ```mermaid
 flowchart TB
   subgraph win [Windows]
-    browser["娴忚鍣?:3081/?token="]
-    host["鍓创鏉?/ 璧勬簮绠＄悊鍣?/ 榛樿娴忚鍣?]
+    browser["浏览器 :3081/?token="]
+    host["剪贴板 / 资源管理器 / 默认浏览器"]
   end
   subgraph wslbox [WSL]
-    relay["绔彛涓户"]
+    relay["端口中继"]
     dsh["dsh web :3080"]
-    subgraph plugins [鏈?kit 鐨勬彃浠禲
-      daily["鏃ュ父锛歟nv net fetch open clipboard path browser launch"]
+    subgraph plugins [本 kit 的插件]
+      daily["日常：env net fetch open clipboard path browser launch"]
       guards["repeat-stop + tool-budget"]
-      more["鍙€夛細github cred notify + 璇婃柇"]
+      more["可选：github cred notify + 诊断"]
     end
-    im["dsh-wsl-im 鈥?鍙€?]
-    obsidian["dsh-wsl-obsidian 鈥?鍙€?]
-    jev["dsh-wsl-jev 鈥?鍙€?]
+    im["dsh-wsl-im — 可选"]
+    obsidian["dsh-wsl-obsidian — 可选"]
+    jev["dsh-wsl-jev — 可选"]
   end
-  llm["DeepSeek API 鎴栨湰鏈?Ollama"]
-  chats["椋炰功 / 浼佸井 / 閽夐拤 / QQ / Slack / Discord / Telegram"]
-  vault["Windows Obsidian vault锛圢TFS锛?]
+  llm["DeepSeek API 或本机 Ollama"]
+  chats["飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram"]
+  vault["Windows Obsidian vault（NTFS）"]
 
   browser --> relay --> dsh
   dsh --> plugins
@@ -39,22 +43,24 @@ flowchart TB
   dsh --> obsidian
 ```
 
-| 杈圭晫 | 璋佽礋璐?|
+| 边界 | 谁负责 |
 |------|--------|
-| Windows 鐣岄潰 | 娴忚鍣ㄥ紑 `:3081`锛孶RL 甯︿竴娆℃€?`?token=`锛堣８ `:3081` 鏄?401锛沗:3080` 鍙粰 WSL锛?|
-| Agent | WSL 閲岀殑 `dsh web`锛屽伐鍏疯蛋鎻掍欢 `ctx` |
-| 璺ㄧ郴缁?| 鏃ュ父鎻掍欢锛坄path`銆乣open`銆乣clipboard`銆乣browser`銆乣launch`銆乣net`銆乣fetch`锛?|
-| IM | `dsh-wsl-im` 鍑虹珯 WS/Stream/Gateway 鈫?`ctx.agents`銆傛瘡涓?IM 涓€涓伐浣滃尯锛屾瘡涓亰澶╀竴鏉′細璇?|
-| Obsidian | `dsh-wsl-obsidian`锛歐SL agent 鈫?Windows NTFS vault + `obsidian://`銆備笉杩?`install.sh` |
-| Jev | `dsh-wsl-jev`锛歋ystem One 鍐崇瓥锛坄jev_ask` / `check` / `rank`锛夛紝OpenRouter 鎴?TypeSafe銆備笉杩?`install.sh` |
+| Windows 界面 | 浏览器开 `:3081`，URL 带一次性 `?token=`（裸 `:3081` 是 401；`:3080` 只给 WSL） |
+| Agent | WSL 里的 `dsh web`，工具走插件 `ctx` |
+| 跨系统 | 日常插件（`path`、`open`、`clipboard`、`browser`、`launch`、`net`、`fetch`） |
+| IM | `dsh-wsl-im` 出站 WS/Stream/Gateway → `ctx.agents`。每个 IM 一个工作区，每个聊天一条会话 |
+| Obsidian | `dsh-wsl-obsidian`：WSL agent ↔ Windows NTFS vault + `obsidian://`。不进 `install.sh` |
+| Jev | `dsh-wsl-jev`：System One 决策（`jev_ask` / `check` / `rank`），OpenRouter 或 TypeSafe。不进 `install.sh` |
 
-## 鎻掍欢鐗堟湰
+## 插件版本
 
-涓嬮潰鏄?**2026-09-18** 鏈満鍏勫紵浠撶殑 `package.json`銆俒`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) 閲岀殑鍦版澘鏄笅闄愶紝涓嶆槸杩欎唤蹇収銆?
-褰撳ぉ鏈満 dsh 鏄?**`0.1.6-alpha.1`**锛坄alpha` 鏍囩锛夈€傛湰鏂囦笅闈㈠吋瀹硅〃閲岃緝鏃╄涓嬬殑 npm `latest` 浠嶆槸 **`0.1.5-rc.1`**銆傝剼鏈粛鎸?dsh **鈮?.1.2** 缂栧啓銆?
-### 鏃ュ父
+下面是 **2026-09-18** 本机兄弟仓的 `package.json`。[`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) 里的地板是下限，不是这份快照。
 
-| 鎻掍欢 | 鐗堟湰 | 妗ｄ綅 |
+当天本机 dsh 是 **`0.1.6-alpha.1`**（`alpha` 标签）。本文下面兼容表里较早记下的 npm `latest` 仍是 **`0.1.5-rc.1`**。脚本仍按 dsh **≥0.1.2** 编写。
+
+### 日常
+
+| 插件 | 版本 | 档位 |
 |------|------|------|
 | [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) | 0.3.0 | daily |
 | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) | 0.5.2 | daily |
@@ -67,26 +73,27 @@ flowchart TB
 | [dsh-wsl-browser](https://github.com/173787247/dsh-wsl-browser) | 0.1.0 | daily |
 | [dsh-wsl-launch](https://github.com/173787247/dsh-wsl-launch) | 0.1.0 | daily |
 
-### GitHub 闄勫姞涓庡彲閫?
-| 鎻掍欢 | 鐗堟湰 | 妗ｄ綅 |
+### GitHub 附加与可选
+
+| 插件 | 版本 | 档位 |
 |------|------|------|
 | [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) | 0.2.0 | github |
 | [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | 0.2.0 | github |
 | [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | 0.1.0 | github |
-| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.2 | 涓嶅湪 `install.sh` |
-| [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | 涓嶅湪鏃ュ父濂椾欢 |
-| [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) | 0.1.0 | 涓嶅湪 `install.sh`锛堝彲閫夛級 |
-| [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) | 0.1.0 | 涓嶅湪 `install.sh`锛堝彲閫夛級 |
-| [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) | 0.1.0 | 涓嶅湪 `install.sh`锛堝彲閫夛級 |
-| [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) | 0.1.0 | 涓嶅湪 `install.sh`锛堝彲閫夛級 |
-| [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) | 0.1.0 | 涓嶅湪 `install.sh`锛堝彲閫夛級 |
-| [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) | 0.1.0 | 涓嶅湪 `install.sh`锛堝彲閫夛級 |
-| [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) | 0.1.0 | 涓嶅湪 `install.sh`锛堝彲閫夛級 |
-| [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) | 0.1.0 | 涓嶅湪 `install.sh`锛堝彲閫夛級 |
+| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.2 | 不在 `install.sh` |
+| [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | 不在日常套件 |
+| [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) | 0.1.0 | 不在 `install.sh`（可选） |
 
-### 瀹屾暣濂椾欢鍏朵綑鎻掍欢
+### 完整套件其余插件
 
-| 鎻掍欢 | 鐗堟湰 | 鎻掍欢 | 鐗堟湰 |
+| 插件 | 版本 | 插件 | 版本 |
 |------|------|------|------|
 | [gpu](https://github.com/173787247/dsh-wsl-gpu) | 0.2.2 | [port](https://github.com/173787247/dsh-wsl-port) | 0.2.2 |
 | [distro](https://github.com/173787247/dsh-wsl-distro) | 0.2.0 | [workspace](https://github.com/173787247/dsh-wsl-workspace) | 0.2.0 |
@@ -98,132 +105,160 @@ flowchart TB
 | [ssh-agent](https://github.com/173787247/dsh-wsl-ssh-agent) | 0.2.0 | [encoding](https://github.com/173787247/dsh-wsl-encoding) | 0.2.0 |
 | [wslconfig](https://github.com/173787247/dsh-wsl-wslconfig) | 0.2.0 | [download](https://github.com/173787247/dsh-wsl-download) | 0.2.0 |
 
-鍏辩敤搴?[dsh-wsl-common](https://github.com/173787247/dsh-wsl-common) `0.1.0` 涓嶆槸 `KIT_SET` 鐨勪竴椤广€?
+共用库 [dsh-wsl-common](https://github.com/173787247/dsh-wsl-common) `0.1.0` 不是 `KIT_SET` 的一项。
+
 ---
 
-## 鍏煎鎬э紙2026-09锛?
-| 椤?| 鐜扮姸 |
+## 兼容性（2026-09）
+
+| 项 | 现状 |
 |----|------|
-| **dsh** | 濂椾欢绾у凡鍦?**`0.1.5-rc.1`** 楠岃瘉锛?026-09-10 鏃?npm `latest`锛涘皻鏃犻潪 rc 鐨?`0.1.5`锛夈€傛湰鏈?2026-09-16 鍐掔儫鐢ㄧ殑鏄?**`0.1.6-alpha.1`**锛坄alpha` 鏍囩锛涘崌绾ф椂 `latest` 浠嶆槸 `0.1.5-rc.1`锛夈€傝剼鏈寜 dsh **鈮?.1.2** 鐨?UI 涓€娆℃€?`?token=`锛坄:3081`锛夌紪鍐欍€?|
-| **DeepSeek V4.1 Flash** | 瀹樻柟 API 妯″瀷 id 涓?**`deepseek-flash`**銆傛棫鍚?`deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` 鏆傛椂浼氳矾鐢卞埌 V4.1 Flash銆?*鏈?kit 涓嶅啓姝绘ā鍨?*鈥斺€斿湪 `~/.dsh/settings.yaml` 鐨?`llm-deepseek` / 榛樿妯″瀷閲屾敼銆?|
-| **Agent Teams** | 鍙€夊疄楠屽寘锛坄@deepseek-ai/dsh-experimental-agent-team-profile`锛屼笌 dsh 鍚岀増鏈嚎锛夈€?*涓嶅湪** `install.sh` 閲屻€傚紑浜?Teams 浼氬嚭鐜版洿闀跨殑 鈥淒eep diving鈥濓紱娴嬫ā鍨嬭鍏堢敤鏅€氭柊浼氳瘽銆?|
-| **鎻掍欢** | 蹇収瑙佷笂鏂?[鎻掍欢鐗堟湰](#鎻掍欢鐗堟湰)锛?026-09-16 鍏勫紵浠擄級銆傚湴鏉胯 [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh)銆傛棩甯稿浠跺惈 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **鈮?.1.1**銆?|
+| **dsh** | 套件级已在 **`0.1.5-rc.1`** 验证（2026-09-10 时 npm `latest`；尚无非 rc 的 `0.1.5`）。本机 2026-09-16 冒烟用的是 **`0.1.6-alpha.1`**（`alpha` 标签；升级时 `latest` 仍是 `0.1.5-rc.1`）。脚本按 dsh **≥0.1.2** 的 UI 一次性 `?token=`（`:3081`）编写。 |
+| **DeepSeek V4.1 Flash** | 官方 API 模型 id 为 **`deepseek-flash`**。旧名 `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` 暂时会路由到 V4.1 Flash。**本 kit 不写死模型**——在 `~/.dsh/settings.yaml` 的 `llm-deepseek` / 默认模型里改。 |
+| **Agent Teams** | 可选实验包（`@deepseek-ai/dsh-experimental-agent-team-profile`，与 dsh 同版本线）。**不在** `install.sh` 里。开了 Teams 会出现更长的 “Deep diving”；测模型请先用普通新会话。 |
+| **插件** | 快照见上文 [插件版本](#插件版本)（2026-09-16 兄弟仓）。地板见 [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh)。日常套件含 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**。 |
 
-### 瀛愭彃浠?README 绾﹀畾
+### 子插件 README 约定
 
-- **鏈吋瀹硅〃鏄浠剁煩闃靛敮涓€鐪熸簮銆?* 鍚勫瓙鎻掍欢 README锛堜腑鑻憋級閮芥湁瀵瑰簲鐨?**鍏煎鎬?* 琛細鏈€浣?dsh **鈮?.1.2**銆侀摼鍥炴澶勭湅**鏈€鏂伴獙璇?*銆佸浠舵。浣嶏紝骞惰鏄庝簯绔?Flash / Agent Teams 涓嶅綊 WSL 鎻掍欢绠°€?- 姣忓綋 dsh 鍙戞柊绾匡紙濡?`0.1.5` 姝ｅ紡鐗堟垨 `0.1.6`锛夛紝**鍏堟敼鏈?kit 琛?*锛屽啀鍒锋柊鍚勬彃浠躲€屽綋鍓?鈥︺€嶈锛堟垨璺戞枃妗ｅ悓姝ワ級銆傛病鏈夊啋鐑熼€氳繃灏变笉瑕佽櫄鏋勩€屽凡楠岃瘉銆嶆棩鏈熴€?- API 鏁忔劅鎻掍欢锛坄net` / `fetch` / `port` / `expose` / `tray` / `hostsvc`锛夊彟鏈?**鑼冨洿** 娈碉紱钖?Daily 宸ュ叿鍙繚鐣欏叡鐢ㄨ〃鍗冲彲銆?
-浠呮崲鍒?V4.1 Flash **涓嶅繀**鏀?kit 瀹夎閫昏緫锛涜嫢榛樿妯″瀷浠嶆槸宸查€€褰?id锛屾敼 settings 鍗冲彲銆?
+- **本兼容表是套件矩阵唯一真源。** 各子插件 README（中英）都有对应的 **兼容性** 表：最低 dsh **≥0.1.2**、链回此处看**最新验证**、套件档位，并说明云端 Flash / Agent Teams 不归 WSL 插件管。
+- 每当 dsh 发新线（如 `0.1.5` 正式版或 `0.1.6`），**先改本 kit 表**，再刷新各插件「当前 …」行（或跑文档同步）。没有冒烟通过就不要虚构「已验证」日期。
+- API 敏感插件（`net` / `fetch` / `port` / `expose` / `tray` / `hostsvc`）另有 **范围** 段；薄 Daily 工具只保留共用表即可。
+
+仅换到 V4.1 Flash **不必**改 kit 安装逻辑；若默认模型仍是已退役 id，改 settings 即可。
+
 ---
 
-## 60 绉掍笂鎵嬶紙鎺ㄨ崘锛氭棩甯稿浠讹級
+## 60 秒上手（推荐：日常套件）
 
-**鍓嶆彁锛?* WSL 閲屽凡鑳借繍琛?`dsh`锛堥€氬父 profile = `web`锛夈€傚缓璁?`0.1.5-rc.1` 鎴栧悓绯诲垪鏇存柊銆?
+**前提：** WSL 里已能运行 `dsh`（通常 profile = `web`）。建议 `0.1.5-rc.1` 或同系列更新。
+
 ```sh
 curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh \
   | KIT_SET=daily bash
 ```
 
-鐒跺悗锛?
-1. 鐢?[`scripts/restart-dsh-web.sh`](./scripts/restart-dsh-web.sh) 閲嶅惎锛坄:3080` dsh + `:3081` Windows 涓户锛?2. Windows 娴忚鍣ㄦ墦寮€ **`restart-dsh-web.sh` 鎵撳嵃鐨?URL**锛坉sh 鈮?.1.2 甯?`?token=`锛涜８ `:3081` 鏄?401銆備笉瑕佺敤 `:3080`锛夈€俆oken 涔熷啓鍦?WSL `/tmp/dsh-ui-url`銆?3. 寮€涓€涓?*鏂颁細璇?*锛堟棫浼氳瘽浠嶆槸鏃у伐鍏烽泦锛?4. 鍙€夛細鎶?[`cordis.patch.yml`](./cordis.patch.yml) 鍚堝苟杩?profile锛堝悗鍐欑殑鎻掍欢 `config` 浼?*鏁存鏇挎崲**锛岄敭瑕佸啓鍏級
+然后：
 
-| 鎯宠浠€涔?| 鍛戒护 |
+1. 用 [`scripts/restart-dsh-web.sh`](./scripts/restart-dsh-web.sh) 重启（`:3080` dsh + `:3081` Windows 中继）
+2. Windows 浏览器打开 **`restart-dsh-web.sh` 打印的 URL**（dsh ≥0.1.2 带 `?token=`；裸 `:3081` 是 401。不要用 `:3080`）。Token 也写在 WSL `/tmp/dsh-ui-url`。
+3. 开一个**新会话**（旧会话仍是旧工具集）
+4. 可选：把 [`cordis.patch.yml`](./cordis.patch.yml) 合并进 profile（后写的插件 `config` 会**整段替换**，键要写全）
+
+| 想装什么 | 命令 |
 |----------|------|
-| **鏃ュ父锛堥粯璁ゆ帹鑽愶級** | `KIT_SET=daily bash install.sh` |
-| 鏃ュ父 + GitHub App / 鍑嵁 | `KIT_SET=github bash install.sh` |
-| **鏈湴 LLM + 缃戠粶璇婃柇** | `KIT_SET=llm bash install.sh` |
-| 鍏ㄥ妗?| `KIT_SET=full bash install.sh`锛堟垨涓嶈 `KIT_SET`锛屽吋瀹规棫琛屼负锛?|
+| **日常（默认推荐）** | `KIT_SET=daily bash install.sh` |
+| 日常 + GitHub App / 凭据 | `KIT_SET=github bash install.sh` |
+| **本地 LLM + 网络诊断** | `KIT_SET=llm bash install.sh` |
+| 全家桶 | `KIT_SET=full bash install.sh`（或不设 `KIT_SET`，兼容旧行为） |
 
-鏈湴鍏嬮殕鍚庯細`KIT_SET=daily bash install.sh`
+本地克隆后：`KIT_SET=daily bash install.sh`
 
-### `restart-dsh-web.sh` 浼氬姞杞戒粈涔?
-- `NODE_USE_ENV_PROXY=1`锛宍OLLAMA_API_KEY` 榛樿 `ollama`
-- `NO_PROXY` **浠?* `127.0.0.1,localhost`锛堜笉瑕佺户鎵?Clash 鐨?RFC1918 `NO_PROXY` 閫氶厤锛屽惁鍒?Node 缁曡繃浠ｇ悊锛岃闂?`api.deepseek.com` 浼?TRANSPORT 瓒呮椂锛?- GitHub App锛氬惎鍔ㄥ墠鑷 `source "$HOME/.dsh/dsh-wsl-github.env"`
+### `restart-dsh-web.sh` 会加载什么
+
+- `NODE_USE_ENV_PROXY=1`，`OLLAMA_API_KEY` 默认 `ollama`
+- `NO_PROXY` **仅** `127.0.0.1,localhost`（不要继承 Clash 的 RFC1918 `NO_PROXY` 通配，否则 Node 绕过代理，访问 `api.deepseek.com` 会 TRANSPORT 超时）
+- GitHub App：启动前自行 `source "$HOME/.dsh/dsh-wsl-github.env"`
 
 ---
 
-## 浣犻┈涓婅兘鐢ㄧ殑鑳藉姏
+## 你马上能用的能力
 
-| 鐥涚偣 | 宸ュ叿 | 鎻掍欢 |
+| 痛点 | 工具 | 插件 |
 |------|------|------|
-| 浠ｇ悊 / Node 24 鎵撲笉閫?DeepSeek 鎴?npm | `net_doctor` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
-| `web_fetch` 鎶?`TypeError: fetch failed`锛圓PI 鍗撮€氾級 | 瑁?[dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) 鈮?.1.1 + `restart-dsh-web.sh` | [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) |
-| 鑱婂ぉ閲岀殑 Linux 璺緞瑕佸湪 Windows 鎵撳紑 | 锛堝彲鐐瑰嚮璺緞锛?| [dsh-wsl-open](https://github.com/173787247/dsh-wsl-open) |
-| 璺緞浜掕浆銆乣/mnt/c` 鎱?| `path_convert` | [dsh-wsl-path](https://github.com/173787247/dsh-wsl-path) |
-| 璇诲啓 Windows 鍓创鏉?| `wsl_clipboard` | [dsh-wsl-clipboard](https://github.com/173787247/dsh-wsl-clipboard) |
-| 鍦?Windows 娴忚鍣ㄦ墦寮€ PR / 鏂囨。閾炬帴 | `win_open_url` | [dsh-wsl-browser](https://github.com/173787247/dsh-wsl-browser) |
-| Agent 涓嶇煡閬撹嚜宸卞湪 WSL | 锛堟敞鍏?system prompt锛?| [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) |
+| 代理 / Node 24 打不通 DeepSeek 或 npm | `net_doctor` | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) |
+| `web_fetch` 报 `TypeError: fetch failed`（API 却通） | 装 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) ≥0.1.1 + `restart-dsh-web.sh` | [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) |
+| 聊天里的 Linux 路径要在 Windows 打开 | （可点击路径） | [dsh-wsl-open](https://github.com/173787247/dsh-wsl-open) |
+| 路径互转、`/mnt/c` 慢 | `path_convert` | [dsh-wsl-path](https://github.com/173787247/dsh-wsl-path) |
+| 读写 Windows 剪贴板 | `wsl_clipboard` | [dsh-wsl-clipboard](https://github.com/173787247/dsh-wsl-clipboard) |
+| 在 Windows 浏览器打开 PR / 文档链接 | `win_open_url` | [dsh-wsl-browser](https://github.com/173787247/dsh-wsl-browser) |
+| Agent 不知道自己在 WSL | （注入 system prompt） | [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) |
 
-**鏃ュ父濂椾欢** = 涓婅〃 + `win_launch` + `dsh-repeat-stop` + `dsh-tool-budget` + **`dsh-wsl-fetch`**銆?
-鍐掔儫锛氬鏂颁細璇濊銆岃窇涓€涓?`net_doctor`銆嶃€屾妸褰撳墠璺緞鎷峰埌 Windows 鍓创鏉裤€嶃€備簯绔紭鍏堥€?**`deepseek-flash`**锛涚涓€娆″啋鐑熷厛鍏虫帀 Agent Teams銆?
+**日常套件** = 上表 + `win_launch` + `dsh-repeat-stop` + `dsh-tool-budget` + **`dsh-wsl-fetch`**。
+
+冒烟：对新会话说「跑一下 `net_doctor`」「把当前路径拷到 Windows 剪贴板」。云端优先选 **`deepseek-flash`**；第一次冒烟先关掉 Agent Teams。
+
 ---
 
-## 瀹夎缁勫悎锛堢煭鍚嶅崟锛?
-| 缁勫悎 | 鍖呭惈 | 閫傚悎璋?|
+## 安装组合（短名单）
+
+| 组合 | 包含 | 适合谁 |
 |------|------|--------|
-| **鏃ュ父** | env銆乶et銆?*fetch**銆乷pen銆乺epeat-stop銆乼ool-budget銆乧lipboard銆乸ath銆乥rowser銆乴aunch | 缁濆ぇ澶氭暟 WSL + Windows 娴忚鍣ㄧ敤鎴?|
-| **GitHub 鏃ュ父** | 鏃ュ父 + [github](https://github.com/173787247/dsh-wsl-github) + [cred](https://github.com/173787247/dsh-wsl-cred) + notify | 杩樿鏌?PR/Actions銆佷慨 `git push` 鍑嵁 |
-| **鏈湴 LLM** | env銆乶et銆?*fetch**銆乭ostsvc銆乨ocker銆乨ns銆乧lock銆乬pu銆乸ort銆乪xpose銆乼ray銆乷pen銆乸ath銆乥rowser | Ollama / vLLM / Unsloth + 杩為€氭€?|
-| **瀹屾暣** | [`install.sh`](./install.sh) 鍏ㄩ儴 | 璇婃柇 GPU/Docker/鏃堕挓銆佹墭鐩樺惎鍔ㄣ€乸ortproxy 绛?|
+| **日常** | env、net、**fetch**、open、repeat-stop、tool-budget、clipboard、path、browser、launch | 绝大多数 WSL + Windows 浏览器用户 |
+| **GitHub 日常** | 日常 + [github](https://github.com/173787247/dsh-wsl-github) + [cred](https://github.com/173787247/dsh-wsl-cred) + notify | 还要查 PR/Actions、修 `git push` 凭据 |
+| **本地 LLM** | env、net、**fetch**、hostsvc、docker、dns、clock、gpu、port、expose、tray、open、path、browser | Ollama / vLLM / Unsloth + 连通性 |
+| **完整** | [`install.sh`](./install.sh) 全部 | 诊断 GPU/Docker/时钟、托盘启动、portproxy 等 |
 
-**涓嶈**涓€涓婃潵瑁呭畬鏁村鈥斺€斿厛鏃ュ父璺戦€氾紝鍐嶆寜鐥涚偣鍔犳彃浠躲€?
-### GitHub 鏃ュ父锛堝彲閫夛級
+**不要**一上来装完整套——先日常跑通，再按痛点加插件。
 
-WSL 閲岀 GitHub = 鍑嵁 + API + 娴忚鍣ㄦ墦寮€ + 浠ｇ悊锛屼笉鏄竴涓ぇ鎻掍欢鑳界硦寮勭殑銆傝 `KIT_SET=github` 鍚庯細
+### GitHub 日常（可选）
 
-1. 鎸?[dsh-wsl-github](https://github.com/173787247/dsh-wsl-github/blob/master/README.zh.md) 鍒涘缓 GitHub App锛堝彧璇?Metadata / PR / Actions锛屽叧 webhook锛?2. 鍚姩鍓嶏細`source "$HOME/.dsh/dsh-wsl-github.env"`
-3. 鏂颁細璇濋噷璺?`github_app_hint` / `github_repo_status`锛?*涓嶈**鎶?PEM / PAT 璐磋繘鑱婂ぉ
+WSL 里碰 GitHub = 凭据 + API + 浏览器打开 + 代理，不是一个大插件能糊弄的。装 `KIT_SET=github` 后：
+
+1. 按 [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github/blob/master/README.zh.md) 创建 GitHub App（只读 Metadata / PR / Actions，关 webhook）
+2. 启动前：`source "$HOME/.dsh/dsh-wsl-github.env"`
+3. 新会话里跑 `github_app_hint` / `github_repo_status`；**不要**把 PEM / PAT 贴进聊天
 
 ---
 
-## Node 24 + Windows 浠ｇ悊
+## Node 24 + Windows 代理
 
-Clash / V2Ray 鍦?Windows銆乄SL 瑕佽蛋浠ｇ悊鏃讹細
+Clash / V2Ray 在 Windows、WSL 要走代理时：
 
 ```sh
-export HTTP_PROXY=http://127.0.0.1:7890   # 鎴?Clash mixed锛屽 16006
+export HTTP_PROXY=http://127.0.0.1:7890   # 或 Clash mixed，如 16006
 export HTTPS_PROXY=http://127.0.0.1:7890
 export NODE_USE_ENV_PROXY=1
-# 鎺ㄨ崘鐢?restart-dsh-web.sh锛屼繚璇?NO_PROXY 鍙湁鍥炵幆
+# 推荐用 restart-dsh-web.sh，保证 NO_PROXY 只有回环
 ```
 
-浠嶄笉閫?鈫?璁?Agent 璺?`net_doctor`銆?
-- **API 閫氥€乣web_fetch` 澶辫触** 鈫?[dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch)锛堟棩甯稿浠跺凡瑁咃級銆?- **绗笁鏂?Workers / Cloudflare 缁?Clash 杩斿洖 403锛?010锛?* 鈫?瀵硅鍩熷悕鍔?Clash **DIRECT**锛堟彃浠舵敼涓嶄簡绔欑偣 WAF锛夈€?
-鏈湴 Ollama / LM Studio 绛夊湪 Windows 涓婏細鍔?[dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc)锛岃窇 `host_reach`锛屽啀鍚堝苟 [`examples/local-llm-providers.settings.yaml`](./examples/local-llm-providers.settings.yaml)銆?
+仍不通 → 让 Agent 跑 `net_doctor`。
+
+- **API 通、`web_fetch` 失败** → [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch)（日常套件已装）。
+- **第三方 Workers / Cloudflare 经 Clash 返回 403（1010）** → 对该域名加 Clash **DIRECT**（插件改不了站点 WAF）。
+
+本地 Ollama / LM Studio 等在 Windows 上：加 [dsh-wsl-hostsvc](https://github.com/173787247/dsh-wsl-hostsvc)，跑 `host_reach`，再合并 [`examples/local-llm-providers.settings.yaml`](./examples/local-llm-providers.settings.yaml)。
+
 ---
 
-## 鏁呴殰鏍?
-杩炰笉涓?Ollama銆丄PI銆乬it push銆乣web_fetch` 鏃跺厛鐪?**[docs/TROUBLESHOOTING.zh.md](./docs/TROUBLESHOOTING.zh.md)**锛堣嫳鏂囷細[TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)锛夈€?
-鎺ㄨ崘椤哄簭锛歚host_reach` 鈫?`net_doctor` 鈫?`dns_doctor` 鈫?`clock_doctor` 鈫?workspace/mnt 鈫?expose锛堜粎 LAN锛夈€?
+## 故障树
+
+连不上 Ollama、API、git push、`web_fetch` 时先看 **[docs/TROUBLESHOOTING.zh.md](./docs/TROUBLESHOOTING.zh.md)**（英文：[TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)）。
+
+推荐顺序：`host_reach` → `net_doctor` → `dns_doctor` → `clock_doctor` → workspace/mnt → expose（仅 LAN）。
+
 ---
 
-## 瀹屾暣鎻掍欢鐩綍锛堟寜闇€鏌ラ槄锛?
+## 完整插件目录（按需查阅）
+
 <details>
-<summary>鐐瑰嚮灞曞紑鍏ㄩ儴鎻掍欢琛?/summary>
+<summary>点击展开全部插件表</summary>
 
-### 鏃ュ父锛圞IT_SET=daily锛?
-| 鎻掍欢 | 浣滅敤 |
+### 日常（KIT_SET=daily）
+
+| 插件 | 作用 |
 |------|------|
-| [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) | 鍚?system prompt 娉ㄥ叆 WSL/Windows 浜嬪疄 |
+| [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) | 向 system prompt 注入 WSL/Windows 事实 |
 | [dsh-wsl-net](https://github.com/173787247/dsh-wsl-net) | `net_doctor` |
-| [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) | 璁?`web_fetch` 璧?Windows 浠ｇ悊锛坲ndici `ProxyAgent`锛?|
-| [dsh-wsl-open](https://github.com/173787247/dsh-wsl-open) | 鑱婂ぉ璺緞鍦?Windows 鎵撳紑 |
-| [dsh-repeat-stop](https://github.com/173787247/dsh-repeat-stop) | 杩炵画鐩稿悓宸ュ叿璋冪敤纭嫤鎴?|
-| [dsh-tool-budget](https://github.com/173787247/dsh-tool-budget) | 浼氳瘽绾у伐鍏锋鏁颁笂闄?|
+| [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) | 让 `web_fetch` 走 Windows 代理（undici `ProxyAgent`） |
+| [dsh-wsl-open](https://github.com/173787247/dsh-wsl-open) | 聊天路径在 Windows 打开 |
+| [dsh-repeat-stop](https://github.com/173787247/dsh-repeat-stop) | 连续相同工具调用硬拦截 |
+| [dsh-tool-budget](https://github.com/173787247/dsh-tool-budget) | 会话级工具次数上限 |
 | [dsh-wsl-clipboard](https://github.com/173787247/dsh-wsl-clipboard) | `wsl_clipboard` |
 | [dsh-wsl-path](https://github.com/173787247/dsh-wsl-path) | `path_convert` |
 | [dsh-wsl-browser](https://github.com/173787247/dsh-wsl-browser) | `win_open_url` |
-| [dsh-wsl-launch](https://github.com/173787247/dsh-wsl-launch) | `win_launch`锛堢櫧鍚嶅崟锛?|
+| [dsh-wsl-launch](https://github.com/173787247/dsh-wsl-launch) | `win_launch`（白名单） |
 
-### GitHub 闄勫姞
+### GitHub 附加
 
-| 鎻掍欢 | 浣滅敤 |
+| 插件 | 作用 |
 |------|------|
 | [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) | `github_app_hint` / `github_repo_status` |
-| [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | `cred_hint`锛堜笉杈撳嚭瀵嗛挜锛?|
+| [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | `cred_hint`（不输出密钥） |
 | [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | `win_notify` |
 
-### 璇婃柇 / UI / 浜屾闃?
-| 鎻掍欢 | 浣滅敤 |
+### 诊断 / UI / 二梯队
+
+| 插件 | 作用 |
 |------|------|
 | [dsh-wsl-gpu](https://github.com/173787247/dsh-wsl-gpu) | `gpu_doctor` |
 | [dsh-wsl-port](https://github.com/173787247/dsh-wsl-port) | `port_doctor` |
@@ -244,40 +279,46 @@ export NODE_USE_ENV_PROXY=1
 | [dsh-wsl-wslconfig](https://github.com/173787247/dsh-wsl-wslconfig) | `wslconfig_hint` |
 | [dsh-wsl-download](https://github.com/173787247/dsh-wsl-download) | `win_download` |
 
-鍙€夌浉鍏筹細[session-contract](https://github.com/173787247/session-contract)銆俛wesome 鐗囨锛歔`awesome-wsl-kit.md`](./awesome-wsl-kit.md)銆?
-**Awesome 鐜扮姸锛?026-09锛夛細** `173787247` 涓嬪凡鏀跺綍 **32** 涓彃浠讹紙鍚?[fetch](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) [#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736)銆乕obscura](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-obscura.yml) [#4903](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4903)锛夈€?*鏈?kit 鍏冧粨涓嶈繘 awesome** 鈥?鐢ㄦ湰浠?/ `install.sh` 瀹夎銆?
+可选相关：[session-contract](https://github.com/173787247/session-contract)。awesome 片段：[`awesome-wsl-kit.md`](./awesome-wsl-kit.md)。
+
+**Awesome 现状（2026-09）：** `173787247` 下已收录 **32** 个插件（含 [fetch](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) [#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736)、[obscura](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-obscura.yml) [#4903](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4903)）。**本 kit 元仓不进 awesome** — 用本仓 / `install.sh` 安装。
+
 </details>
 
 ---
 
-## kit 涔嬪鎬庝箞闀?
-宸茬粡钀藉湴鐨勪笉瑕佸啀褰撴柊鏂瑰悜閲嶅紑锛坄fetch` 0.1.2銆乣obscura`銆佺増鏈湴鏉裤€?01 鍋ュ悍妫€鏌ャ€乣hostsvc` `apiReady`銆乣:3081` token 涓户锛夈€傚彧鏈夋柊浜у搧鎵嶅紑鏂颁粨銆傞拤閽夋病鏈夎嚜宸辩殑浠撱€?
-| 鏂瑰悜 | 瑙勫垝 | 鐜扮姸锛?026-09-17锛?|
+## kit 之外怎么长
+
+已经落地的不要再当新方向重开（`fetch` 0.1.2、`obscura`、版本地板、401 健康检查、`hostsvc` `apiReady`、`:3081` token 中继）。只有新产品才开新仓。钉钉没有自己的仓。
+
+| 方向 | 规划 | 现状（2026-09-17） |
 |------|------|-------------------|
-| 椋炰功 / 浼佸井 / 閽夐拤 / QQ / Slack / Discord / Telegram | 宸叉槸 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)銆傜户缁湪閭ｄ釜浠撳仛娣憋紝**涓嶈**鏀捐繘 `install.sh`銆傞暱杩炴帴瑕佸嚟璇佸拰 `HTTPS_PROXY`锛學SL 鐩磋繛杩欏嚑瀹朵細瓒呮椂銆?| **0.3.2** 鍚?Slack Socket Mode銆丏iscord Gateway銆乀elegram `getUpdates`锛堝榻?OryxOS 鍑虹珯鍨嬶紱涓嶅仛 webhook 娓犻亾锛夈€俛wesome 宸插悎 [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222)銆?|
-| Obsidian | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 0.1.0锛歷ault 鏀?NTFS锛坄/mnt/c|d/...`锛夛紝宸ュ叿 `obsidian_*` + `obsidian://` 鎵撳紑銆?*涓嶈**鏀捐繘 `install.sh`銆?| 鍙€夈€傚崟鐙?`dsh plugin --profile web add github:173787247/dsh-wsl-obsidian`銆傚噯澶?awesome 鏀跺綍銆?|
-| Jev / System One | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) 0.1.0锛氳嚜寤哄伐鍏风洿杩?OpenRouter/TypeSafe System One锛坄noul`/`choice`/`score`锛夛紝涓嶄緷璧栫涓夋柟 Jev 鎻掍欢銆?*涓嶈**鏀捐繘 `install.sh`銆?| 鍙€夈€傞渶瑕?`OPENROUTER_API_KEY` 鎴?`TYPESAFE_API_KEY` + `HTTPS_PROXY`銆?|
-| 鏈湴 Ollama | [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) 0.1.0锛歚ollama_status/list/chat/embed`銆?| 鍙€夈€?|
-| 濯掍綋 CLI | [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) 0.1.0锛歠fprobe / pdftotext / whisper銆?| 鍙€夈€?|
-| 娌欑妫€绱?| [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) 0.1.0锛歳g + fd銆?| 鍙€夈€?|
-| 鍚戦噺灏忚 | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) 0.1.0锛歄llama embedding + `~/.dsh/vecmem`銆?| 鍙€夈€?|
-| kubectl 鍙 | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) 0.1.0锛歡et/describe/logs銆?| 鍙€夈€?|
-| 瀵嗛挜鍙 | [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) 0.1.0锛歱ass/age + allowPrefixes銆?| 鍙€夈€?|
-| [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) | 0.1.0 | 涓嶅湪 `install.sh`锛堝彲閫夛級 |
-| MCP | 鐢ㄤ笂娓?[`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md)锛屽啓鍦?`cordis.patch.yml`锛屼竴鍙版湇鍔″櫒涓€涓疄渚嬨€備笉鏄?WSL 鎻掍欢銆?| 涓嶈繘 kit |
-| OpenClaw | 鐙珛杩愯鏃躲€備笉瑕佹妸瀹冪殑娓犻亾鎼繘鏈?kit銆傚悓涓€涓?Bot 鍙兘涓€鏉￠暱杩炴帴锛屼笉瑕佸拰 `dsh-wsl-im` 鍚屾椂鎸傚悓涓€涓?Bot銆?| 涓嶈繘 kit |
-| Agent Teams | 涓婃父瀹為獙鍖咃紝涓嶈繘 `install.sh`銆?| 涓嶈繘 kit |
-| 钖?UX | editor / shot / notify / picker | 鏆傜紦 |
+| 飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram | 已是 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)。继续在那个仓做深，**不要**放进 `install.sh`。长连接要凭证和 `HTTPS_PROXY`，WSL 直连这几家会超时。 | **0.3.2** 含 Slack Socket Mode、Discord Gateway、Telegram `getUpdates`（对齐 OryxOS 出站型；不做 webhook 渠道）。awesome 已合 [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222)。 |
+| Obsidian | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 0.1.0：vault 放 NTFS（`/mnt/c|d/...`），工具 `obsidian_*` + `obsidian://` 打开。**不要**放进 `install.sh`。 | 可选。单独 `dsh plugin --profile web add github:173787247/dsh-wsl-obsidian`。准备 awesome 收录。 |
+| Jev / System One | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) 0.1.0：自建工具直连 OpenRouter/TypeSafe System One（`noul`/`choice`/`score`），不依赖第三方 Jev 插件。**不要**放进 `install.sh`。 | 可选。需要 `OPENROUTER_API_KEY` 或 `TYPESAFE_API_KEY` + `HTTPS_PROXY`。 |
+| 本地 Ollama | [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) 0.1.0：`ollama_status/list/chat/embed`。 | 可选。 |
+| 媒体 CLI | [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) 0.1.0：ffprobe / pdftotext / whisper。 | 可选。 |
+| 沙箱检索 | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) 0.1.0：rg + fd。 | 可选。 |
+| 向量小记 | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) 0.1.0：Ollama embedding + `~/.dsh/vecmem`。 | 可选。 |
+| kubectl 只读 | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) 0.1.0：get/describe/logs。 | 可选。 |
+| MCP | 用上游 [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md)，写在 `cordis.patch.yml`，一台服务器一个实例。不是 WSL 插件。 | 不进 kit |
+| OpenClaw | 独立运行时。不要把它的渠道搬进本 kit。同一个 Bot 只能一条长连接，不要和 `dsh-wsl-im` 同时挂同一个 Bot。 | 不进 kit |
+| Agent Teams | 上游实验包，不进 `install.sh`。 | 不进 kit |
+| 薄 UX | editor / shot / notify / picker | 暂缓 |
 
 ---
 
-## 瀹夊叏
+## 安全
 
-- 鎻掍欢涓?Harness 鍚屾潈锛堣鏂囦欢銆佽仈缃戙€佺粡 PowerShell 璋?Windows锛夈€?- `win_launch` 鏈夌櫧鍚嶅崟锛沗cred_hint` / GitHub App **涓?*鎶婂瘑閽ヨ创杩涘璇濄€?- `win_notify` 浼氶樆濉炲脊绐楋紝鏂囨鍕垮惈瀵嗛挜銆?- `~/.dsh/*.env` 淇濇寔 `chmod 600`锛屽嬁鎶?API Key 鎻愪氦杩涗粨搴撱€?
+- 插件与 Harness 同权（读文件、联网、经 PowerShell 调 Windows）。
+- `win_launch` 有白名单；`cred_hint` / GitHub App **不**把密钥贴进对话。
+- `win_notify` 会阻塞弹窗，文案勿含密钥。
+- `~/.dsh/*.env` 保持 `chmod 600`，勿把 API Key 提交进仓库。
+
 ## Topics
 
-`deepseek-harness` 路 `dsh-plugin` 路 `wsl` 路 `windows` 路 `github-app`
+`deepseek-harness` · `dsh-plugin` · `wsl` · `windows` · `github-app`
 
-## 璁稿彲
+## 许可
 
-MIT锛堜笌鍚勫瓙鎻掍欢鐩稿悓锛夈€?
+MIT（与各子插件相同）。
