@@ -239,6 +239,52 @@ CATALOG = {
     "notes_en": "Paths must stay under allowRoots (home, `/tmp`, `/mnt/c|d` by default).",
     "config": "allowRoots / timeoutMs / maxPdfChars",
   },
+  # Catalog-only rows (READMEs already hand-written; keep for OPTIONAL_PLUGINS regenerate)
+  "dsh-wsl-ollama": {
+    "ver": "0.1.0",
+    "one_zh": "本机 Ollama：status / list / chat / embed。",
+    "one_en": "Local Ollama: status / list / chat / embed.",
+    "tools": [],
+    "notes_zh": "",
+    "notes_en": "",
+    "config": "baseUrl",
+  },
+  "dsh-wsl-vecmem": {
+    "ver": "0.1.0",
+    "one_zh": "本地向量小记：Ollama embedding + `~/.dsh/vecmem`。",
+    "one_en": "Tiny local vector memory via Ollama embeddings + `~/.dsh/vecmem`.",
+    "tools": [],
+    "notes_zh": "",
+    "notes_en": "",
+    "config": "ollamaBase / embedModel",
+  },
+  "dsh-wsl-search": {
+    "ver": "0.2.0",
+    "one_zh": "沙箱 ripgrep / fd / ast-grep。",
+    "one_en": "Sandboxed ripgrep / fd / ast-grep.",
+    "tools": [],
+    "notes_zh": "",
+    "notes_en": "",
+    "config": "allowRoots",
+  },
+  "dsh-wsl-secret": {
+    "ver": "0.2.0",
+    "one_zh": "只读 pass / age 密钥（需 allowPrefixes）。",
+    "one_en": "Read-only pass / age secrets (requires allowPrefixes).",
+    "tools": [],
+    "notes_zh": "",
+    "notes_en": "",
+    "config": "allowPrefixes",
+  },
+  "dsh-wsl-k8s": {
+    "ver": "0.1.0",
+    "one_zh": "kubectl 只读：get / describe / logs。",
+    "one_en": "Read-only kubectl get / describe / logs.",
+    "tools": [],
+    "notes_zh": "",
+    "notes_en": "",
+    "config": "allowedContexts",
+  },
 }
 
 
@@ -350,7 +396,7 @@ def write_kit_catalog() -> None:
 |------|------|--------|
 {chr(10).join(rows_zh)}
 
-另见早期可选：`dsh-wsl-ollama` / `search` / `vecmem` / `k8s` / `secret` / `jev` / `obsidian` / `im`（已在主 README 表内）。
+另见（主 README / 其它方向）：`dsh-wsl-jev` / `obsidian` / `im`。
 
 ## 批量链接到 web profile
 
@@ -377,7 +423,7 @@ Also listed in the main [README.md](../README.md) optional table and Beyond sect
 |--------|-----|---------|
 {chr(10).join(rows_en)}
 
-Also: `dsh-wsl-ollama` / `search` / `vecmem` / `k8s` / `secret` / `jev` / `obsidian` / `im` (in the main README tables).
+Also (other tracks / main README): `dsh-wsl-jev` / `obsidian` / `im`.
 
 ## Batch-link into web profile
 
@@ -398,8 +444,20 @@ MIT (same as individual plugins).
     print("kit catalog written")
 
 
+# Hand-maintained READMEs — catalog rows only, do not overwrite via write_pair
+CATALOG_ONLY = {
+    "dsh-wsl-ollama",
+    "dsh-wsl-vecmem",
+    "dsh-wsl-search",
+    "dsh-wsl-secret",
+    "dsh-wsl-k8s",
+}
+
+
 def main() -> None:
     for name, meta in CATALOG.items():
+        if name in CATALOG_ONLY:
+            continue
         write_pair(name, meta)
     write_kit_catalog()
 
