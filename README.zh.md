@@ -86,7 +86,7 @@ flowchart TB
 | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) | 0.1.0 | 不在 `install.sh`（可选） |
 | [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) | 0.1.0 | 不在 `install.sh`（可选） |
 | [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) | 0.2.0 | 不在 `install.sh`（可选） |
-| [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) | 0.2.0 | 不在 `install.sh`（可选） |
 | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) | 0.1.0 | 不在 `install.sh`（可选） |
 | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) | 0.1.0 | 不在 `install.sh`（可选） |
 | [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) | 0.2.0 | 不在 `install.sh`（可选） |
@@ -99,6 +99,13 @@ flowchart TB
 | [dsh-wsl-systemd](https://github.com/173787247/dsh-wsl-systemd) | 0.1.0 | 不在 `install.sh`（可选） |
 | [dsh-wsl-helm](https://github.com/173787247/dsh-wsl-helm) | 0.1.0 | 不在 `install.sh`（可选） |
 | [dsh-wsl-terraform](https://github.com/173787247/dsh-wsl-terraform) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-rclone](https://github.com/173787247/dsh-wsl-rclone) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-db](https://github.com/173787247/dsh-wsl-db) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-glab](https://github.com/173787247/dsh-wsl-glab) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-playwright](https://github.com/173787247/dsh-wsl-playwright) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-mail](https://github.com/173787247/dsh-wsl-mail) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-cal](https://github.com/173787247/dsh-wsl-cal) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-pkg](https://github.com/173787247/dsh-wsl-pkg) | 0.1.0 | 不在 `install.sh`（可选） |
 
 ### 完整套件其余插件
 
@@ -307,7 +314,7 @@ export NODE_USE_ENV_PROXY=1
 | Jev / System One | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) 0.1.0：自建工具直连 OpenRouter/TypeSafe System One（`noul`/`choice`/`score`），不依赖第三方 Jev 插件。**不要**放进 `install.sh`。 | 可选。需要 `OPENROUTER_API_KEY` 或 `TYPESAFE_API_KEY` + `HTTPS_PROXY`。 |
 | 本地 Ollama | [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) 0.1.0：`ollama_status/list/chat/embed`。 | 可选。 |
 | 媒体 CLI | [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) 0.2.0：probe + 抽音轨/缩略图 + pdf/asr + pandoc/ocr/exif。 | 可选。 |
-| 沙箱检索 | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) 0.1.0：rg + fd。 | 可选。 |
+| 沙箱检索 | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) 0.2.0：rg + fd + ast-grep。 | 可选。 |
 | 向量小记 | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) 0.1.0：Ollama embedding + `~/.dsh/vecmem`。 | 可选。 |
 | kubectl 只读 | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) 0.1.0：get/describe/logs。 | 可选。 |
 | 密钥只读 | [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) 0.2.0：list/exists + `secret_to_env`（首选）；须配 allowPrefixes。 | 可选。 |
@@ -320,6 +327,13 @@ export NODE_USE_ENV_PROXY=1
 | systemd --user | [dsh-wsl-systemd](https://github.com/173787247/dsh-wsl-systemd) 0.1.0：list/show/journal。 | 可选。 |
 | Helm 只读 | [dsh-wsl-helm](https://github.com/173787247/dsh-wsl-helm) 0.1.0：list/status/history。 | 可选。 |
 | Terraform plan | [dsh-wsl-terraform](https://github.com/173787247/dsh-wsl-terraform) 0.1.0：plan 摘要 + state list（永不 apply）。 | 可选。 |
+| rclone | [dsh-wsl-rclone](https://github.com/173787247/dsh-wsl-rclone) 0.1.0：listremotes/lsf/about。 | 可选。 |
+| DB 探针 | [dsh-wsl-db](https://github.com/173787247/dsh-wsl-db) 0.1.0：只读 psql + redis-cli。 | 可选。 |
+| GitLab glab | [dsh-wsl-glab](https://github.com/173787247/dsh-wsl-glab) 0.1.0：MR/issue/ci status。 | 可选。 |
+| Playwright WSL | [dsh-wsl-playwright](https://github.com/173787247/dsh-wsl-playwright) 0.1.0：无头抓取；补 Windows browser。 | 可选。 |
+| 邮件 | [dsh-wsl-mail](https://github.com/173787247/dsh-wsl-mail) 0.1.0：himalaya/notmuch（不发送）。 | 可选。 |
+| 日历 | [dsh-wsl-cal](https://github.com/173787247/dsh-wsl-cal) 0.1.0：khal 只读。 | 可选。 |
+| 依赖树 | [dsh-wsl-pkg](https://github.com/173787247/dsh-wsl-pkg) 0.1.0：npm/pip/cargo 摘要。 | 可选。 |
 | MCP | 用上游 [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md)，写在 `cordis.patch.yml`，一台服务器一个实例。不是 WSL 插件。 | 不进 kit |
 | OpenClaw | 独立运行时。不要把它的渠道搬进本 kit。同一个 Bot 只能一条长连接，不要和 `dsh-wsl-im` 同时挂同一个 Bot。 | 不进 kit |
 | Agent Teams | 上游实验包，不进 `install.sh`。 | 不进 kit |

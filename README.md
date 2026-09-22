@@ -86,7 +86,7 @@ Local dsh line the same day: **`0.1.6-alpha.1`** (`alpha` tag). npm `latest` not
 | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) | 0.2.0 | not in `install.sh` (optional) |
-| [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) | 0.2.0 | not in `install.sh` (optional) |
 | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) | 0.2.0 | not in `install.sh` (optional) |
@@ -99,6 +99,13 @@ Local dsh line the same day: **`0.1.6-alpha.1`** (`alpha` tag). npm `latest` not
 | [dsh-wsl-systemd](https://github.com/173787247/dsh-wsl-systemd) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-helm](https://github.com/173787247/dsh-wsl-helm) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-terraform](https://github.com/173787247/dsh-wsl-terraform) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-rclone](https://github.com/173787247/dsh-wsl-rclone) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-db](https://github.com/173787247/dsh-wsl-db) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-glab](https://github.com/173787247/dsh-wsl-glab) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-playwright](https://github.com/173787247/dsh-wsl-playwright) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-mail](https://github.com/173787247/dsh-wsl-mail) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-cal](https://github.com/173787247/dsh-wsl-cal) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-pkg](https://github.com/173787247/dsh-wsl-pkg) | 0.1.0 | not in `install.sh` (optional) |
 
 ### Full-set extras
 
@@ -305,7 +312,7 @@ Do not reopen work that already shipped (`fetch` 0.1.2, `obscura`, version floor
 | Jev / System One | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) 0.1.0: self-built tools calling OpenRouter/TypeSafe System One (`noul`/`choice`/`score`). No third-party Jev plugin dependency. Do **not** add to `install.sh`. | Optional. Needs `OPENROUTER_API_KEY` or `TYPESAFE_API_KEY` + `HTTPS_PROXY`. |
 | Local Ollama | [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) 0.1.0: `ollama_status/list/chat/embed` → local daemon. | Optional. |
 | Media CLI | [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) 0.2.0: probe + extract_audio/thumbnail + pdf/asr + pandoc/ocr/exif. | Optional. |
-| Sandboxed search | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) 0.1.0: ripgrep + fd capped under `$HOME`/`~/.dsh`. | Optional. |
+| Sandboxed search | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) 0.2.0: ripgrep + fd + ast-grep under `$HOME`/`~/.dsh`. | Optional. |
 | Vector crumbs | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) 0.1.0: Ollama embeddings + `~/.dsh/vecmem`. Complements Obsidian. | Optional. Needs embed model. |
 | kubectl read-only | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) 0.1.0: get/describe/logs only. | Optional. |
 | Secrets | [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) 0.2.0: list/exists + `secret_to_env` (preferred); allowPrefixes required. | Optional. |
@@ -318,6 +325,13 @@ Do not reopen work that already shipped (`fetch` 0.1.2, `obscura`, version floor
 | systemd --user | [dsh-wsl-systemd](https://github.com/173787247/dsh-wsl-systemd) 0.1.0: list/show/journal only. | Optional. |
 | Helm read-only | [dsh-wsl-helm](https://github.com/173787247/dsh-wsl-helm) 0.1.0: list/status/history. | Optional. |
 | Terraform plan | [dsh-wsl-terraform](https://github.com/173787247/dsh-wsl-terraform) 0.1.0: plan summary + state list (never apply). | Optional. |
+| rclone | [dsh-wsl-rclone](https://github.com/173787247/dsh-wsl-rclone) 0.1.0: listremotes/lsf/about only. | Optional. |
+| DB probes | [dsh-wsl-db](https://github.com/173787247/dsh-wsl-db) 0.1.0: read-only psql + redis-cli. | Optional. |
+| GitLab glab | [dsh-wsl-glab](https://github.com/173787247/dsh-wsl-glab) 0.1.0: MR/issue/ci status. | Optional. |
+| Playwright WSL | [dsh-wsl-playwright](https://github.com/173787247/dsh-wsl-playwright) 0.1.0: headless fetch; complements Windows browser. | Optional. |
+| Mail | [dsh-wsl-mail](https://github.com/173787247/dsh-wsl-mail) 0.1.0: himalaya/notmuch list-search (no send). | Optional. |
+| Calendar | [dsh-wsl-cal](https://github.com/173787247/dsh-wsl-cal) 0.1.0: khal list (read-only). | Optional. |
+| Pkg trees | [dsh-wsl-pkg](https://github.com/173787247/dsh-wsl-pkg) 0.1.0: npm ls / pip list / cargo tree summaries. | Optional. |
 | MCP | Use upstream [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md) in `cordis.patch.yml`. One instance per server. Not a WSL plugin. | Out of kit |
 | OpenClaw | Separate runtime. Do not port its channels into this kit. A bot can hold only one long connection, so do not run it beside `dsh-wsl-im` on the same bot. | Out of kit |
 | Agent Teams | Upstream experimental package. Not part of `install.sh`. | Out of kit |
