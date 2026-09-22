@@ -307,6 +307,8 @@ export NODE_USE_ENV_PROXY=1
 
 已经落地的不要再当新方向重开（`fetch` 0.1.2、`obscura`、版本地板、401 健康检查、`hostsvc` `apiReady`、`:3081` token 中继）。只有新产品才开新仓。钉钉没有自己的仓。
 
+**可选 Linux/本地能力插件（首页中文 + `README.en.md`）：** 完整目录 → [`docs/OPTIONAL_PLUGINS.zh.md`](./docs/OPTIONAL_PLUGINS.zh.md) / [English](./docs/OPTIONAL_PLUGINS.md)。批量链接：`bash scripts/link-linux-plugins.sh`。
+
 | 方向 | 规划 | 现状（2026-09-17） |
 |------|------|-------------------|
 | 飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram | 已是 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)。继续在那个仓做深，**不要**放进 `install.sh`。长连接要凭证和 `HTTPS_PROXY`，WSL 直连这几家会超时。 | **0.3.2** 含 Slack Socket Mode、Discord Gateway、Telegram `getUpdates`（对齐 OryxOS 出站型；不做 webhook 渠道）。awesome 已合 [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222)。 |

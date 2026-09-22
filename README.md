@@ -305,6 +305,8 @@ Related: [session-contract](https://github.com/173787247/session-contract). Awes
 
 Do not reopen work that already shipped (`fetch` 0.1.2, `obscura`, version floors, 401 health, `hostsvc` `apiReady`, `:3081` token relay). A new repo only for a new product. DingTalk does not get one.
 
+**Optional Linux/local plugins (Chinese homepage + English `README.en.md`):** full catalog → [`docs/OPTIONAL_PLUGINS.md`](./docs/OPTIONAL_PLUGINS.md) / [中文](./docs/OPTIONAL_PLUGINS.zh.md). Batch-link: `bash scripts/link-linux-plugins.sh`.
+
 | Track | Plan | Status (2026-09-17) |
 |-------|------|---------------------|
 | Feishu / WeCom / DingTalk / QQ / Slack / Discord / Telegram | Already [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im). Keep deepening that repo. Do **not** add it to `install.sh` — long connections need credentials and `HTTPS_PROXY`, and WSL has no direct egress to those hosts. | **0.3.2** adds Slack Socket Mode, Discord Gateway, and Telegram `getUpdates` (OryxOS-aligned outbound; no webhook channels). Awesome listing merged in [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222). |
