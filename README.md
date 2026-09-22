@@ -85,11 +85,16 @@ Local dsh line the same day: **`0.1.6-alpha.1`** (`alpha` tag). npm `latest` not
 | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) | 0.1.0 | not in `install.sh` (optional) |
-| [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) | 0.2.0 | not in `install.sh` (optional) |
 | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) | 0.2.0 | not in `install.sh` (optional) |
+| [dsh-wsl-llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-vllm](https://github.com/173787247/dsh-wsl-vllm) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-struct](https://github.com/173787247/dsh-wsl-struct) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-git](https://github.com/173787247/dsh-wsl-git) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-tmux](https://github.com/173787247/dsh-wsl-tmux) | 0.1.0 | not in `install.sh` (optional) |
 
 ### Full-set extras
 
@@ -295,11 +300,16 @@ Do not reopen work that already shipped (`fetch` 0.1.2, `obscura`, version floor
 | Obsidian | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 0.1.0: keep the vault on NTFS (`/mnt/c|d/...`), `obsidian_*` tools + `obsidian://` open. Do **not** add to `install.sh`. | Optional. `dsh plugin --profile web add github:173787247/dsh-wsl-obsidian`. Awesome listing in progress. |
 | Jev / System One | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) 0.1.0: self-built tools calling OpenRouter/TypeSafe System One (`noul`/`choice`/`score`). No third-party Jev plugin dependency. Do **not** add to `install.sh`. | Optional. Needs `OPENROUTER_API_KEY` or `TYPESAFE_API_KEY` + `HTTPS_PROXY`. |
 | Local Ollama | [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) 0.1.0: `ollama_status/list/chat/embed` → local daemon. | Optional. |
-| Media CLI | [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) 0.1.0: ffprobe / pdftotext / whisper ASR under allowRoots. | Optional. |
+| Media CLI | [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) 0.2.0: probe + extract_audio/thumbnail + pdf/asr + pandoc/ocr/exif. | Optional. |
 | Sandboxed search | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) 0.1.0: ripgrep + fd capped under `$HOME`/`~/.dsh`. | Optional. |
 | Vector crumbs | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) 0.1.0: Ollama embeddings + `~/.dsh/vecmem`. Complements Obsidian. | Optional. Needs embed model. |
 | kubectl read-only | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) 0.1.0: get/describe/logs only. | Optional. |
 | Secrets | [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) 0.2.0: list/exists + `secret_to_env` (preferred); allowPrefixes required. | Optional. |
+| llama.cpp / Unsloth | [dsh-wsl-llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) 0.1.0: OpenAI-compat status/chat (default `:8080`). | Optional. |
+| vLLM | [dsh-wsl-vllm](https://github.com/173787247/dsh-wsl-vllm) 0.1.0: OpenAI-compat status/chat (default `:8000`). | Optional. |
+| Structured CLI | [dsh-wsl-struct](https://github.com/173787247/dsh-wsl-struct) 0.1.0: jq / yq / read-only sqlite3. | Optional. |
+| Git summaries | [dsh-wsl-git](https://github.com/173787247/dsh-wsl-git) 0.1.0: status summary + diff --stat only. | Optional. |
+| tmux | [dsh-wsl-tmux](https://github.com/173787247/dsh-wsl-tmux) 0.1.0: list + capture-pane (read-only). | Optional. |
 | MCP | Use upstream [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md) in `cordis.patch.yml`. One instance per server. Not a WSL plugin. | Out of kit |
 | OpenClaw | Separate runtime. Do not port its channels into this kit. A bot can hold only one long connection, so do not run it beside `dsh-wsl-im` on the same bot. | Out of kit |
 | Agent Teams | Upstream experimental package. Not part of `install.sh`. | Out of kit |
