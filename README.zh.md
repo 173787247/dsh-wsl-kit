@@ -30,7 +30,7 @@ flowchart TB
     obsidian["dsh-wsl-obsidian — 可选"]
   end
   llm["DeepSeek API 或本机 Ollama"]
-  chats["飞书 / 企微 / 钉钉 / QQ"]
+  chats["飞书 / 企微 / 钉钉 / QQ / Slack"]
   vault["Windows Obsidian vault（NTFS）"]
 
   browser --> relay --> dsh
@@ -78,7 +78,7 @@ flowchart TB
 | [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) | 0.2.0 | github |
 | [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | 0.2.0 | github |
 | [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | 0.1.0 | github |
-| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 本地 0.2.4 / master 0.2.3 | 不在 `install.sh` |
+| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.0 | 不在 `install.sh` |
 | [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | 不在日常套件 |
 | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) | 0.1.0 | 不在 `install.sh`（可选） |
 
@@ -284,7 +284,7 @@ export NODE_USE_ENV_PROXY=1
 
 | 方向 | 规划 | 现状（2026-09-17） |
 |------|------|-------------------|
-| 飞书 / 企微 / 钉钉 / QQ | 已是 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)。继续在那个仓做深，**不要**放进 `install.sh`。长连接要凭证和 `HTTPS_PROXY`，WSL 直连这几家会超时。 | 已在用。发布版 `master` 是 0.2.3；按 IM 拆工作区见上游 PR。awesome 已合 [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222)。 |
+| 飞书 / 企微 / 钉钉 / QQ / Slack | 已是 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)。继续在那个仓做深，**不要**放进 `install.sh`。长连接要凭证和 `HTTPS_PROXY`，WSL 直连这几家会超时。 | **0.3.0** 起含 Slack Socket Mode（对齐 OryxOS 出站型）。Discord / Telegram 后续小版本。awesome 已合 [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222)。 |
 | Obsidian | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 0.1.0：vault 放 NTFS（`/mnt/c|d/...`），工具 `obsidian_*` + `obsidian://` 打开。**不要**放进 `install.sh`。 | 可选。单独 `dsh plugin --profile web add github:173787247/dsh-wsl-obsidian`。准备 awesome 收录。 |
 | MCP | 用上游 [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md)，写在 `cordis.patch.yml`，一台服务器一个实例。不是 WSL 插件。 | 不进 kit |
 | OpenClaw | 独立运行时。不要把它的渠道搬进本 kit。同一个 Bot 只能一条长连接，不要和 `dsh-wsl-im` 同时挂同一个 Bot。 | 不进 kit |
