@@ -84,6 +84,11 @@ Local dsh line the same day: **`0.1.6-alpha.1`** (`alpha` tag). npm `latest` not
 | [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | not in Daily |
 | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) | 0.1.0 | not in `install.sh` (optional) |
 
 ### Full-set extras
 
@@ -288,6 +293,11 @@ Do not reopen work that already shipped (`fetch` 0.1.2, `obscura`, version floor
 | Feishu / WeCom / DingTalk / QQ / Slack / Discord / Telegram | Already [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im). Keep deepening that repo. Do **not** add it to `install.sh` — long connections need credentials and `HTTPS_PROXY`, and WSL has no direct egress to those hosts. | **0.3.2** adds Slack Socket Mode, Discord Gateway, and Telegram `getUpdates` (OryxOS-aligned outbound; no webhook channels). Awesome listing merged in [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222). |
 | Obsidian | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 0.1.0: keep the vault on NTFS (`/mnt/c|d/...`), `obsidian_*` tools + `obsidian://` open. Do **not** add to `install.sh`. | Optional. `dsh plugin --profile web add github:173787247/dsh-wsl-obsidian`. Awesome listing in progress. |
 | Jev / System One | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) 0.1.0: self-built tools calling OpenRouter/TypeSafe System One (`noul`/`choice`/`score`). No third-party Jev plugin dependency. Do **not** add to `install.sh`. | Optional. Needs `OPENROUTER_API_KEY` or `TYPESAFE_API_KEY` + `HTTPS_PROXY`. |
+| Local Ollama | [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) 0.1.0: `ollama_status/list/chat/embed` → local daemon. | Optional. |
+| Media CLI | [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) 0.1.0: ffprobe / pdftotext / whisper ASR under allowRoots. | Optional. |
+| Sandboxed search | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) 0.1.0: ripgrep + fd capped under `$HOME`/`~/.dsh`. | Optional. |
+| Vector crumbs | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) 0.1.0: Ollama embeddings + `~/.dsh/vecmem`. Complements Obsidian. | Optional. Needs embed model. |
+| kubectl read-only | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) 0.1.0: get/describe/logs only. | Optional. |
 | MCP | Use upstream [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md) in `cordis.patch.yml`. One instance per server. Not a WSL plugin. | Out of kit |
 | OpenClaw | Separate runtime. Do not port its channels into this kit. A bot can hold only one long connection, so do not run it beside `dsh-wsl-im` on the same bot. | Out of kit |
 | Agent Teams | Upstream experimental package. Not part of `install.sh`. | Out of kit |
