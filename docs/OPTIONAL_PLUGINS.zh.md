@@ -34,6 +34,8 @@
 
 另见（主 README / 其它方向）：`dsh-wsl-jev` / `obsidian` / `im`。
 
+收录进度（awesome）：见 [`AWESOME_QUEUE.zh.md`](./AWESOME_QUEUE.zh.md)。
+
 ## 批量链接到 web profile
 
 ```sh
