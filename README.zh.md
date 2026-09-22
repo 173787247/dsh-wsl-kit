@@ -30,7 +30,7 @@ flowchart TB
     obsidian["dsh-wsl-obsidian — 可选"]
   end
   llm["DeepSeek API 或本机 Ollama"]
-  chats["飞书 / 企微 / 钉钉 / QQ / Slack"]
+  chats["飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram"]
   vault["Windows Obsidian vault（NTFS）"]
 
   browser --> relay --> dsh
@@ -52,7 +52,7 @@ flowchart TB
 
 ## 插件版本
 
-下面是 **2026-09-16** 本机兄弟仓的 `package.json`。[`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) 里的地板是下限，不是这份快照。`dsh-wsl-im` 的 `0.2.4` 是正在登记四个 IM 工作区的本地分支（[PR #4](https://github.com/173787247/dsh-wsl-im/pull/4)）；合进 `master` 之前发布版仍是 `0.2.3`。
+下面是 **2026-09-18** 本机兄弟仓的 `package.json`。[`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) 里的地板是下限，不是这份快照。
 
 当天本机 dsh 是 **`0.1.6-alpha.1`**（`alpha` 标签）。本文下面兼容表里较早记下的 npm `latest` 仍是 **`0.1.5-rc.1`**。脚本仍按 dsh **≥0.1.2** 编写。
 
@@ -78,7 +78,7 @@ flowchart TB
 | [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) | 0.2.0 | github |
 | [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | 0.2.0 | github |
 | [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | 0.1.0 | github |
-| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.0 | 不在 `install.sh` |
+| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.2 | 不在 `install.sh` |
 | [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | 不在日常套件 |
 | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) | 0.1.0 | 不在 `install.sh`（可选） |
 
@@ -284,7 +284,7 @@ export NODE_USE_ENV_PROXY=1
 
 | 方向 | 规划 | 现状（2026-09-17） |
 |------|------|-------------------|
-| 飞书 / 企微 / 钉钉 / QQ / Slack | 已是 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)。继续在那个仓做深，**不要**放进 `install.sh`。长连接要凭证和 `HTTPS_PROXY`，WSL 直连这几家会超时。 | **0.3.0** 起含 Slack Socket Mode（对齐 OryxOS 出站型）。Discord / Telegram 后续小版本。awesome 已合 [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222)。 |
+| 飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram | 已是 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)。继续在那个仓做深，**不要**放进 `install.sh`。长连接要凭证和 `HTTPS_PROXY`，WSL 直连这几家会超时。 | **0.3.2** 含 Slack Socket Mode、Discord Gateway、Telegram `getUpdates`（对齐 OryxOS 出站型；不做 webhook 渠道）。awesome 已合 [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222)。 |
 | Obsidian | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 0.1.0：vault 放 NTFS（`/mnt/c|d/...`），工具 `obsidian_*` + `obsidian://` 打开。**不要**放进 `install.sh`。 | 可选。单独 `dsh plugin --profile web add github:173787247/dsh-wsl-obsidian`。准备 awesome 收录。 |
 | MCP | 用上游 [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md)，写在 `cordis.patch.yml`，一台服务器一个实例。不是 WSL 插件。 | 不进 kit |
 | OpenClaw | 独立运行时。不要把它的渠道搬进本 kit。同一个 Bot 只能一条长连接，不要和 `dsh-wsl-im` 同时挂同一个 Bot。 | 不进 kit |

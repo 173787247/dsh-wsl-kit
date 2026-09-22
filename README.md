@@ -30,7 +30,7 @@ flowchart TB
     obsidian["dsh-wsl-obsidian — optional"]
   end
   llm["DeepSeek API or local Ollama"]
-  chats["Feishu / WeCom / DingTalk / QQ / Slack"]
+  chats["Feishu / WeCom / DingTalk / QQ / Slack / Discord / Telegram"]
   vault["Windows Obsidian vault (NTFS)"]
 
   browser --> relay --> dsh
@@ -52,7 +52,7 @@ flowchart TB
 
 ## Plugin versions
 
-Sibling checkout versions on **2026-09-16**. Floors enforced by [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) are the minimum, not this snapshot. `dsh-wsl-im` `0.2.4` is the local branch that registers the four IM workspaces ([PR #4](https://github.com/173787247/dsh-wsl-im/pull/4)); published `master` is `0.2.3` until that merges.
+Sibling checkout versions on **2026-09-18**. Floors enforced by [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) are the minimum, not this snapshot.
 
 Local dsh line the same day: **`0.1.6-alpha.1`** (`alpha` tag). npm `latest` noted earlier in this file was still **`0.1.5-rc.1`**. Scripts still assume dsh **≥0.1.2**.
 
@@ -78,7 +78,7 @@ Local dsh line the same day: **`0.1.6-alpha.1`** (`alpha` tag). npm `latest` not
 | [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) | 0.2.0 | github |
 | [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | 0.2.0 | github |
 | [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | 0.1.0 | github |
-| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.0 | not in `install.sh` |
+| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.2 | not in `install.sh` |
 | [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | not in Daily |
 | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) | 0.1.0 | not in `install.sh` (optional) |
 
@@ -282,7 +282,7 @@ Do not reopen work that already shipped (`fetch` 0.1.2, `obscura`, version floor
 
 | Track | Plan | Status (2026-09-17) |
 |-------|------|---------------------|
-| Feishu / WeCom / DingTalk / QQ / Slack | Already [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im). Keep deepening that repo. Do **not** add it to `install.sh` — long connections need credentials and `HTTPS_PROXY`, and WSL has no direct egress to those hosts. | **0.3.0** adds Slack Socket Mode (OryxOS-aligned outbound). Discord / Telegram later. Awesome listing merged in [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222). |
+| Feishu / WeCom / DingTalk / QQ / Slack / Discord / Telegram | Already [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im). Keep deepening that repo. Do **not** add it to `install.sh` — long connections need credentials and `HTTPS_PROXY`, and WSL has no direct egress to those hosts. | **0.3.2** adds Slack Socket Mode, Discord Gateway, and Telegram `getUpdates` (OryxOS-aligned outbound; no webhook channels). Awesome listing merged in [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222). |
 | Obsidian | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 0.1.0: keep the vault on NTFS (`/mnt/c|d/...`), `obsidian_*` tools + `obsidian://` open. Do **not** add to `install.sh`. | Optional. `dsh plugin --profile web add github:173787247/dsh-wsl-obsidian`. Awesome listing in progress. |
 | MCP | Use upstream [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md) in `cordis.patch.yml`. One instance per server. Not a WSL plugin. | Out of kit |
 | OpenClaw | Separate runtime. Do not port its channels into this kit. A bot can hold only one long connection, so do not run it beside `dsh-wsl-im` on the same bot. | Out of kit |

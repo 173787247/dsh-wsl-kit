@@ -8,6 +8,16 @@ export OLLAMA_API_KEY="${OLLAMA_API_KEY:-ollama}"
 export NO_PROXY="127.0.0.1,localhost"
 export no_proxy="$NO_PROXY"
 
+# Optional IM bridge (dsh-wsl-im): WeCom/Feishu/… credentials
+if [[ -f "${HOME}/.dsh/dsh-wsl-im.env" ]]; then
+  # shellcheck disable=SC1091
+  set -a
+  # strip CRLF if file edited on Windows
+  # shellcheck disable=SC1090
+  source <(tr -d '\r' < "${HOME}/.dsh/dsh-wsl-im.env")
+  set +a
+fi
+
 pkill -f 'node.*/dsh web' 2>/dev/null || true
 pkill -f 'dsh-port-relay.py' 2>/dev/null || true
 sleep 1
