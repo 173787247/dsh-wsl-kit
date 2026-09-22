@@ -95,6 +95,10 @@ Local dsh line the same day: **`0.1.6-alpha.1`** (`alpha` tag). npm `latest` not
 | [dsh-wsl-struct](https://github.com/173787247/dsh-wsl-struct) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-git](https://github.com/173787247/dsh-wsl-git) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-tmux](https://github.com/173787247/dsh-wsl-tmux) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-compose](https://github.com/173787247/dsh-wsl-compose) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-systemd](https://github.com/173787247/dsh-wsl-systemd) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-helm](https://github.com/173787247/dsh-wsl-helm) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-terraform](https://github.com/173787247/dsh-wsl-terraform) | 0.1.0 | not in `install.sh` (optional) |
 
 ### Full-set extras
 
@@ -310,6 +314,10 @@ Do not reopen work that already shipped (`fetch` 0.1.2, `obscura`, version floor
 | Structured CLI | [dsh-wsl-struct](https://github.com/173787247/dsh-wsl-struct) 0.1.0: jq / yq / read-only sqlite3. | Optional. |
 | Git summaries | [dsh-wsl-git](https://github.com/173787247/dsh-wsl-git) 0.1.0: status summary + diff --stat only. | Optional. |
 | tmux | [dsh-wsl-tmux](https://github.com/173787247/dsh-wsl-tmux) 0.1.0: list + capture-pane (read-only). | Optional. |
+| Compose | [dsh-wsl-compose](https://github.com/173787247/dsh-wsl-compose) 0.1.0: ps/logs; up/down needs `allowMutate`+`confirm`. | Optional. |
+| systemd --user | [dsh-wsl-systemd](https://github.com/173787247/dsh-wsl-systemd) 0.1.0: list/show/journal only. | Optional. |
+| Helm read-only | [dsh-wsl-helm](https://github.com/173787247/dsh-wsl-helm) 0.1.0: list/status/history. | Optional. |
+| Terraform plan | [dsh-wsl-terraform](https://github.com/173787247/dsh-wsl-terraform) 0.1.0: plan summary + state list (never apply). | Optional. |
 | MCP | Use upstream [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md) in `cordis.patch.yml`. One instance per server. Not a WSL plugin. | Out of kit |
 | OpenClaw | Separate runtime. Do not port its channels into this kit. A bot can hold only one long connection, so do not run it beside `dsh-wsl-im` on the same bot. | Out of kit |
 | Agent Teams | Upstream experimental package. Not part of `install.sh`. | Out of kit |

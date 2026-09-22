@@ -95,6 +95,10 @@ flowchart TB
 | [dsh-wsl-struct](https://github.com/173787247/dsh-wsl-struct) | 0.1.0 | 不在 `install.sh`（可选） |
 | [dsh-wsl-git](https://github.com/173787247/dsh-wsl-git) | 0.1.0 | 不在 `install.sh`（可选） |
 | [dsh-wsl-tmux](https://github.com/173787247/dsh-wsl-tmux) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-compose](https://github.com/173787247/dsh-wsl-compose) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-systemd](https://github.com/173787247/dsh-wsl-systemd) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-helm](https://github.com/173787247/dsh-wsl-helm) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-terraform](https://github.com/173787247/dsh-wsl-terraform) | 0.1.0 | 不在 `install.sh`（可选） |
 
 ### 完整套件其余插件
 
@@ -312,6 +316,10 @@ export NODE_USE_ENV_PROXY=1
 | 结构化 CLI | [dsh-wsl-struct](https://github.com/173787247/dsh-wsl-struct) 0.1.0：jq / yq / 只读 sqlite3。 | 可选。 |
 | Git 摘要 | [dsh-wsl-git](https://github.com/173787247/dsh-wsl-git) 0.1.0：status 摘要 + diff --stat。 | 可选。 |
 | tmux | [dsh-wsl-tmux](https://github.com/173787247/dsh-wsl-tmux) 0.1.0：list + capture-pane（只读）。 | 可选。 |
+| Compose | [dsh-wsl-compose](https://github.com/173787247/dsh-wsl-compose) 0.1.0：ps/logs；up/down 需 `allowMutate`+`confirm`。 | 可选。 |
+| systemd --user | [dsh-wsl-systemd](https://github.com/173787247/dsh-wsl-systemd) 0.1.0：list/show/journal。 | 可选。 |
+| Helm 只读 | [dsh-wsl-helm](https://github.com/173787247/dsh-wsl-helm) 0.1.0：list/status/history。 | 可选。 |
+| Terraform plan | [dsh-wsl-terraform](https://github.com/173787247/dsh-wsl-terraform) 0.1.0：plan 摘要 + state list（永不 apply）。 | 可选。 |
 | MCP | 用上游 [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md)，写在 `cordis.patch.yml`，一台服务器一个实例。不是 WSL 插件。 | 不进 kit |
 | OpenClaw | 独立运行时。不要把它的渠道搬进本 kit。同一个 Bot 只能一条长连接，不要和 `dsh-wsl-im` 同时挂同一个 Bot。 | 不进 kit |
 | Agent Teams | 上游实验包，不进 `install.sh`。 | 不进 kit |
