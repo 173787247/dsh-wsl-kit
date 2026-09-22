@@ -10,7 +10,7 @@
 
 ## 这些东西怎么拼在一起
 
-本仓不是运行时。`install.sh` 把插件装进 dsh 的 `web` profile。聊天在 Windows，agent 和工具在 WSL。可选的 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) **不在** `install.sh` 里，它是另外的出站长连接桥。
+本仓不是运行时。`install.sh` 把插件装进 dsh 的 `web` profile。聊天在 Windows，agent 和工具在 WSL。可选的 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) 与 [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) **不在** `install.sh` 里。
 
 ```mermaid
 flowchart TB
@@ -27,15 +27,19 @@ flowchart TB
       more["可选：github cred notify + 诊断"]
     end
     im["dsh-wsl-im — 可选"]
+    obsidian["dsh-wsl-obsidian — 可选"]
   end
   llm["DeepSeek API 或本机 Ollama"]
   chats["飞书 / 企微 / 钉钉 / QQ"]
+  vault["Windows Obsidian vault（NTFS）"]
 
   browser --> relay --> dsh
   dsh --> plugins
   dsh --> llm
   plugins --> host
   chats --> im --> dsh
+  obsidian --> vault
+  dsh --> obsidian
 ```
 
 | 边界 | 谁负责 |
@@ -44,6 +48,7 @@ flowchart TB
 | Agent | WSL 里的 `dsh web`，工具走插件 `ctx` |
 | 跨系统 | 日常插件（`path`、`open`、`clipboard`、`browser`、`launch`、`net`、`fetch`） |
 | IM | `dsh-wsl-im` 出站 WS/Stream/Gateway → `ctx.agents`。每个 IM 一个工作区，每个聊天一条会话 |
+| Obsidian | `dsh-wsl-obsidian`：WSL agent ↔ Windows NTFS vault + `obsidian://`。不进 `install.sh` |
 
 ## 插件版本
 
@@ -75,6 +80,7 @@ flowchart TB
 | [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | 0.1.0 | github |
 | [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 本地 0.2.4 / master 0.2.3 | 不在 `install.sh` |
 | [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | 不在日常套件 |
+| [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) | 0.1.0 | 不在 `install.sh`（可选） |
 
 ### 完整套件其余插件
 
@@ -278,7 +284,8 @@ export NODE_USE_ENV_PROXY=1
 
 | 方向 | 规划 | 现状（2026-09-17） |
 |------|------|-------------------|
-| 飞书 / 企微 / 钉钉 / QQ | 已是 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)。继续在那个仓做深，**不要**放进 `install.sh`。长连接要凭证和 `HTTPS_PROXY`，WSL 直连这几家会超时。 | 已在用。发布版 `master` 是 0.2.3（四家文字和图片已通）。按 IM 拆工作区是 [PR #4](https://github.com/173787247/dsh-wsl-im/pull/4)（0.2.4，未合）。awesome 收录是 [PR #5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222)（开着，未合）。 |
+| 飞书 / 企微 / 钉钉 / QQ | 已是 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)。继续在那个仓做深，**不要**放进 `install.sh`。长连接要凭证和 `HTTPS_PROXY`，WSL 直连这几家会超时。 | 已在用。发布版 `master` 是 0.2.3；按 IM 拆工作区见上游 PR。awesome 已合 [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222)。 |
+| Obsidian | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 0.1.0：vault 放 NTFS（`/mnt/c|d/...`），工具 `obsidian_*` + `obsidian://` 打开。**不要**放进 `install.sh`。 | 可选。单独 `dsh plugin --profile web add github:173787247/dsh-wsl-obsidian`。准备 awesome 收录。 |
 | MCP | 用上游 [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md)，写在 `cordis.patch.yml`，一台服务器一个实例。不是 WSL 插件。 | 不进 kit |
 | OpenClaw | 独立运行时。不要把它的渠道搬进本 kit。同一个 Bot 只能一条长连接，不要和 `dsh-wsl-im` 同时挂同一个 Bot。 | 不进 kit |
 | Agent Teams | 上游实验包，不进 `install.sh`。 | 不进 kit |
