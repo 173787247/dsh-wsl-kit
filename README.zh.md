@@ -89,7 +89,7 @@ flowchart TB
 | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) | 0.1.0 | 不在 `install.sh`（可选） |
 | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) | 0.1.0 | 不在 `install.sh`（可选） |
 | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) | 0.1.0 | 不在 `install.sh`（可选） |
-| [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) | 0.2.0 | 不在 `install.sh`（可选） |
 
 ### 完整套件其余插件
 
@@ -301,6 +301,7 @@ export NODE_USE_ENV_PROXY=1
 | 沙箱检索 | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) 0.1.0：rg + fd。 | 可选。 |
 | 向量小记 | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) 0.1.0：Ollama embedding + `~/.dsh/vecmem`。 | 可选。 |
 | kubectl 只读 | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) 0.1.0：get/describe/logs。 | 可选。 |
+| 密钥只读 | [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) 0.2.0：list/exists + `secret_to_env`（首选）；须配 allowPrefixes。 | 可选。 |
 | MCP | 用上游 [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md)，写在 `cordis.patch.yml`，一台服务器一个实例。不是 WSL 插件。 | 不进 kit |
 | OpenClaw | 独立运行时。不要把它的渠道搬进本 kit。同一个 Bot 只能一条长连接，不要和 `dsh-wsl-im` 同时挂同一个 Bot。 | 不进 kit |
 | Agent Teams | 上游实验包，不进 `install.sh`。 | 不进 kit |

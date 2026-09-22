@@ -89,7 +89,7 @@ Local dsh line the same day: **`0.1.6-alpha.1`** (`alpha` tag). npm `latest` not
 | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) | 0.1.0 | not in `install.sh` (optional) |
-| [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) | 0.2.0 | not in `install.sh` (optional) |
 
 ### Full-set extras
 
@@ -299,7 +299,7 @@ Do not reopen work that already shipped (`fetch` 0.1.2, `obscura`, version floor
 | Sandboxed search | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) 0.1.0: ripgrep + fd capped under `$HOME`/`~/.dsh`. | Optional. |
 | Vector crumbs | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) 0.1.0: Ollama embeddings + `~/.dsh/vecmem`. Complements Obsidian. | Optional. Needs embed model. |
 | kubectl read-only | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) 0.1.0: get/describe/logs only. | Optional. |
-| Secrets | [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) 0.1.0: pass/age with allowPrefixes; reveal defaults false. | Optional. |
+| Secrets | [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) 0.2.0: list/exists + `secret_to_env` (preferred); allowPrefixes required. | Optional. |
 | MCP | Use upstream [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md) in `cordis.patch.yml`. One instance per server. Not a WSL plugin. | Out of kit |
 | OpenClaw | Separate runtime. Do not port its channels into this kit. A bot can hold only one long connection, so do not run it beside `dsh-wsl-im` on the same bot. | Out of kit |
 | Agent Teams | Upstream experimental package. Not part of `install.sh`. | Out of kit |
