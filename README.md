@@ -10,7 +10,7 @@ This is a **meta-repo** (docs + install script + [`cordis.patch.yml`](./cordis.p
 
 ## How the pieces fit
 
-The kit is not a runtime. `install.sh` clones plugins into the dsh `web` profile. Chat stays on Windows; the agent and tools stay in WSL. Optional [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) and [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) are **not** in `install.sh`.
+The kit is not a runtime. `install.sh` clones plugins into the dsh `web` profile. Chat stays on Windows; the agent and tools stay in WSL. Optional [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im), [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian), and [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) are **not** in `install.sh`.
 
 ```mermaid
 flowchart TB
@@ -28,6 +28,7 @@ flowchart TB
     end
     im["dsh-wsl-im — optional"]
     obsidian["dsh-wsl-obsidian — optional"]
+    jev["dsh-wsl-jev — optional"]
   end
   llm["DeepSeek API or local Ollama"]
   chats["Feishu / WeCom / DingTalk / QQ / Slack / Discord / Telegram"]
@@ -49,6 +50,7 @@ flowchart TB
 | Cross-OS | Daily plugins (`path`, `open`, `clipboard`, `browser`, `launch`, `net`, `fetch`) |
 | IM | `dsh-wsl-im` outbound WS/Stream/Gateway → `ctx.agents`. One workspace per IM, one session per chat |
 | Obsidian | `dsh-wsl-obsidian`: WSL agent ↔ Windows NTFS vault + `obsidian://`. Not in `install.sh` |
+| Jev | `dsh-wsl-jev`: System One decisions (`jev_ask` / `check` / `rank`) via OpenRouter or TypeSafe. Not in `install.sh` |
 
 ## Plugin versions
 
@@ -81,6 +83,7 @@ Local dsh line the same day: **`0.1.6-alpha.1`** (`alpha` tag). npm `latest` not
 | [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.2 | not in `install.sh` |
 | [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | not in Daily |
 | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) | 0.1.0 | not in `install.sh` (optional) |
+| [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) | 0.1.0 | not in `install.sh` (optional) |
 
 ### Full-set extras
 
@@ -284,6 +287,7 @@ Do not reopen work that already shipped (`fetch` 0.1.2, `obscura`, version floor
 |-------|------|---------------------|
 | Feishu / WeCom / DingTalk / QQ / Slack / Discord / Telegram | Already [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im). Keep deepening that repo. Do **not** add it to `install.sh` — long connections need credentials and `HTTPS_PROXY`, and WSL has no direct egress to those hosts. | **0.3.2** adds Slack Socket Mode, Discord Gateway, and Telegram `getUpdates` (OryxOS-aligned outbound; no webhook channels). Awesome listing merged in [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222). |
 | Obsidian | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 0.1.0: keep the vault on NTFS (`/mnt/c|d/...`), `obsidian_*` tools + `obsidian://` open. Do **not** add to `install.sh`. | Optional. `dsh plugin --profile web add github:173787247/dsh-wsl-obsidian`. Awesome listing in progress. |
+| Jev / System One | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) 0.1.0: self-built tools calling OpenRouter/TypeSafe System One (`noul`/`choice`/`score`). No third-party Jev plugin dependency. Do **not** add to `install.sh`. | Optional. Needs `OPENROUTER_API_KEY` or `TYPESAFE_API_KEY` + `HTTPS_PROXY`. |
 | MCP | Use upstream [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md) in `cordis.patch.yml`. One instance per server. Not a WSL plugin. | Out of kit |
 | OpenClaw | Separate runtime. Do not port its channels into this kit. A bot can hold only one long connection, so do not run it beside `dsh-wsl-im` on the same bot. | Out of kit |
 | Agent Teams | Upstream experimental package. Not part of `install.sh`. | Out of kit |

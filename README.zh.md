@@ -10,7 +10,7 @@
 
 ## 这些东西怎么拼在一起
 
-本仓不是运行时。`install.sh` 把插件装进 dsh 的 `web` profile。聊天在 Windows，agent 和工具在 WSL。可选的 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) 与 [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) **不在** `install.sh` 里。
+本仓不是运行时。`install.sh` 把插件装进 dsh 的 `web` profile。聊天在 Windows，agent 和工具在 WSL。可选的 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)、[dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 与 [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) **不在** `install.sh` 里。
 
 ```mermaid
 flowchart TB
@@ -28,6 +28,7 @@ flowchart TB
     end
     im["dsh-wsl-im — 可选"]
     obsidian["dsh-wsl-obsidian — 可选"]
+    jev["dsh-wsl-jev — 可选"]
   end
   llm["DeepSeek API 或本机 Ollama"]
   chats["飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram"]
@@ -49,6 +50,7 @@ flowchart TB
 | 跨系统 | 日常插件（`path`、`open`、`clipboard`、`browser`、`launch`、`net`、`fetch`） |
 | IM | `dsh-wsl-im` 出站 WS/Stream/Gateway → `ctx.agents`。每个 IM 一个工作区，每个聊天一条会话 |
 | Obsidian | `dsh-wsl-obsidian`：WSL agent ↔ Windows NTFS vault + `obsidian://`。不进 `install.sh` |
+| Jev | `dsh-wsl-jev`：System One 决策（`jev_ask` / `check` / `rank`），OpenRouter 或 TypeSafe。不进 `install.sh` |
 
 ## 插件版本
 
@@ -81,6 +83,7 @@ flowchart TB
 | [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.2 | 不在 `install.sh` |
 | [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | 不在日常套件 |
 | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) | 0.1.0 | 不在 `install.sh`（可选） |
+| [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) | 0.1.0 | 不在 `install.sh`（可选） |
 
 ### 完整套件其余插件
 
@@ -286,6 +289,7 @@ export NODE_USE_ENV_PROXY=1
 |------|------|-------------------|
 | 飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram | 已是 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)。继续在那个仓做深，**不要**放进 `install.sh`。长连接要凭证和 `HTTPS_PROXY`，WSL 直连这几家会超时。 | **0.3.2** 含 Slack Socket Mode、Discord Gateway、Telegram `getUpdates`（对齐 OryxOS 出站型；不做 webhook 渠道）。awesome 已合 [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222)。 |
 | Obsidian | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 0.1.0：vault 放 NTFS（`/mnt/c|d/...`），工具 `obsidian_*` + `obsidian://` 打开。**不要**放进 `install.sh`。 | 可选。单独 `dsh plugin --profile web add github:173787247/dsh-wsl-obsidian`。准备 awesome 收录。 |
+| Jev / System One | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) 0.1.0：自建工具直连 OpenRouter/TypeSafe System One（`noul`/`choice`/`score`），不依赖第三方 Jev 插件。**不要**放进 `install.sh`。 | 可选。需要 `OPENROUTER_API_KEY` 或 `TYPESAFE_API_KEY` + `HTTPS_PROXY`。 |
 | MCP | 用上游 [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md)，写在 `cordis.patch.yml`，一台服务器一个实例。不是 WSL 插件。 | 不进 kit |
 | OpenClaw | 独立运行时。不要把它的渠道搬进本 kit。同一个 Bot 只能一条长连接，不要和 `dsh-wsl-im` 同时挂同一个 Bot。 | 不进 kit |
 | Agent Teams | 上游实验包，不进 `install.sh`。 | 不进 kit |

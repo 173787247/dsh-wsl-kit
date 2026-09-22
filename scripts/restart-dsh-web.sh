@@ -18,6 +18,14 @@ if [[ -f "${HOME}/.dsh/dsh-wsl-im.env" ]]; then
   set +a
 fi
 
+# Optional Jev / System One (dsh-wsl-jev): OpenRouter or TypeSafe key
+if [[ -f "${HOME}/.dsh/dsh-wsl-jev.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source <(tr -d '\r' < "${HOME}/.dsh/dsh-wsl-jev.env")
+  set +a
+fi
+
 pkill -f 'node.*/dsh web' 2>/dev/null || true
 pkill -f 'dsh-port-relay.py' 2>/dev/null || true
 sleep 1
