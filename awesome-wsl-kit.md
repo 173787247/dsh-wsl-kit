@@ -36,12 +36,13 @@ Browser on Windows, agent in WSL. Install the meta pack first: [dsh-wsl-kit](htt
 
 ### Optional Linux / local (not in `install.sh`)
 
-Full catalog: [OPTIONAL_PLUGINS.md](https://github.com/173787247/dsh-wsl-kit/blob/master/docs/OPTIONAL_PLUGINS.md). Batch-link: `bash scripts/link-linux-plugins.sh`.
+Not shipped by Daily. Full catalog: [OPTIONAL_PLUGINS.md](https://github.com/173787247/dsh-wsl-kit/blob/master/docs/OPTIONAL_PLUGINS.md). Batch-link: `bash scripts/link-linux-plugins.sh`.
 
-- Inference: [ollama](https://github.com/173787247/dsh-wsl-ollama) · [llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) · [vllm](https://github.com/173787247/dsh-wsl-vllm) · [vecmem](https://github.com/173787247/dsh-wsl-vecmem)
-- Media / search / secrets: [media](https://github.com/173787247/dsh-wsl-media) · [search](https://github.com/173787247/dsh-wsl-search) · [secret](https://github.com/173787247/dsh-wsl-secret) · [struct](https://github.com/173787247/dsh-wsl-struct)
-- Read-only DevOps: [git](https://github.com/173787247/dsh-wsl-git) · [tmux](https://github.com/173787247/dsh-wsl-tmux) · [compose](https://github.com/173787247/dsh-wsl-compose) · [k8s](https://github.com/173787247/dsh-wsl-k8s) · [helm](https://github.com/173787247/dsh-wsl-helm) · [terraform](https://github.com/173787247/dsh-wsl-terraform) · …
-- Also: [im](https://github.com/173787247/dsh-wsl-im) · [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev)
+- **Inference / memory:** [ollama](https://github.com/173787247/dsh-wsl-ollama) · [llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) · [vllm](https://github.com/173787247/dsh-wsl-vllm) · [vecmem](https://github.com/173787247/dsh-wsl-vecmem)
+- **Media / search / secrets:** [media](https://github.com/173787247/dsh-wsl-media) · [search](https://github.com/173787247/dsh-wsl-search) · [secret](https://github.com/173787247/dsh-wsl-secret) · [struct](https://github.com/173787247/dsh-wsl-struct)
+- **Read-only DevOps:** [git](https://github.com/173787247/dsh-wsl-git) · [tmux](https://github.com/173787247/dsh-wsl-tmux) · [compose](https://github.com/173787247/dsh-wsl-compose) · [systemd](https://github.com/173787247/dsh-wsl-systemd) · [k8s](https://github.com/173787247/dsh-wsl-k8s) · [helm](https://github.com/173787247/dsh-wsl-helm) · [terraform](https://github.com/173787247/dsh-wsl-terraform) · [rclone](https://github.com/173787247/dsh-wsl-rclone) · [db](https://github.com/173787247/dsh-wsl-db) · [glab](https://github.com/173787247/dsh-wsl-glab)
+- **Local UX:** [playwright](https://github.com/173787247/dsh-wsl-playwright) · [mail](https://github.com/173787247/dsh-wsl-mail) · [cal](https://github.com/173787247/dsh-wsl-cal) · [pkg](https://github.com/173787247/dsh-wsl-pkg)
+- **Also:** [im](https://github.com/173787247/dsh-wsl-im) · [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev)
 ```
 
 ## 中文章节
@@ -72,10 +73,11 @@ Full catalog: [OPTIONAL_PLUGINS.md](https://github.com/173787247/dsh-wsl-kit/blo
 
 ### 可选 Linux / 本地（不在 `install.sh`）
 
-完整目录：[OPTIONAL_PLUGINS.zh.md](https://github.com/173787247/dsh-wsl-kit/blob/master/docs/OPTIONAL_PLUGINS.zh.md)。批量链接：`bash scripts/link-linux-plugins.sh`。
+不进 Daily。完整目录：[OPTIONAL_PLUGINS.zh.md](https://github.com/173787247/dsh-wsl-kit/blob/master/docs/OPTIONAL_PLUGINS.zh.md)。批量链接：`bash scripts/link-linux-plugins.sh`。
 
-- 推理：[ollama](https://github.com/173787247/dsh-wsl-ollama) · [llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) · [vllm](https://github.com/173787247/dsh-wsl-vllm) · [vecmem](https://github.com/173787247/dsh-wsl-vecmem)
-- 媒体 / 检索 / 密钥：[media](https://github.com/173787247/dsh-wsl-media) · [search](https://github.com/173787247/dsh-wsl-search) · [secret](https://github.com/173787247/dsh-wsl-secret) · [struct](https://github.com/173787247/dsh-wsl-struct)
-- 只读 DevOps：[git](https://github.com/173787247/dsh-wsl-git) · [tmux](https://github.com/173787247/dsh-wsl-tmux) · [compose](https://github.com/173787247/dsh-wsl-compose) · [k8s](https://github.com/173787247/dsh-wsl-k8s) · [helm](https://github.com/173787247/dsh-wsl-helm) · [terraform](https://github.com/173787247/dsh-wsl-terraform) · …
-- 另见：[im](https://github.com/173787247/dsh-wsl-im) · [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev)
+- **推理 / 向量：** [ollama](https://github.com/173787247/dsh-wsl-ollama) · [llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) · [vllm](https://github.com/173787247/dsh-wsl-vllm) · [vecmem](https://github.com/173787247/dsh-wsl-vecmem)
+- **媒体 / 检索 / 密钥：** [media](https://github.com/173787247/dsh-wsl-media) · [search](https://github.com/173787247/dsh-wsl-search) · [secret](https://github.com/173787247/dsh-wsl-secret) · [struct](https://github.com/173787247/dsh-wsl-struct)
+- **只读运维：** [git](https://github.com/173787247/dsh-wsl-git) · [tmux](https://github.com/173787247/dsh-wsl-tmux) · [compose](https://github.com/173787247/dsh-wsl-compose) · [systemd](https://github.com/173787247/dsh-wsl-systemd) · [k8s](https://github.com/173787247/dsh-wsl-k8s) · [helm](https://github.com/173787247/dsh-wsl-helm) · [terraform](https://github.com/173787247/dsh-wsl-terraform) · [rclone](https://github.com/173787247/dsh-wsl-rclone) · [db](https://github.com/173787247/dsh-wsl-db) · [glab](https://github.com/173787247/dsh-wsl-glab)
+- **本机周边：** [playwright](https://github.com/173787247/dsh-wsl-playwright) · [mail](https://github.com/173787247/dsh-wsl-mail) · [cal](https://github.com/173787247/dsh-wsl-cal) · [pkg](https://github.com/173787247/dsh-wsl-pkg)
+- **另见：** [im](https://github.com/173787247/dsh-wsl-im) · [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev)
 ```
