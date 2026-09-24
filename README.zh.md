@@ -10,53 +10,64 @@
 
 ## 这些东西怎么拼在一起
 
-本仓不是运行时。`install.sh` 把插件装进 dsh 的 `web` profile。聊天在 Windows，agent 和工具在 WSL。可选的 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)、[dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 与 [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) **不在** `install.sh` 里。
+本仓不是运行时。`install.sh` 把 **Daily / GitHub / LLM / Full** 插件装进 dsh 的 `web` profile。聊天在 Windows，agent 和工具在 WSL。另有一批 **Linux/本地能力** 可选仓（推理、检索、媒体、只读 DevOps…）**不进** `install.sh`，用 [`link-linux-plugins.sh`](./scripts/link-linux-plugins.sh) 或按需 `dsh plugin add`。IM / Obsidian / Jev 同样不进 `install.sh`。
 
 ```mermaid
 flowchart TB
   subgraph win [Windows]
     browser["浏览器 :3081/?token="]
     host["剪贴板 / 资源管理器 / 默认浏览器"]
+    vault["Obsidian vault（NTFS）"]
+    localLLM["Ollama / llama.cpp / vLLM"]
   end
   subgraph wslbox [WSL]
     relay["端口中继"]
     dsh["dsh web :3080"]
-    subgraph plugins [本 kit 的插件]
-      daily["日常：env net fetch open clipboard path browser launch"]
+    subgraph kitPlugins [install.sh 套件]
+      daily["Daily：env net fetch open clipboard path browser launch"]
       guards["repeat-stop + tool-budget"]
-      more["可选：github cred notify + 诊断"]
+      more["GitHub / LLM / Full 诊断"]
+    end
+    subgraph linuxOpt [可选 Linux 本地能力 · 不进 install.sh]
+      infer["ollama · llamacpp · vllm · vecmem"]
+      media["media · search · secret · struct"]
+      devops["git · tmux · compose · k8s · helm · terraform · …"]
+      desk["playwright · mail · cal · pkg · rclone · db · glab"]
     end
     im["dsh-wsl-im — 可选"]
     obsidian["dsh-wsl-obsidian — 可选"]
     jev["dsh-wsl-jev — 可选"]
   end
-  llm["DeepSeek API 或本机 Ollama"]
+  api["DeepSeek API"]
   chats["飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram"]
-  vault["Windows Obsidian vault（NTFS）"]
 
   browser --> relay --> dsh
-  dsh --> plugins
-  dsh --> llm
-  plugins --> host
+  dsh --> kitPlugins
+  dsh --> linuxOpt
+  dsh --> api
+  linuxOpt --> localLLM
+  kitPlugins --> host
   chats --> im --> dsh
   obsidian --> vault
   dsh --> obsidian
+  dsh --> jev
 ```
 
 | 边界 | 谁负责 |
 |------|--------|
 | Windows 界面 | 浏览器开 `:3081`，URL 带一次性 `?token=`（裸 `:3081` 是 401；`:3080` 只给 WSL） |
 | Agent | WSL 里的 `dsh web`，工具走插件 `ctx` |
-| 跨系统 | 日常插件（`path`、`open`、`clipboard`、`browser`、`launch`、`net`、`fetch`） |
+| 跨系统 Daily | `path` / `open` / `clipboard` / `browser` / `launch` / `net` / `fetch`（`KIT_SET=daily`） |
+| Linux 本地可选 | 推理、媒体、沙箱检索、密钥、只读 DevOps 等 — 见 [`docs/OPTIONAL_PLUGINS.zh.md`](./docs/OPTIONAL_PLUGINS.zh.md)；`bash scripts/link-linux-plugins.sh` |
 | IM | `dsh-wsl-im` 出站 WS/Stream/Gateway → `ctx.agents`。每个 IM 一个工作区，每个聊天一条会话 |
-| Obsidian | `dsh-wsl-obsidian`：WSL agent ↔ Windows NTFS vault + `obsidian://`。不进 `install.sh` |
-| Jev | `dsh-wsl-jev`：System One 决策（`jev_ask` / `check` / `rank`），OpenRouter 或 TypeSafe。不进 `install.sh` |
+| Obsidian | `dsh-wsl-obsidian`：WSL agent ↔ Windows NTFS vault + `obsidian://` |
+| Jev | `dsh-wsl-jev`：System One（`jev_ask` / `check` / `rank`），OpenRouter 或 TypeSafe |
 
 ## 插件版本
 
 下面是 **2026-09-18** 本机兄弟仓的 `package.json`。[`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) 里的地板是下限，不是这份快照。
 
-当天本机 dsh 是 **`0.1.6-alpha.1`**（`alpha` 标签）。本文下面兼容表里较早记下的 npm `latest` 仍是 **`0.1.5-rc.1`**。脚本仍按 dsh **≥0.1.2** 编写。
+当天本机 dsh 是 **`0.1.7-alpha.2`**（npm `@alpha`，2026-09-24）。npm `latest` 标签可能滞后。脚本仍按 dsh **≥0.1.2** 编写。
 
 ### 日常
 
@@ -129,7 +140,7 @@ flowchart TB
 
 | 项 | 现状 |
 |----|------|
-| **dsh** | 套件级已在 **`0.1.5-rc.1`** 验证（2026-09-10 时 npm `latest`；尚无非 rc 的 `0.1.5`）。本机 2026-09-16 冒烟用的是 **`0.1.6-alpha.1`**（`alpha` 标签；升级时 `latest` 仍是 `0.1.5-rc.1`）。脚本按 dsh **≥0.1.2** 的 UI 一次性 `?token=`（`:3081`）编写。 |
+| **dsh** | 本机 **`0.1.7-alpha.2`**（npm `@alpha`，2026-09-24）。npm `latest` 可能滞后；要新线用 `@next` / `@alpha`。脚本按 dsh **≥0.1.2** 的 UI 一次性 `?token=`（`:3081`）编写。 |
 | **DeepSeek V4.1 Flash** | 官方 API 模型 id 为 **`deepseek-flash`**。旧名 `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` 暂时会路由到 V4.1 Flash。**本 kit 不写死模型**——在 `~/.dsh/settings.yaml` 的 `llm-deepseek` / 默认模型里改。 |
 | **Agent Teams** | 可选实验包（`@deepseek-ai/dsh-experimental-agent-team-profile`，与 dsh 同版本线）。**不在** `install.sh` 里。开了 Teams 会出现更长的 “Deep diving”；测模型请先用普通新会话。 |
 | **插件** | 快照见上文 [插件版本](#插件版本)（2026-09-16 兄弟仓）。地板见 [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh)。日常套件含 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**。 |
@@ -146,7 +157,7 @@ flowchart TB
 
 ## 60 秒上手（推荐：日常套件）
 
-**前提：** WSL 里已能运行 `dsh`（通常 profile = `web`）。建议 `0.1.5-rc.1` 或同系列更新。
+**前提：** WSL 里已能运行 `dsh`（通常 profile = `web`）。建议 `0.1.7-alpha.2`（`@alpha`）或同系列更新。
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh \
@@ -297,7 +308,7 @@ export NODE_USE_ENV_PROXY=1
 
 可选相关：[session-contract](https://github.com/173787247/session-contract)。awesome 片段：[`awesome-wsl-kit.md`](./awesome-wsl-kit.md)。
 
-**Awesome 现状（2026-09）：** `173787247` 下已收录 **32** 个插件（含 [fetch](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) [#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736)、[obscura](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-obscura.yml) [#4903](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4903)）。**本 kit 元仓不进 awesome** — 用本仓 / `install.sh` 安装。
+**Awesome 现状（2026-09-24）：** Daily/工具向约 **35** 条已在 awesome main（含 jev / obsidian）。本批 **22** 个 Linux 可选仓 PR [#5783](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5783)–[#5790](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5790) 已开且 CI 绿，等合入。进度见 [`docs/AWESOME_QUEUE.zh.md`](./docs/AWESOME_QUEUE.zh.md)。**本 kit 元仓不进 awesome** — 用本仓 / `install.sh` 安装。
 
 </details>
 
@@ -307,38 +318,17 @@ export NODE_USE_ENV_PROXY=1
 
 已经落地的不要再当新方向重开（`fetch` 0.1.2、`obscura`、版本地板、401 健康检查、`hostsvc` `apiReady`、`:3081` token 中继）。只有新产品才开新仓。钉钉没有自己的仓。
 
-**可选 Linux/本地能力插件（首页中文 + `README.en.md`）：** 完整目录 → [`docs/OPTIONAL_PLUGINS.zh.md`](./docs/OPTIONAL_PLUGINS.zh.md) / [English](./docs/OPTIONAL_PLUGINS.md)。批量链接：`bash scripts/link-linux-plugins.sh`。
+**规划（2026-09-24）：** Daily 套件稳住；新产品走 **可选 Linux/本地能力** 开仓（中文首页 + `README.en.md`，默认只读/双重确认）。完整目录与批量链接 → [`docs/OPTIONAL_PLUGINS.zh.md`](./docs/OPTIONAL_PLUGINS.zh.md) · `bash scripts/link-linux-plugins.sh`。awesome 队列 → [`docs/AWESOME_QUEUE.zh.md`](./docs/AWESOME_QUEUE.zh.md)。
 
-| 方向 | 规划 | 现状（2026-09-17） |
-|------|------|-------------------|
-| 飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram | 已是 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)。继续在那个仓做深，**不要**放进 `install.sh`。长连接要凭证和 `HTTPS_PROXY`，WSL 直连这几家会超时。 | **0.3.2** 含 Slack Socket Mode、Discord Gateway、Telegram `getUpdates`（对齐 OryxOS 出站型；不做 webhook 渠道）。awesome 已合 [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222)。 |
-| Obsidian | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 0.1.0：vault 放 NTFS（`/mnt/c|d/...`），工具 `obsidian_*` + `obsidian://` 打开。**不要**放进 `install.sh`。 | 可选。单独 `dsh plugin --profile web add github:173787247/dsh-wsl-obsidian`。准备 awesome 收录。 |
-| Jev / System One | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) 0.1.0：自建工具直连 OpenRouter/TypeSafe System One（`noul`/`choice`/`score`），不依赖第三方 Jev 插件。**不要**放进 `install.sh`。 | 可选。需要 `OPENROUTER_API_KEY` 或 `TYPESAFE_API_KEY` + `HTTPS_PROXY`。 |
-| 本地 Ollama | [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) 0.1.0：`ollama_status/list/chat/embed`。 | 可选。 |
-| 媒体 CLI | [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) 0.2.0：probe + 抽音轨/缩略图 + pdf/asr + pandoc/ocr/exif。 | 可选。 |
-| 沙箱检索 | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) 0.2.0：rg + fd + ast-grep。 | 可选。 |
-| 向量小记 | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) 0.1.0：Ollama embedding + `~/.dsh/vecmem`。 | 可选。 |
-| kubectl 只读 | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) 0.1.0：get/describe/logs。 | 可选。 |
-| 密钥只读 | [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) 0.2.0：list/exists + `secret_to_env`（首选）；须配 allowPrefixes。 | 可选。 |
-| llama.cpp | [dsh-wsl-llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) 0.1.0：OpenAI 兼容 status/chat（`:8080`）。 | 可选。 |
-| vLLM | [dsh-wsl-vllm](https://github.com/173787247/dsh-wsl-vllm) 0.1.0：OpenAI 兼容 status/chat（`:8000`）。 | 可选。 |
-| 结构化 CLI | [dsh-wsl-struct](https://github.com/173787247/dsh-wsl-struct) 0.1.0：jq / yq / 只读 sqlite3。 | 可选。 |
-| Git 摘要 | [dsh-wsl-git](https://github.com/173787247/dsh-wsl-git) 0.1.0：status 摘要 + diff --stat。 | 可选。 |
-| tmux | [dsh-wsl-tmux](https://github.com/173787247/dsh-wsl-tmux) 0.1.0：list + capture-pane（只读）。 | 可选。 |
-| Compose | [dsh-wsl-compose](https://github.com/173787247/dsh-wsl-compose) 0.1.0：ps/logs；up/down 需 `allowMutate`+`confirm`。 | 可选。 |
-| systemd --user | [dsh-wsl-systemd](https://github.com/173787247/dsh-wsl-systemd) 0.1.0：list/show/journal。 | 可选。 |
-| Helm 只读 | [dsh-wsl-helm](https://github.com/173787247/dsh-wsl-helm) 0.1.0：list/status/history。 | 可选。 |
-| Terraform plan | [dsh-wsl-terraform](https://github.com/173787247/dsh-wsl-terraform) 0.1.0：plan 摘要 + state list（永不 apply）。 | 可选。 |
-| rclone | [dsh-wsl-rclone](https://github.com/173787247/dsh-wsl-rclone) 0.1.0：listremotes/lsf/about。 | 可选。 |
-| DB 探针 | [dsh-wsl-db](https://github.com/173787247/dsh-wsl-db) 0.1.0：只读 psql + redis-cli。 | 可选。 |
-| GitLab glab | [dsh-wsl-glab](https://github.com/173787247/dsh-wsl-glab) 0.1.0：MR/issue/ci status。 | 可选。 |
-| Playwright WSL | [dsh-wsl-playwright](https://github.com/173787247/dsh-wsl-playwright) 0.1.0：无头抓取；补 Windows browser。 | 可选。 |
-| 邮件 | [dsh-wsl-mail](https://github.com/173787247/dsh-wsl-mail) 0.1.0：himalaya/notmuch（不发送）。 | 可选。 |
-| 日历 | [dsh-wsl-cal](https://github.com/173787247/dsh-wsl-cal) 0.1.0：khal 只读。 | 可选。 |
-| 依赖树 | [dsh-wsl-pkg](https://github.com/173787247/dsh-wsl-pkg) 0.1.0：npm/pip/cargo 摘要。 | 可选。 |
-| MCP | 用上游 [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md)，写在 `cordis.patch.yml`，一台服务器一个实例。不是 WSL 插件。 | 不进 kit |
-| OpenClaw | 独立运行时。不要把它的渠道搬进本 kit。同一个 Bot 只能一条长连接，不要和 `dsh-wsl-im` 同时挂同一个 Bot。 | 不进 kit |
-| Agent Teams | 上游实验包，不进 `install.sh`。 | 不进 kit |
+| 方向 | 规划 | 现状 |
+|------|------|------|
+| 飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram | 继续深挖 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)，**不进** `install.sh`。 | **0.3.2**；awesome [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222) |
+| Obsidian / Jev | [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev)；**不进** `install.sh`。 | 已在 awesome main |
+| 本地推理 | ollama · llamacpp · vllm · vecmem | 仓已开；目录见 OPTIONAL_PLUGINS；awesome B/C 等合 |
+| 媒体 / 检索 / 密钥 / 结构 | media · search · secret · struct | 同上 |
+| 只读 DevOps | git · tmux · compose · systemd · k8s · helm · terraform · rclone · db · glab | 同上（E–G） |
+| 桌面辅助 | playwright · mail · cal · pkg | 同上（H–I） |
+| MCP / OpenClaw / Agent Teams | 上游或独立运行时，不进本 kit | 不进 kit |
 | 薄 UX | editor / shot / notify / picker | 暂缓 |
 
 ---

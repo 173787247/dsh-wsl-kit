@@ -10,53 +10,64 @@ This is a **meta-repo** (docs + install script + [`cordis.patch.yml`](./cordis.p
 
 ## How the pieces fit
 
-The kit is not a runtime. `install.sh` clones plugins into the dsh `web` profile. Chat stays on Windows; the agent and tools stay in WSL. Optional [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im), [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian), and [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) are **not** in `install.sh`.
+The kit is not a runtime. `install.sh` loads **Daily / GitHub / LLM / Full** plugins into the dsh `web` profile. Chat stays on Windows; the agent and tools stay in WSL. A second tier of **Linux/local capability** plugins (inference, search, media, read-only DevOps, …) is **not** in `install.sh` — use [`link-linux-plugins.sh`](./scripts/link-linux-plugins.sh) or `dsh plugin add` as needed. IM / Obsidian / Jev are likewise off `install.sh`.
 
 ```mermaid
 flowchart TB
   subgraph win [Windows]
     browser["Browser :3081/?token="]
     host["Clipboard / Explorer / default browser"]
+    vault["Obsidian vault (NTFS)"]
+    localLLM["Ollama / llama.cpp / vLLM"]
   end
   subgraph wslbox [WSL]
     relay["port relay"]
     dsh["dsh web :3080"]
-    subgraph plugins [Plugins from this kit]
+    subgraph kitPlugins [install.sh suites]
       daily["Daily: env net fetch open clipboard path browser launch"]
       guards["repeat-stop + tool-budget"]
-      more["Optional: github cred notify + doctors"]
+      more["GitHub / LLM / Full doctors"]
+    end
+    subgraph linuxOpt [Optional Linux local · not in install.sh]
+      infer["ollama · llamacpp · vllm · vecmem"]
+      media["media · search · secret · struct"]
+      devops["git · tmux · compose · k8s · helm · terraform · …"]
+      desk["playwright · mail · cal · pkg · rclone · db · glab"]
     end
     im["dsh-wsl-im — optional"]
     obsidian["dsh-wsl-obsidian — optional"]
     jev["dsh-wsl-jev — optional"]
   end
-  llm["DeepSeek API or local Ollama"]
+  api["DeepSeek API"]
   chats["Feishu / WeCom / DingTalk / QQ / Slack / Discord / Telegram"]
-  vault["Windows Obsidian vault (NTFS)"]
 
   browser --> relay --> dsh
-  dsh --> plugins
-  dsh --> llm
-  plugins --> host
+  dsh --> kitPlugins
+  dsh --> linuxOpt
+  dsh --> api
+  linuxOpt --> localLLM
+  kitPlugins --> host
   chats --> im --> dsh
   obsidian --> vault
   dsh --> obsidian
+  dsh --> jev
 ```
 
 | Boundary | Who owns it |
 |----------|-------------|
 | Windows UI | Browser on `:3081` with a one-shot `?token=` (bare `:3081` is 401; `:3080` is WSL-only) |
 | Agent | `dsh web` inside WSL, tools via plugin `ctx` |
-| Cross-OS | Daily plugins (`path`, `open`, `clipboard`, `browser`, `launch`, `net`, `fetch`) |
+| Cross-OS Daily | `path` / `open` / `clipboard` / `browser` / `launch` / `net` / `fetch` (`KIT_SET=daily`) |
+| Linux local optional | Inference, media, sandboxed search, secrets, read-only DevOps — see [`docs/OPTIONAL_PLUGINS.md`](./docs/OPTIONAL_PLUGINS.md); `bash scripts/link-linux-plugins.sh` |
 | IM | `dsh-wsl-im` outbound WS/Stream/Gateway → `ctx.agents`. One workspace per IM, one session per chat |
-| Obsidian | `dsh-wsl-obsidian`: WSL agent ↔ Windows NTFS vault + `obsidian://`. Not in `install.sh` |
-| Jev | `dsh-wsl-jev`: System One decisions (`jev_ask` / `check` / `rank`) via OpenRouter or TypeSafe. Not in `install.sh` |
+| Obsidian | `dsh-wsl-obsidian`: WSL agent ↔ Windows NTFS vault + `obsidian://` |
+| Jev | `dsh-wsl-jev`: System One (`jev_ask` / `check` / `rank`) via OpenRouter or TypeSafe |
 
 ## Plugin versions
 
 Sibling checkout versions on **2026-09-18**. Floors enforced by [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) are the minimum, not this snapshot.
 
-Local dsh line the same day: **`0.1.6-alpha.1`** (`alpha` tag). npm `latest` noted earlier in this file was still **`0.1.5-rc.1`**. Scripts still assume dsh **≥0.1.2**.
+Local dsh line: **`0.1.7-alpha.2`** (npm `@alpha`, 2026-09-24). npm `latest` may lag. Scripts still assume dsh **≥0.1.2**.
 
 ### Daily
 
@@ -129,7 +140,7 @@ Shared helper [dsh-wsl-common](https://github.com/173787247/dsh-wsl-common) `0.1
 
 | Piece | Status |
 |-------|--------|
-| **dsh** | Suite-verified with **`0.1.5-rc.1`** (npm `latest` as of 2026-09-10; no non-rc `0.1.5` yet). This machine smoke-tested **`0.1.6-alpha.1`** on 2026-09-16 (`alpha` tag; `latest` was still `0.1.5-rc.1` when upgraded). Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). |
+| **dsh** | This machine on **`0.1.7-alpha.2`** (npm `@alpha`, 2026-09-24). npm `latest` may lag; prefer `@next` / `@alpha` for newer lines. Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). |
 | **DeepSeek V4.1 Flash** | Official API model id is **`deepseek-flash`**. Legacy `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` temporarily route to V4.1 Flash. **Not configured by this kit** — set under `llm-deepseek` / default model in `~/.dsh/settings.yaml`. |
 | **Agent Teams** | Opt-in experimental package (`@deepseek-ai/dsh-experimental-agent-team-profile`, same line as your dsh). **Not** part of `install.sh`. Expect longer “Deep diving” turns; use a fresh non-Teams session to smoke-test models. |
 | **Plugins** | Snapshot: [Plugin versions](#plugin-versions) (sibling checkouts 2026-09-16). Floor: [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh). Daily includes [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**. |
@@ -146,7 +157,7 @@ No kit code change is required solely for V4.1 Flash — update model ids in set
 
 ## 60-second start (recommended: Daily set)
 
-**Prereq:** `dsh` works inside WSL (profile usually `web`). Prefer `0.1.5-rc.1` or newer from the same release train.
+**Prereq:** `dsh` works inside WSL (profile usually `web`). Prefer `0.1.7-alpha.2` (`@alpha`) or newer from the same release train.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh \
@@ -295,7 +306,7 @@ Order of play: `host_reach` → `net_doctor` → `dns_doctor` → `clock_doctor`
 
 Related: [session-contract](https://github.com/173787247/session-contract). Awesome listing snippet: [`awesome-wsl-kit.md`](./awesome-wsl-kit.md).
 
-**Awesome status (2026-09):** **32** plugins under `173787247` are listed (including [fetch](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) [#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736) and [obscura](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-obscura.yml) [#4903](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4903)). This **kit meta-repo is not** submitted to awesome — install via this repo / `install.sh`.
+**Awesome status (2026-09-24):** ~**35** Daily/tool plugins on awesome main (including jev / obsidian). The **22** Linux-optional plugins are in PRs [#5783](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5783)–[#5790](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5790) (CI green, awaiting merge). Queue: [`docs/AWESOME_QUEUE.zh.md`](./docs/AWESOME_QUEUE.zh.md). This **kit meta-repo is not** submitted to awesome — install via this repo / `install.sh`.
 
 </details>
 
@@ -305,38 +316,17 @@ Related: [session-contract](https://github.com/173787247/session-contract). Awes
 
 Do not reopen work that already shipped (`fetch` 0.1.2, `obscura`, version floors, 401 health, `hostsvc` `apiReady`, `:3081` token relay). A new repo only for a new product. DingTalk does not get one.
 
-**Optional Linux/local plugins (Chinese homepage + English `README.en.md`):** full catalog → [`docs/OPTIONAL_PLUGINS.md`](./docs/OPTIONAL_PLUGINS.md) / [中文](./docs/OPTIONAL_PLUGINS.zh.md). Batch-link: `bash scripts/link-linux-plugins.sh`.
+**Plan (2026-09-24):** Keep Daily stable; ship new products as **optional Linux/local** plugins (Chinese homepage + `README.en.md`; read-only / double-gated by default). Full catalog + batch link → [`docs/OPTIONAL_PLUGINS.md`](./docs/OPTIONAL_PLUGINS.md) · `bash scripts/link-linux-plugins.sh`. Awesome queue → [`docs/AWESOME_QUEUE.zh.md`](./docs/AWESOME_QUEUE.zh.md).
 
-| Track | Plan | Status (2026-09-17) |
-|-------|------|---------------------|
-| Feishu / WeCom / DingTalk / QQ / Slack / Discord / Telegram | Already [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im). Keep deepening that repo. Do **not** add it to `install.sh` — long connections need credentials and `HTTPS_PROXY`, and WSL has no direct egress to those hosts. | **0.3.2** adds Slack Socket Mode, Discord Gateway, and Telegram `getUpdates` (OryxOS-aligned outbound; no webhook channels). Awesome listing merged in [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222). |
-| Obsidian | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) 0.1.0: keep the vault on NTFS (`/mnt/c|d/...`), `obsidian_*` tools + `obsidian://` open. Do **not** add to `install.sh`. | Optional. `dsh plugin --profile web add github:173787247/dsh-wsl-obsidian`. Awesome listing in progress. |
-| Jev / System One | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) 0.1.0: self-built tools calling OpenRouter/TypeSafe System One (`noul`/`choice`/`score`). No third-party Jev plugin dependency. Do **not** add to `install.sh`. | Optional. Needs `OPENROUTER_API_KEY` or `TYPESAFE_API_KEY` + `HTTPS_PROXY`. |
-| Local Ollama | [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) 0.1.0: `ollama_status/list/chat/embed` → local daemon. | Optional. |
-| Media CLI | [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) 0.2.0: probe + extract_audio/thumbnail + pdf/asr + pandoc/ocr/exif. | Optional. |
-| Sandboxed search | [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) 0.2.0: ripgrep + fd + ast-grep under `$HOME`/`~/.dsh`. | Optional. |
-| Vector crumbs | [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) 0.1.0: Ollama embeddings + `~/.dsh/vecmem`. Complements Obsidian. | Optional. Needs embed model. |
-| kubectl read-only | [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) 0.1.0: get/describe/logs only. | Optional. |
-| Secrets | [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) 0.2.0: list/exists + `secret_to_env` (preferred); allowPrefixes required. | Optional. |
-| llama.cpp / Unsloth | [dsh-wsl-llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) 0.1.0: OpenAI-compat status/chat (default `:8080`). | Optional. |
-| vLLM | [dsh-wsl-vllm](https://github.com/173787247/dsh-wsl-vllm) 0.1.0: OpenAI-compat status/chat (default `:8000`). | Optional. |
-| Structured CLI | [dsh-wsl-struct](https://github.com/173787247/dsh-wsl-struct) 0.1.0: jq / yq / read-only sqlite3. | Optional. |
-| Git summaries | [dsh-wsl-git](https://github.com/173787247/dsh-wsl-git) 0.1.0: status summary + diff --stat only. | Optional. |
-| tmux | [dsh-wsl-tmux](https://github.com/173787247/dsh-wsl-tmux) 0.1.0: list + capture-pane (read-only). | Optional. |
-| Compose | [dsh-wsl-compose](https://github.com/173787247/dsh-wsl-compose) 0.1.0: ps/logs; up/down needs `allowMutate`+`confirm`. | Optional. |
-| systemd --user | [dsh-wsl-systemd](https://github.com/173787247/dsh-wsl-systemd) 0.1.0: list/show/journal only. | Optional. |
-| Helm read-only | [dsh-wsl-helm](https://github.com/173787247/dsh-wsl-helm) 0.1.0: list/status/history. | Optional. |
-| Terraform plan | [dsh-wsl-terraform](https://github.com/173787247/dsh-wsl-terraform) 0.1.0: plan summary + state list (never apply). | Optional. |
-| rclone | [dsh-wsl-rclone](https://github.com/173787247/dsh-wsl-rclone) 0.1.0: listremotes/lsf/about only. | Optional. |
-| DB probes | [dsh-wsl-db](https://github.com/173787247/dsh-wsl-db) 0.1.0: read-only psql + redis-cli. | Optional. |
-| GitLab glab | [dsh-wsl-glab](https://github.com/173787247/dsh-wsl-glab) 0.1.0: MR/issue/ci status. | Optional. |
-| Playwright WSL | [dsh-wsl-playwright](https://github.com/173787247/dsh-wsl-playwright) 0.1.0: headless fetch; complements Windows browser. | Optional. |
-| Mail | [dsh-wsl-mail](https://github.com/173787247/dsh-wsl-mail) 0.1.0: himalaya/notmuch list-search (no send). | Optional. |
-| Calendar | [dsh-wsl-cal](https://github.com/173787247/dsh-wsl-cal) 0.1.0: khal list (read-only). | Optional. |
-| Pkg trees | [dsh-wsl-pkg](https://github.com/173787247/dsh-wsl-pkg) 0.1.0: npm ls / pip list / cargo tree summaries. | Optional. |
-| MCP | Use upstream [`@deepseek-ai/dsh-mcp-client`](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md) in `cordis.patch.yml`. One instance per server. Not a WSL plugin. | Out of kit |
-| OpenClaw | Separate runtime. Do not port its channels into this kit. A bot can hold only one long connection, so do not run it beside `dsh-wsl-im` on the same bot. | Out of kit |
-| Agent Teams | Upstream experimental package. Not part of `install.sh`. | Out of kit |
+| Track | Plan | Status |
+|-------|------|--------|
+| Feishu / WeCom / DingTalk / QQ / Slack / Discord / Telegram | Deepen [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im); **not** in `install.sh`. | **0.3.2**; awesome [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222) |
+| Obsidian / Jev | [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev); **not** in `install.sh`. | On awesome main |
+| Local inference | ollama · llamacpp · vllm · vecmem | Repos open; see OPTIONAL_PLUGINS; awesome waves B/C pending merge |
+| Media / search / secrets / struct | media · search · secret · struct | Same |
+| Read-only DevOps | git · tmux · compose · systemd · k8s · helm · terraform · rclone · db · glab | Same (E–G) |
+| Desktop helpers | playwright · mail · cal · pkg | Same (H–I) |
+| MCP / OpenClaw / Agent Teams | Upstream or separate runtimes | Out of kit |
 | Thin UX | editor / shot / notify / picker | Deferred |
 
 ## Security
