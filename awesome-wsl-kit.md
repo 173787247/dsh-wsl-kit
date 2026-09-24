@@ -60,9 +60,17 @@ Not shipped by Daily. Full catalog: [OPTIONAL_PLUGINS.md](https://github.com/173
 - [dsh-wsl-mail](https://github.com/173787247/dsh-wsl-mail) - Mail list/search via himalaya / notmuch (no send).
 - [dsh-wsl-cal](https://github.com/173787247/dsh-wsl-cal) - Read-only khal calendar list.
 - [dsh-wsl-pkg](https://github.com/173787247/dsh-wsl-pkg) - Dependency tree summaries: npm / pip / cargo.
-- [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) - Optional IM bridge companion (not Daily).
-- [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) - WSL agent ↔ Windows Obsidian vault read/write/open.
-- [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) - Typed evidence questions via OpenRouter / Typesafe.
+- [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) - Optional IM bridge (not Daily).
+- [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) - WSL agent to Windows Obsidian vault.
+- [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) - Typed evidence Q&A via OpenRouter / Typesafe.
+
+### Remote bridges (not in `install.sh`)
+
+Classic estate and devices. Catalog: [OPTIONAL_PLUGINS.md](https://github.com/173787247/dsh-wsl-kit/blob/master/docs/OPTIONAL_PLUGINS.md). Batch-link: `bash scripts/link-remote-bridges.sh`.
+
+- [dsh-remote-ssh](https://github.com/173787247/dsh-remote-ssh) - Allowlisted SSH into Unix / AIX / macOS (no shell; read-only by default).
+- [dsh-mac-companion](https://github.com/173787247/dsh-mac-companion) - HTTP to a macOS companion (notify / Shortcuts / clipboard).
+- [dsh-device-bridge](https://github.com/173787247/dsh-device-bridge) - Generic Companion protocol for phones / IoT / thin agents.
 ```
 
 ## 中文章节
@@ -120,4 +128,12 @@ Not shipped by Daily. Full catalog: [OPTIONAL_PLUGINS.md](https://github.com/173
 - [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) - 可选 IM 桥接（不在 Daily）。
 - [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) - WSL ↔ Windows Obsidian 仓库读写与打开。
 - [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) - 经 OpenRouter / Typesafe 的 typed 证据问答。
+
+### 远程桥接（不在 `install.sh`）
+
+旧世界主机与跨设备能力。目录：[OPTIONAL_PLUGINS.zh.md](https://github.com/173787247/dsh-wsl-kit/blob/master/docs/OPTIONAL_PLUGINS.zh.md)。批量链接：`bash scripts/link-remote-bridges.sh`。
+
+- [dsh-remote-ssh](https://github.com/173787247/dsh-remote-ssh) - 白名单 SSH 接入 Unix / AIX / macOS（不走 shell；默认只读）。
+- [dsh-mac-companion](https://github.com/173787247/dsh-mac-companion) - HTTP 调 Mac Companion（通知 / Shortcuts / 剪贴板）。
+- [dsh-device-bridge](https://github.com/173787247/dsh-device-bridge) - 通用 Companion 协议：手机 / IoT / 薄 Agent。
 ```

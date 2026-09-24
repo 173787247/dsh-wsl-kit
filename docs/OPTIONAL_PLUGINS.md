@@ -32,12 +32,25 @@ Also listed in the main [README.md](../README.md) optional table and Beyond sect
 | [dsh-wsl-cal](https://github.com/173787247/dsh-wsl-cal) | 0.1.0 | Read-only khal calendar list. |
 | [dsh-wsl-pkg](https://github.com/173787247/dsh-wsl-pkg) | 0.1.0 | Dependency tree summaries: npm / pip / cargo. |
 
+## Remote bridges (classic estate / devices)
+
+Not in `install.sh`. Bring Unix / AIX / Mac / phone-side capability into dsh (tools still run on the dsh host).
+
+| Plugin | Ver | Summary |
+|--------|-----|---------|
+| [dsh-remote-ssh](https://github.com/173787247/dsh-remote-ssh) | 0.1.0 | Allowlisted SSH to Unix/AIX/macOS (no shell; read-only by default). |
+| [dsh-mac-companion](https://github.com/173787247/dsh-mac-companion) | 0.1.0 | HTTP client to a macOS companion (notify / Shortcuts / clipboard). |
+| [dsh-device-bridge](https://github.com/173787247/dsh-device-bridge) | 0.1.0 | Generic Companion protocol for phones / IoT / thin agents. |
+
+Batch-link: `bash scripts/link-remote-bridges.sh`.
+
 Also (other tracks / main README): `dsh-wsl-jev` / `obsidian` / `im`.
 
 ## Batch-link into web profile
 
 ```sh
 bash scripts/link-linux-plugins.sh
+bash scripts/link-remote-bridges.sh
 ```
 
 Override the list with `DSH_LINK_PLUGINS` (space-separated).

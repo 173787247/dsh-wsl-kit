@@ -32,6 +32,18 @@
 | [dsh-wsl-cal](https://github.com/173787247/dsh-wsl-cal) | 0.1.0 | 日历只读：khal list / today。 |
 | [dsh-wsl-pkg](https://github.com/173787247/dsh-wsl-pkg) | 0.1.0 | 依赖树摘要：npm ls / pip list / cargo tree。 |
 
+## 远程桥接（旧世界 / 跨设备）
+
+不进 `install.sh`。把 Unix / AIX / Mac / 手机侧能力接到 dsh（工具仍在 dsh 主机执行）。
+
+| 插件 | 版本 | 一句话 |
+|------|------|--------|
+| [dsh-remote-ssh](https://github.com/173787247/dsh-remote-ssh) | 0.1.0 | 白名单 SSH：Unix / AIX / macOS（不走 shell；默认只读）。 |
+| [dsh-mac-companion](https://github.com/173787247/dsh-mac-companion) | 0.1.0 | HTTP 调 Mac Companion：通知 / Shortcuts / 剪贴板。 |
+| [dsh-device-bridge](https://github.com/173787247/dsh-device-bridge) | 0.1.0 | 通用 Companion 协议：手机 / IoT / 薄 Agent。 |
+
+批量链接：`bash scripts/link-remote-bridges.sh`。
+
 另见（主 README / 其它方向）：`dsh-wsl-jev` / `obsidian` / `im`。
 
 收录进度（awesome）：见 [`AWESOME_QUEUE.zh.md`](./AWESOME_QUEUE.zh.md)。
@@ -40,6 +52,7 @@
 
 ```sh
 bash scripts/link-linux-plugins.sh
+bash scripts/link-remote-bridges.sh
 ```
 
 默认链接一整组可选仓（可用环境变量 `DSH_LINK_PLUGINS` 覆盖名单）。
