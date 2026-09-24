@@ -5,7 +5,7 @@
 
 不收录：`dsh-wsl-kit`、`dsh-wsl-common`。YAML：[`awesome-queue/`](./awesome-queue/)。
 
-更新于 **2026-09-24 09:00（UTC+8）**。
+更新于 **2026-09-24 14:30（UTC+8）**。
 
 ## 状态
 
@@ -20,5 +20,22 @@
 | **G** | rclone · db · glab | [#5788](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5788) OPEN · CI 绿 |
 | **H** | playwright · mail · cal | [#5789](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5789) OPEN · CI 绿 |
 | **I** | pkg | [#5790](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5790) OPEN · CI 绿 |
+| **J** | remote-ssh · mac-companion · device-bridge | **待提** · YAML 已备 · 最早 **2026-09-25 14:10（UTC+8）** |
 
-提交侧：**24/24 已提**；B–I 等维护者合入。
+提交侧：B–I **24** 条已提等合入；**Wave J**（远程桥接 3 仓）排期明日仓龄满后再开 PR。
+
+## Wave J 说明
+
+| 仓 | 创建（UTC） | 建议提 PR |
+|----|-------------|-----------|
+| [dsh-remote-ssh](https://github.com/173787247/dsh-remote-ssh) | 2026-09-24 06:07 | ≥ 2026-09-25 14:10 CST |
+| [dsh-mac-companion](https://github.com/173787247/dsh-mac-companion) | 2026-09-24 06:08 | 同上 |
+| [dsh-device-bridge](https://github.com/173787247/dsh-device-bridge) | 2026-09-24 06:08 | 同上 |
+
+草稿：[`awesome-queue/wave-J/`](./awesome-queue/wave-J/)。到期执行：
+
+```powershell
+.\scripts\submit-awesome-wave.ps1 J
+```
+
+分类均用 `wsl`（与既有 WSL 套件条目一致；插件本身不要求装在每台远端机上）。
