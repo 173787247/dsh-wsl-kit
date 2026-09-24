@@ -2,5 +2,5 @@ url: https://github.com/173787247/dsh-wsl-systemd
 name: 173787247/dsh-wsl-systemd
 category: wsl
 description:
-  en: systemd --user read-only list / show / journal.
-  zh: systemd --user 只读：list / show / journal。
+  en: 'Read-only systemd --user list / show / journal.'
+  zh: 'systemd --user 只读：list / show / journal。'

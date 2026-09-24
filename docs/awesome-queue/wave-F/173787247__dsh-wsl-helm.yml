@@ -2,5 +2,5 @@ url: https://github.com/173787247/dsh-wsl-helm
 name: 173787247/dsh-wsl-helm
 category: wsl
 description:
-  en: Read-only helm list / status / history.
+  en: Read-only Helm list / status / history.
   zh: Helm 只读：list / status / history。
