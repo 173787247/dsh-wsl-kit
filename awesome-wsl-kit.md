@@ -33,6 +33,15 @@ Browser on Windows, agent in WSL. Install the meta pack first: [dsh-wsl-kit](htt
 - [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) - Safe Git Credential Manager hints (no secrets).
 - [dsh-repeat-stop](https://github.com/173787247/dsh-repeat-stop) - Hard-stop consecutive identical tool calls.
 - [dsh-tool-budget](https://github.com/173787247/dsh-tool-budget) - Hard-stop after a per-session tool-call budget.
+
+### Optional Linux / local (not in `install.sh`)
+
+Full catalog: [OPTIONAL_PLUGINS.md](https://github.com/173787247/dsh-wsl-kit/blob/master/docs/OPTIONAL_PLUGINS.md). Batch-link: `bash scripts/link-linux-plugins.sh`.
+
+- Inference: [ollama](https://github.com/173787247/dsh-wsl-ollama) · [llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) · [vllm](https://github.com/173787247/dsh-wsl-vllm) · [vecmem](https://github.com/173787247/dsh-wsl-vecmem)
+- Media / search / secrets: [media](https://github.com/173787247/dsh-wsl-media) · [search](https://github.com/173787247/dsh-wsl-search) · [secret](https://github.com/173787247/dsh-wsl-secret) · [struct](https://github.com/173787247/dsh-wsl-struct)
+- Read-only DevOps: [git](https://github.com/173787247/dsh-wsl-git) · [tmux](https://github.com/173787247/dsh-wsl-tmux) · [compose](https://github.com/173787247/dsh-wsl-compose) · [k8s](https://github.com/173787247/dsh-wsl-k8s) · [helm](https://github.com/173787247/dsh-wsl-helm) · [terraform](https://github.com/173787247/dsh-wsl-terraform) · …
+- Also: [im](https://github.com/173787247/dsh-wsl-im) · [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev)
 ```
 
 ## 中文章节
@@ -60,4 +69,13 @@ Browser on Windows, agent in WSL. Install the meta pack first: [dsh-wsl-kit](htt
 - [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) - Git Credential Manager 安全指引（不回传密钥）。
 - [dsh-repeat-stop](https://github.com/173787247/dsh-repeat-stop) - 连续相同工具调用硬拦截。
 - [dsh-tool-budget](https://github.com/173787247/dsh-tool-budget) - 会话级工具调用次数上限硬拦截。
+
+### 可选 Linux / 本地（不在 `install.sh`）
+
+完整目录：[OPTIONAL_PLUGINS.zh.md](https://github.com/173787247/dsh-wsl-kit/blob/master/docs/OPTIONAL_PLUGINS.zh.md)。批量链接：`bash scripts/link-linux-plugins.sh`。
+
+- 推理：[ollama](https://github.com/173787247/dsh-wsl-ollama) · [llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) · [vllm](https://github.com/173787247/dsh-wsl-vllm) · [vecmem](https://github.com/173787247/dsh-wsl-vecmem)
+- 媒体 / 检索 / 密钥：[media](https://github.com/173787247/dsh-wsl-media) · [search](https://github.com/173787247/dsh-wsl-search) · [secret](https://github.com/173787247/dsh-wsl-secret) · [struct](https://github.com/173787247/dsh-wsl-struct)
+- 只读 DevOps：[git](https://github.com/173787247/dsh-wsl-git) · [tmux](https://github.com/173787247/dsh-wsl-tmux) · [compose](https://github.com/173787247/dsh-wsl-compose) · [k8s](https://github.com/173787247/dsh-wsl-k8s) · [helm](https://github.com/173787247/dsh-wsl-helm) · [terraform](https://github.com/173787247/dsh-wsl-terraform) · …
+- 另见：[im](https://github.com/173787247/dsh-wsl-im) · [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev)
 ```
