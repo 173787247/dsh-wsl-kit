@@ -38,11 +38,31 @@ Browser on Windows, agent in WSL. Install the meta pack first: [dsh-wsl-kit](htt
 
 Not shipped by Daily. Full catalog: [OPTIONAL_PLUGINS.md](https://github.com/173787247/dsh-wsl-kit/blob/master/docs/OPTIONAL_PLUGINS.md). Batch-link: `bash scripts/link-linux-plugins.sh`.
 
-- **Inference / memory:** [ollama](https://github.com/173787247/dsh-wsl-ollama) · [llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) · [vllm](https://github.com/173787247/dsh-wsl-vllm) · [vecmem](https://github.com/173787247/dsh-wsl-vecmem)
-- **Media / search / secrets:** [media](https://github.com/173787247/dsh-wsl-media) · [search](https://github.com/173787247/dsh-wsl-search) · [secret](https://github.com/173787247/dsh-wsl-secret) · [struct](https://github.com/173787247/dsh-wsl-struct)
-- **Read-only DevOps:** [git](https://github.com/173787247/dsh-wsl-git) · [tmux](https://github.com/173787247/dsh-wsl-tmux) · [compose](https://github.com/173787247/dsh-wsl-compose) · [systemd](https://github.com/173787247/dsh-wsl-systemd) · [k8s](https://github.com/173787247/dsh-wsl-k8s) · [helm](https://github.com/173787247/dsh-wsl-helm) · [terraform](https://github.com/173787247/dsh-wsl-terraform) · [rclone](https://github.com/173787247/dsh-wsl-rclone) · [db](https://github.com/173787247/dsh-wsl-db) · [glab](https://github.com/173787247/dsh-wsl-glab)
-- **Local UX:** [playwright](https://github.com/173787247/dsh-wsl-playwright) · [mail](https://github.com/173787247/dsh-wsl-mail) · [cal](https://github.com/173787247/dsh-wsl-cal) · [pkg](https://github.com/173787247/dsh-wsl-pkg)
-- **Also:** [im](https://github.com/173787247/dsh-wsl-im) · [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev)
+- [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) - Local Ollama: status / list / chat / embed.
+- [dsh-wsl-llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) - OpenAI-compatible llama.cpp / Unsloth Desktop client (default :8080).
+- [dsh-wsl-vllm](https://github.com/173787247/dsh-wsl-vllm) - OpenAI-compatible vLLM client (default :8000).
+- [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) - Tiny local vector memory via Ollama embeddings.
+- [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) - Local media/doc pipeline: probe, extract, PDF, ASR, OCR.
+- [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) - Sandboxed ripgrep / fd / ast-grep.
+- [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) - Read-only pass / age secrets (allowPrefixes).
+- [dsh-wsl-struct](https://github.com/173787247/dsh-wsl-struct) - Sandboxed jq / yq / read-only sqlite3.
+- [dsh-wsl-git](https://github.com/173787247/dsh-wsl-git) - Capped git status / diff --stat (no full patches).
+- [dsh-wsl-tmux](https://github.com/173787247/dsh-wsl-tmux) - Read-only tmux list + capture-pane.
+- [dsh-wsl-compose](https://github.com/173787247/dsh-wsl-compose) - docker compose ps/logs; up/down double-gated.
+- [dsh-wsl-systemd](https://github.com/173787247/dsh-wsl-systemd) - systemd --user read-only list / show / journal.
+- [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) - Read-only kubectl get / describe / logs.
+- [dsh-wsl-helm](https://github.com/173787247/dsh-wsl-helm) - Read-only helm list / status / history.
+- [dsh-wsl-terraform](https://github.com/173787247/dsh-wsl-terraform) - terraform/tofu plan summary + state list (never apply).
+- [dsh-wsl-rclone](https://github.com/173787247/dsh-wsl-rclone) - Read-only rclone listremotes / lsf / about.
+- [dsh-wsl-db](https://github.com/173787247/dsh-wsl-db) - Read-only psql + redis-cli probes.
+- [dsh-wsl-glab](https://github.com/173787247/dsh-wsl-glab) - Read-only glab MR / issue / ci status.
+- [dsh-wsl-playwright](https://github.com/173787247/dsh-wsl-playwright) - Headless Playwright fetch (title + body) in WSL.
+- [dsh-wsl-mail](https://github.com/173787247/dsh-wsl-mail) - Mail list/search via himalaya / notmuch (no send).
+- [dsh-wsl-cal](https://github.com/173787247/dsh-wsl-cal) - Read-only khal calendar list.
+- [dsh-wsl-pkg](https://github.com/173787247/dsh-wsl-pkg) - Dependency tree summaries: npm / pip / cargo.
+- [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) - Optional IM bridge companion (not Daily).
+- [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) - WSL agent ↔ Windows Obsidian vault read/write/open.
+- [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) - Typed evidence questions via OpenRouter / Typesafe.
 ```
 
 ## 中文章节
@@ -75,9 +95,29 @@ Not shipped by Daily. Full catalog: [OPTIONAL_PLUGINS.md](https://github.com/173
 
 不进 Daily。完整目录：[OPTIONAL_PLUGINS.zh.md](https://github.com/173787247/dsh-wsl-kit/blob/master/docs/OPTIONAL_PLUGINS.zh.md)。批量链接：`bash scripts/link-linux-plugins.sh`。
 
-- **推理 / 向量：** [ollama](https://github.com/173787247/dsh-wsl-ollama) · [llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) · [vllm](https://github.com/173787247/dsh-wsl-vllm) · [vecmem](https://github.com/173787247/dsh-wsl-vecmem)
-- **媒体 / 检索 / 密钥：** [media](https://github.com/173787247/dsh-wsl-media) · [search](https://github.com/173787247/dsh-wsl-search) · [secret](https://github.com/173787247/dsh-wsl-secret) · [struct](https://github.com/173787247/dsh-wsl-struct)
-- **只读运维：** [git](https://github.com/173787247/dsh-wsl-git) · [tmux](https://github.com/173787247/dsh-wsl-tmux) · [compose](https://github.com/173787247/dsh-wsl-compose) · [systemd](https://github.com/173787247/dsh-wsl-systemd) · [k8s](https://github.com/173787247/dsh-wsl-k8s) · [helm](https://github.com/173787247/dsh-wsl-helm) · [terraform](https://github.com/173787247/dsh-wsl-terraform) · [rclone](https://github.com/173787247/dsh-wsl-rclone) · [db](https://github.com/173787247/dsh-wsl-db) · [glab](https://github.com/173787247/dsh-wsl-glab)
-- **本机周边：** [playwright](https://github.com/173787247/dsh-wsl-playwright) · [mail](https://github.com/173787247/dsh-wsl-mail) · [cal](https://github.com/173787247/dsh-wsl-cal) · [pkg](https://github.com/173787247/dsh-wsl-pkg)
-- **另见：** [im](https://github.com/173787247/dsh-wsl-im) · [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev)
+- [dsh-wsl-ollama](https://github.com/173787247/dsh-wsl-ollama) - 本机 Ollama：status / list / chat / embed。
+- [dsh-wsl-llamacpp](https://github.com/173787247/dsh-wsl-llamacpp) - 对接 llama.cpp / Unsloth Desktop 的 OpenAI 兼容接口（默认 :8080）。
+- [dsh-wsl-vllm](https://github.com/173787247/dsh-wsl-vllm) - 对接本机/Docker vLLM 的 OpenAI 兼容服务（默认 :8000）。
+- [dsh-wsl-vecmem](https://github.com/173787247/dsh-wsl-vecmem) - 本地向量小记：Ollama embedding + `~/.dsh/vecmem`。
+- [dsh-wsl-media](https://github.com/173787247/dsh-wsl-media) - 本地媒体/文档管线：抽音轨、PDF、ASR、OCR 等。
+- [dsh-wsl-search](https://github.com/173787247/dsh-wsl-search) - 沙箱 ripgrep / fd / ast-grep。
+- [dsh-wsl-secret](https://github.com/173787247/dsh-wsl-secret) - 只读 pass / age 密钥（需 allowPrefixes）。
+- [dsh-wsl-struct](https://github.com/173787247/dsh-wsl-struct) - 沙箱 jq / yq / sqlite3（只读 SELECT）。
+- [dsh-wsl-git](https://github.com/173787247/dsh-wsl-git) - 截断版 git status / diff --stat，避免巨型 diff。
+- [dsh-wsl-tmux](https://github.com/173787247/dsh-wsl-tmux) - 只读查看 tmux 会话与 pane 输出。
+- [dsh-wsl-compose](https://github.com/173787247/dsh-wsl-compose) - docker compose：ps/logs；up/down 需双重确认。
+- [dsh-wsl-systemd](https://github.com/173787247/dsh-wsl-systemd) - systemd --user 只读：list / show / journal。
+- [dsh-wsl-k8s](https://github.com/173787247/dsh-wsl-k8s) - kubectl 只读：get / describe / logs。
+- [dsh-wsl-helm](https://github.com/173787247/dsh-wsl-helm) - Helm 只读：list / status / history。
+- [dsh-wsl-terraform](https://github.com/173787247/dsh-wsl-terraform) - terraform/tofu：plan 摘要 + state list（永不 apply）。
+- [dsh-wsl-rclone](https://github.com/173787247/dsh-wsl-rclone) - rclone 只读：listremotes / lsf / about。
+- [dsh-wsl-db](https://github.com/173787247/dsh-wsl-db) - psql / redis-cli 只读探针。
+- [dsh-wsl-glab](https://github.com/173787247/dsh-wsl-glab) - GitLab CLI（glab）只读：MR / issue / ci。
+- [dsh-wsl-playwright](https://github.com/173787247/dsh-wsl-playwright) - WSL 无头 Playwright 抓取页面标题与正文。
+- [dsh-wsl-mail](https://github.com/173787247/dsh-wsl-mail) - 邮件只读：himalaya list / notmuch search。
+- [dsh-wsl-cal](https://github.com/173787247/dsh-wsl-cal) - 日历只读：khal list / today。
+- [dsh-wsl-pkg](https://github.com/173787247/dsh-wsl-pkg) - 依赖树摘要：npm ls / pip list / cargo tree。
+- [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) - 可选 IM 桥接（不在 Daily）。
+- [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) - WSL ↔ Windows Obsidian 仓库读写与打开。
+- [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) - 经 OpenRouter / Typesafe 的 typed 证据问答。
 ```
