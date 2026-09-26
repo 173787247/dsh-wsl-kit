@@ -24,6 +24,14 @@
 
 A–J 全部合入。远程桥接三仓已在 awesome；本机可 `bash scripts/link-remote-bridges.sh` + ssh-lab 冒烟。
 
+## 加深后描述更新（2026-09-26）
+
+| PR | 内容 | 状态 |
+|----|------|------|
+| [#5926](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5926) | `dsh-wsl-im`（Mattermost / ASR / 白名单） | open |
+| [#5927](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5927) | remote-ssh · mac-companion · device-bridge | open |
+| [#5928](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5928) | editor · notify · picker | open |
+
 ## Wave J 说明
 
 | 仓 | 创建（UTC） | PR |
