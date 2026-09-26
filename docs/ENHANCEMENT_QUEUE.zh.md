@@ -25,7 +25,7 @@ awesome 收录见 [`AWESOME_QUEUE.zh.md`](./AWESOME_QUEUE.zh.md)（A–J 已合�
 
 ---
 
-## Wave K — 近端（进行中）
+## Wave K — 近端（完成）
 
 | ID | 仓 | 下一交付 | 目标 |
 |----|-----|----------|------|

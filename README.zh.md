@@ -91,7 +91,7 @@ flowchart TB
 | [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) | 0.2.0 | github |
 | [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | 0.2.0 | github |
 | [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | 0.1.0 | github |
-| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.2 | 不在 `install.sh` |
+| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.7 | 不在 `install.sh` |
 | [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | 不在日常套件 |
 | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) | 0.1.0 | 不在 `install.sh`（可选） |
 | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) | 0.1.0 | 不在 `install.sh`（可选） |
@@ -324,7 +324,7 @@ export NODE_USE_ENV_PROXY=1
 
 | 方向 | 规划 | 现状 |
 |------|------|------|
-| 飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram | 继续深挖 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)，**不进** `install.sh`。 | **0.3.6**；加深队列见 [`docs/ENHANCEMENT_QUEUE.zh.md`](./docs/ENHANCEMENT_QUEUE.zh.md) |
+| 飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram / Mattermost | 继续深挖 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)，**不进** `install.sh`。 | **0.3.7**；加深队列见 [`docs/ENHANCEMENT_QUEUE.zh.md`](./docs/ENHANCEMENT_QUEUE.zh.md) |
 | Obsidian / Jev | [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev)；**不进** `install.sh`。 | 已在 awesome main；继续加深 |
 | 本地推理 | ollama · llamacpp · vllm · vecmem | 仓已开；目录见 OPTIONAL_PLUGINS；加深中 |
 | 媒体 / 检索 / 密钥 / 结构 | media · search · secret · struct | 同上 |
