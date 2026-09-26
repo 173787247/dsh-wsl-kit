@@ -320,16 +320,19 @@ export NODE_USE_ENV_PROXY=1
 
 **规划（2026-09-24）：** Daily 套件稳住；新产品走 **可选 Linux/本地能力** 开仓（中文首页 + `README.en.md`，默认只读/双重确认）。完整目录与批量链接 → [`docs/OPTIONAL_PLUGINS.zh.md`](./docs/OPTIONAL_PLUGINS.zh.md) · `bash scripts/link-linux-plugins.sh`。awesome 队列 → [`docs/AWESOME_QUEUE.zh.md`](./docs/AWESOME_QUEUE.zh.md)。
 
+完整加深队列 → [`docs/ENHANCEMENT_QUEUE.zh.md`](./docs/ENHANCEMENT_QUEUE.zh.md)。调用链 → [`docs/CALL_CHAINS.zh.md`](./docs/CALL_CHAINS.zh.md)。
+
 | 方向 | 规划 | 现状 |
 |------|------|------|
-| 飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram | 继续深挖 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)，**不进** `install.sh`。 | **0.3.2**；awesome [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222) |
-| Obsidian / Jev | [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev)；**不进** `install.sh`。 | 已在 awesome main |
-| 本地推理 | ollama · llamacpp · vllm · vecmem | 仓已开；目录见 OPTIONAL_PLUGINS；awesome B/C 等合 |
+| 飞书 / 企微 / 钉钉 / QQ / Slack / Discord / Telegram | 继续深挖 [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im)，**不进** `install.sh`。 | **0.3.6**；加深队列见 [`docs/ENHANCEMENT_QUEUE.zh.md`](./docs/ENHANCEMENT_QUEUE.zh.md) |
+| Obsidian / Jev | [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev)；**不进** `install.sh`。 | 已在 awesome main；继续加深 |
+| 本地推理 | ollama · llamacpp · vllm · vecmem | 仓已开；目录见 OPTIONAL_PLUGINS；加深中 |
 | 媒体 / 检索 / 密钥 / 结构 | media · search · secret · struct | 同上 |
-| 只读 DevOps | git · tmux · compose · systemd · k8s · helm · terraform · rclone · db · glab | 同上（E–G） |
-| 桌面辅助 | playwright · mail · cal · pkg | 同上（H–I） |
+| 只读 DevOps | git · tmux · compose · systemd · k8s · helm · terraform · rclone · db · glab | 同上；**推进加深**（非开仓即停） |
+| 桌面辅助 | playwright · mail · cal · pkg | 同上 |
+| 远程桥接 | [remote-ssh](https://github.com/173787247/dsh-remote-ssh) · [mac-companion](https://github.com/173787247/dsh-mac-companion) · [device-bridge](https://github.com/173787247/dsh-device-bridge) | awesome [#5873](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5873)；加深中 |
 | MCP / OpenClaw / Agent Teams | 上游或独立运行时，不进本 kit | 不进 kit |
-| 薄 UX | editor / shot / notify / picker | 暂缓 |
+| 薄 UX | editor / shot / notify / picker | **推进加深**（见 ENHANCEMENT_QUEUE Wave M） |
 
 ---
 

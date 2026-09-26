@@ -91,7 +91,7 @@ Local dsh line: **`0.1.7-alpha.2`** (npm `@alpha`, 2026-09-24). npm `latest` may
 | [dsh-wsl-github](https://github.com/173787247/dsh-wsl-github) | 0.2.0 | github |
 | [dsh-wsl-cred](https://github.com/173787247/dsh-wsl-cred) | 0.2.0 | github |
 | [dsh-wsl-notify](https://github.com/173787247/dsh-wsl-notify) | 0.1.0 | github |
-| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.2 | not in `install.sh` |
+| [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im) | 0.3.7 | not in `install.sh` |
 | [dsh-wsl-obscura](https://github.com/173787247/dsh-wsl-obscura) | 0.1.0 | not in Daily |
 | [dsh-wsl-obsidian](https://github.com/173787247/dsh-wsl-obsidian) | 0.1.0 | not in `install.sh` (optional) |
 | [dsh-wsl-jev](https://github.com/173787247/dsh-wsl-jev) | 0.1.0 | not in `install.sh` (optional) |
@@ -320,14 +320,15 @@ Do not reopen work that already shipped (`fetch` 0.1.2, `obscura`, version floor
 
 | Track | Plan | Status |
 |-------|------|--------|
-| Feishu / WeCom / DingTalk / QQ / Slack / Discord / Telegram | Deepen [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im); **not** in `install.sh`. | **0.3.2**; awesome [#5222](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5222) |
-| Obsidian / Jev | [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev); **not** in `install.sh`. | On awesome main |
-| Local inference | ollama · llamacpp · vllm · vecmem | Repos open; see OPTIONAL_PLUGINS; awesome waves B/C pending merge |
+| Feishu / WeCom / DingTalk / QQ / Slack / Discord / Telegram / Mattermost | Deepen [dsh-wsl-im](https://github.com/173787247/dsh-wsl-im); **not** in `install.sh`. | **0.3.7**; queue [`docs/ENHANCEMENT_QUEUE.zh.md`](./docs/ENHANCEMENT_QUEUE.zh.md) |
+| Obsidian / Jev | [obsidian](https://github.com/173787247/dsh-wsl-obsidian) · [jev](https://github.com/173787247/dsh-wsl-jev); **not** in `install.sh`. | On awesome main; deepening |
+| Local inference | ollama · llamacpp · vllm · vecmem | Repos open; see OPTIONAL_PLUGINS; deepening |
 | Media / search / secrets / struct | media · search · secret · struct | Same |
-| Read-only DevOps | git · tmux · compose · systemd · k8s · helm · terraform · rclone · db · glab | Same (E–G) |
-| Desktop helpers | playwright · mail · cal · pkg | Same (H–I) |
+| Read-only DevOps | git · tmux · compose · systemd · k8s · helm · terraform · rclone · db · glab | Deepening (not “repo-only”) |
+| Desktop helpers | playwright · mail · cal · pkg | Deepening |
+| Remote bridges | [remote-ssh](https://github.com/173787247/dsh-remote-ssh) · [mac-companion](https://github.com/173787247/dsh-mac-companion) · [device-bridge](https://github.com/173787247/dsh-device-bridge) | awesome [#5873](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5873) |
 | MCP / OpenClaw / Agent Teams | Upstream or separate runtimes | Out of kit |
-| Thin UX | editor / shot / notify / picker | Deferred |
+| Thin UX | editor / shot / notify / picker | **Deepening** (ENHANCEMENT_QUEUE Wave M) |
 
 ## Security
 
