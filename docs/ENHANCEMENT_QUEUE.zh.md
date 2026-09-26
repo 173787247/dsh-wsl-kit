@@ -89,7 +89,7 @@ awesome 收录见 [`AWESOME_QUEUE.zh.md`](./AWESOME_QUEUE.zh.md)（A–J 已合�
 | P1 | kit README「kit 之外」表：IM→当前版本；remote 三仓写入；去掉暂缓措辞 |
 | P2 | `docs/CALL_CHAINS.zh.md`：IM 语音→ASR→vecmem；Mac/Win 剪贴板对称 |
 | P3 | `proxiedFetch` 复用到 jev / companion HTTP |
-| P4 | 出站 `im-plain` 评估企微/飞书是否需要 |
+| P4 | 出站 `im-plain` 评估企微/飞书 | **结论：不纳入**（富客户端 Markdown 尚可；QQ/钉钉/TG/MM 已展平） |
 
 ## 完成勾选（本机推进时改）
 
