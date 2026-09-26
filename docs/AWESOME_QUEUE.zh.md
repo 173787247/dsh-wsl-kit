@@ -28,9 +28,10 @@ A–J 全部合入。远程桥接三仓已在 awesome；本机可 `bash scripts/
 
 | PR | 内容 | 状态 |
 |----|------|------|
-| [#5926](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5926) | `dsh-wsl-im`（Mattermost / ASR / 白名单） | open |
-| [#5927](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5927) | remote-ssh · mac-companion · device-bridge | open |
-| [#5928](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5928) | editor · notify · picker | open |
+| [#5926](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5926) | `dsh-wsl-im`（Mattermost / ASR / 白名单） | open · CI 绿 |
+| [#5927](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5927) | remote-ssh · mac-companion · device-bridge | open · CI 绿 |
+| [#5928](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5928) | editor · notify · picker | open · CI 绿 |
+| [#5956](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5956) | vecmem · search · media | open |
 
 ## Wave J 说明
 
