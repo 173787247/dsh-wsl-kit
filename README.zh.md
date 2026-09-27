@@ -255,6 +255,13 @@ export NODE_USE_ENV_PROXY=1
 
 ---
 
+## 维护这个 kit
+
+哪个文件是生成的、哪个是手写的，三十二个脚本各自做什么、什么时候跑，
+以及让二十六份插件副本不漂的几条不变量：**[docs/MAINTENANCE.zh.md](./docs/MAINTENANCE.zh.md)**。
+
+---
+
 ## 完整插件目录（按需查阅）
 
 <details>

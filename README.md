@@ -253,6 +253,14 @@ Order of play: `host_reach` → `net_doctor` → `dns_doctor` → `clock_doctor`
 
 ---
 
+## Maintaining this kit
+
+Which file is generated and which is handwritten, what each of the thirty-two
+scripts does and when to run it, and the invariants that keep twenty-six plugin
+copies from drifting: **[docs/MAINTENANCE.zh.md](./docs/MAINTENANCE.zh.md)**.
+
+---
+
 ## Full catalog (reference)
 
 <details>
