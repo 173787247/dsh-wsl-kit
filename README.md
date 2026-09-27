@@ -213,9 +213,15 @@ Smoke: in a new session ask “run `net_doctor`” and “copy this path to the 
 | **Daily** | env, net, **fetch**, open, repeat-stop, tool-budget, clipboard, path, browser, launch | Most WSL + Windows-browser users |
 | **GitHub day** | Daily + [github](https://github.com/173787247/dsh-wsl-github) + [cred](https://github.com/173787247/dsh-wsl-cred) + notify | Also need PR/Actions status and `git push` credential hints |
 | **LLM** | env, net, **fetch**, hostsvc, docker, dns, clock, gpu, port, expose, tray, open, path, browser | Local Ollama / vLLM / Unsloth + connectivity |
-| **Full** | Everything in [`install.sh`](./install.sh) | GPU/Docker/clock doctors, tray, portproxy, etc. |
+| **Full** | Everything in [`install.sh`](./install.sh) — Daily + GitHub extras + doctors, plus read-only Windows host observation (perf, service, eventlog, registry, defender, power) | GPU/Docker/clock doctors, tray, portproxy, etc. |
+| **Desktop** | uia, winshot, winctl, wininput — `KIT_SET=desktop` | Want the agent to read **and drive** the Windows desktop |
 
 **Do not** start with Full — get Daily working, then add plugins for specific pains.
+
+**Desktop is a separate set on purpose.** `dsh-wsl-wininput` types and clicks,
+`dsh-wsl-winctl` moves and closes windows; `dsh-wsl-uia` and `dsh-wsl-winshot`
+are the observation half of the same pair. That is a different power level from
+reading counters and an event log, so `full` never pulls it in.
 
 ### Optional: GitHub day
 

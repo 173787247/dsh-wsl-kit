@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 # Install dsh-wsl-kit plugins into the current dsh profile (GitHub sources).
 #
-#   KIT_SET=daily|github|full|llm   (default: full — keeps old curl|bash behavior)
+#   KIT_SET=daily|github|full|llm|desktop   (default: full)
+#
+#   desktop is deliberately not folded into full: dsh-wsl-wininput types and
+#   clicks, dsh-wsl-winctl moves and closes windows. That is a different power
+#   level from reading the Windows host, so it stays a separate set.
 #   DSH_PROFILE=web             (default: web)
 #
 # Examples:
@@ -50,6 +54,23 @@ FULL_EXTRA=(
   "github:173787247/dsh-wsl-encoding"
   "github:173787247/dsh-wsl-wslconfig"
   "github:173787247/dsh-wsl-download"
+  # Windows host observation. Read-only: counters, service state, event log,
+  # registry values, Defender posture, power plan.
+  "github:173787247/dsh-wsl-perf"
+  "github:173787247/dsh-wsl-service"
+  "github:173787247/dsh-wsl-eventlog"
+  "github:173787247/dsh-wsl-registry"
+  "github:173787247/dsh-wsl-defender"
+  "github:173787247/dsh-wsl-power"
+)
+
+# Desktop observation and control on Windows. Separate from every other set:
+# wininput types and clicks, winctl moves and closes windows.
+DESKTOP_SET=(
+  "github:173787247/dsh-wsl-uia"
+  "github:173787247/dsh-wsl-winshot"
+  "github:173787247/dsh-wsl-winctl"
+  "github:173787247/dsh-wsl-wininput"
 )
 
 LLM_SET=(
@@ -81,8 +102,11 @@ case "${KIT_SET}" in
   full)
     PLUGINS+=("${GITHUB_EXTRA[@]}" "${FULL_EXTRA[@]}")
     ;;
+  desktop)
+    PLUGINS=("${DESKTOP_SET[@]}")
+    ;;
   *)
-    echo "Unknown KIT_SET=${KIT_SET} (use daily|github|full|llm)" >&2
+    echo "Unknown KIT_SET=${KIT_SET} (use daily|github|full|llm|desktop)" >&2
     exit 1
     ;;
 esac

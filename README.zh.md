@@ -213,9 +213,14 @@ curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/instal
 | **日常** | env、net、**fetch**、open、repeat-stop、tool-budget、clipboard、path、browser、launch | 绝大多数 WSL + Windows 浏览器用户 |
 | **GitHub 日常** | 日常 + [github](https://github.com/173787247/dsh-wsl-github) + [cred](https://github.com/173787247/dsh-wsl-cred) + notify | 还要查 PR/Actions、修 `git push` 凭据 |
 | **本地 LLM** | env、net、**fetch**、hostsvc、docker、dns、clock、gpu、port、expose、tray、open、path、browser | Ollama / vLLM / Unsloth + 连通性 |
-| **完整** | [`install.sh`](./install.sh) 全部 | 诊断 GPU/Docker/时钟、托盘启动、portproxy 等 |
+| **完整** | [`install.sh`](./install.sh) 全部 —— 日常 + GitHub 附加 + 诊断，**加上只读的 Windows 宿主观察**（perf、service、eventlog、registry、defender、power） | 诊断 GPU/Docker/时钟、托盘启动、portproxy 等 |
+| **桌面** | uia、winshot、winctl、wininput —— `KIT_SET=desktop` | 想让 agent 读**并且操作** Windows 桌面 |
 
 **不要**一上来装完整套——先日常跑通，再按痛点加插件。
+
+**桌面单独成集是有意的。** `dsh-wsl-wininput` 会打字和点击，`dsh-wsl-winctl`
+会移动和关闭窗口；`dsh-wsl-uia` 与 `dsh-wsl-winshot` 是同一对的观察半边。
+这与「读计数器和事件日志」不是一个权限级，所以 `full` 永远不会把它带进来。
 
 ### GitHub 日常（可选）
 
