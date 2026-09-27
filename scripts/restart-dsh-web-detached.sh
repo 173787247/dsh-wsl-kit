@@ -90,7 +90,13 @@ if ! systemctl --user is-system-running >/dev/null 2>&1; then
 fi
 
 # --collect so a failed unit does not block the next attempt with a name clash.
-CMD=(systemd-run --user --collect "--unit=${UNIT}" --description="Restart dsh web and open the UI"
+# KillMode=process: only the unit's main bash dies when the oneshot finishes.
+# Default control-group would SIGKILL the setsid/nohup dsh web + relay that
+# restart-dsh-web.sh left running in the same cgroup — which is exactly how
+# dsh looked "up for 30s then gone" after a detached restart.
+CMD=(systemd-run --user --collect "--unit=${UNIT}"
+     --property=KillMode=process
+     --description="Restart dsh web and open the UI"
      bash "${SCRIPT_DIR}/restart-dsh-web-detached.sh" --inside)
 
 if [[ "${1:-}" == "--dry" ]]; then
