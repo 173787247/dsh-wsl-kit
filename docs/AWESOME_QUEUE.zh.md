@@ -5,7 +5,7 @@
 
 不收录：`dsh-wsl-kit`、`dsh-wsl-common`。YAML：[`awesome-queue/`](./awesome-queue/)。
 
-更新于 **2026-09-25 17:40（UTC+8）**。
+更新于 **2026-09-27**。
 
 ## 状态
 
@@ -31,7 +31,9 @@ A–J 全部合入。远程桥接三仓已在 awesome；本机可 `bash scripts/
 | [#5926](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5926) | `dsh-wsl-im`（Mattermost / ASR / 白名单） | open · CI 绿 |
 | [#5927](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5927) | remote-ssh · mac-companion · device-bridge | open · CI 绿 |
 | [#5928](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5928) | editor · notify · picker | open · CI 绿 |
-| [#5956](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5956) | vecmem · search · media | open |
+| [#5956](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5956) | vecmem · search · media | open · CI 绿 |
+| [#5964](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5964) | shot · obsidian · ollama | open |
+| [#5965](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5965) | k8s · git · compose | open |
 
 ## Wave J 说明
 
