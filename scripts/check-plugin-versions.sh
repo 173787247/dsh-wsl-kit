@@ -27,6 +27,18 @@ declare -A FLOOR=(
   [dsh-wsl-path]=0.2.0
   [dsh-wsl-cred]=0.2.0
   [dsh-wsl-port]=0.2.2
+  # Windows host observation, read-only (KIT_SET=full).
+  [dsh-wsl-perf]=0.1.0
+  [dsh-wsl-service]=0.1.0
+  [dsh-wsl-eventlog]=0.1.0
+  [dsh-wsl-registry]=0.1.0
+  [dsh-wsl-defender]=0.1.0
+  [dsh-wsl-power]=0.1.0
+  # Desktop observation and control (KIT_SET=desktop).
+  [dsh-wsl-uia]=0.1.0
+  [dsh-wsl-winshot]=0.1.0
+  [dsh-wsl-winctl]=0.1.0
+  [dsh-wsl-wininput]=0.1.0
 )
 
 TRACKED=(
@@ -104,7 +116,7 @@ done
 
 echo ""
 if [[ "$failed" -ne 0 ]]; then
-  echo "RESULT: drift detected â€?dsh plugin --profile web add github:173787247/<name> then bash scripts/restart-dsh-web.sh"
+  echo "RESULT: drift detected â€” dsh plugin --profile web add github:173787247/<name> then bash scripts/restart-dsh-web.sh"
   echo "Also see scripts/post-install-check.sh for process/settings."
   exit 1
 fi
