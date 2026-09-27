@@ -48,13 +48,20 @@ dsh_open_browser() {
   local url="${1:?url required}"
   local candidates=()
 
+  # Put the URL on the Windows clipboard first. The token is per-process, so the
+  # clipboard is the one recovery route that survives everything else going
+  # wrong: if the browser opens to the wrong profile, or does not open at all,
+  # the address is already where it can be pasted.
+  if command -v clip.exe >/dev/null 2>&1; then
+    printf '%s' "$url" | clip.exe >/dev/null 2>&1 || true
+  fi
+
   if [[ -n "${DSH_BROWSER:-}" ]]; then
     candidates+=("${DSH_BROWSER}")
   else
     candidates+=(
       "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
       "/mnt/c/Program Files (x86)/Google/Chrome/Application/chrome.exe"
-      "${HOME}/AppData/Local/Google/Chrome/Application/chrome.exe"
       "/mnt/c/Users/${USER}/AppData/Local/Google/Chrome/Application/chrome.exe"
     )
   fi
@@ -74,7 +81,7 @@ dsh_open_browser() {
     return 0
   fi
 
-  echo "no browser could be opened from here; the URL is ${url}" >&2
+  echo "no browser could be opened from here; the URL is on the clipboard and is ${url}" >&2
   return 1
 }
 
