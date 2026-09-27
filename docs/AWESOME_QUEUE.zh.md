@@ -5,7 +5,7 @@
 
 不收录：`dsh-wsl-kit`、`dsh-wsl-common`。YAML：[`awesome-queue/`](./awesome-queue/)。
 
-更新于 **2026-09-27**。
+更新于 **2026-09-28**。
 
 ## 状态
 
@@ -21,8 +21,37 @@
 | **H** | playwright · mail · cal | **已合入** [#5789](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5789) |
 | **I** | pkg | **已合入** [#5790](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5790) |
 | **J** | remote-ssh · mac-companion · device-bridge | **已合入** [#5873](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5873) |
+| **K** | perf · service · eventlog | 待提交（仓龄满 1 天后） |
+| **L** | registry · defender · power | 待提交 |
+| **M** | uia · winshot · winctl | 待提交 |
+| **N** | wininput | 待提交 |
 
 A–J 全部合入。远程桥接三仓已在 awesome；本机可 `bash scripts/link-remote-bridges.sh` + ssh-lab 冒烟。
+
+## Wave K–N：Windows 宿主与桌面（2026-09-27 新建）
+
+十个仓建于 **2026-09-27**，所以首个可提交日是 **2026-09-28**。按每 PR 最多 3 条分四批。
+
+| 仓 | 分类 | 一句话 |
+|----|------|--------|
+| [dsh-wsl-perf](https://github.com/173787247/dsh-wsl-perf) | `wsl` | 宿主性能计数与占用最高的进程 |
+| [dsh-wsl-service](https://github.com/173787247/dsh-wsl-service) | `wsl` | 服务列表；单查时可到依赖、账户、进程号 |
+| [dsh-wsl-eventlog](https://github.com/173787247/dsh-wsl-eventlog) | `wsl` | 事件日志，可按来源与时间窗过滤 |
+| [dsh-wsl-registry](https://github.com/173787247/dsh-wsl-registry) | `wsl` | 注册表只读，限定在允许的键前缀内 |
+| [dsh-wsl-defender](https://github.com/173787247/dsh-wsl-defender) | `wsl` | Defender 状态、近期检出、排除项 |
+| [dsh-wsl-power](https://github.com/173787247/dsh-wsl-power) | `wsl` | 电源方案、电池、休眠超时 |
+| [dsh-wsl-uia](https://github.com/173787247/dsh-wsl-uia) | `wsl` | UI Automation：窗口枚举、元素树、按名等待 |
+| [dsh-wsl-winshot](https://github.com/173787247/dsh-wsl-winshot) | `wsl` | 截窗，可裁剪到区域或指定元素 |
+| [dsh-wsl-winctl](https://github.com/173787247/dsh-wsl-winctl) | `wsl` | 窗口控制：激活、最小化、移动、置顶、关闭 |
+| [dsh-wsl-wininput](https://github.com/173787247/dsh-wsl-wininput) | `wsl` | 定向输入：按键、点击、滚轮 |
+
+**描述都对着代码写过一遍** —— 收录方会核对描述与实现是否相符，
+「Overstating is the one thing that gets an otherwise-good plugin sent back」。
+新增的动作（`wait`、`path`、`key`、`scroll`、`state`、`topmost`、裁剪、
+`detail`、`subkeys`、provider 过滤、`all`）都写进了对应的描述里。
+
+**`dsh-wsl-uia` 与 `dsh-wsl-wininput` 是给 agent 操作桌面的能力**，
+收录后在 `install.sh` 里仍属独立的 `KIT_SET=desktop`，不会被 `full` 带进来。
 
 ## 加深后描述更新（2026-09-26）
 
