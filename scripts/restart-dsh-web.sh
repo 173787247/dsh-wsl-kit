@@ -8,23 +8,27 @@ export OLLAMA_API_KEY="${OLLAMA_API_KEY:-ollama}"
 export NO_PROXY="127.0.0.1,localhost"
 export no_proxy="$NO_PROXY"
 
-# Optional IM bridge (dsh-wsl-im): WeCom/Feishu/… credentials
-if [[ -f "${HOME}/.dsh/dsh-wsl-im.env" ]]; then
-  # shellcheck disable=SC1091
-  set -a
-  # strip CRLF if file edited on Windows
-  # shellcheck disable=SC1090
-  source <(tr -d '\r' < "${HOME}/.dsh/dsh-wsl-im.env")
-  set +a
-fi
-
-# Optional Jev / System One (dsh-wsl-jev): OpenRouter or TypeSafe key
-if [[ -f "${HOME}/.dsh/dsh-wsl-jev.env" ]]; then
-  set -a
-  # shellcheck disable=SC1090
-  source <(tr -d '\r' < "${HOME}/.dsh/dsh-wsl-jev.env")
-  set +a
-fi
+# Credentials and per-plugin config, from one file first: ~/.dsh/.env
+#
+# It used to be dsh-wsl-im.env plus dsh-wsl-jev.env plus .credentials.yaml --
+# three places for nineteen keys, and the next plugin would have made a fourth.
+# The consolidated file has three sections inside it (secrets / feature flags /
+# proxy) so the flags can be handed to someone without the secrets.
+#
+# The two old files are still sourced afterwards, so an existing install keeps
+# working and a plugin can override a single value by keeping its own .env.
+#
+# Later files win. CRLF is stripped because these get edited on the Windows side.
+for f in "${HOME}/.dsh/.env" \
+         "${HOME}/.dsh/dsh-wsl-im.env" \
+         "${HOME}/.dsh/dsh-wsl-jev.env"; do
+  if [[ -f "$f" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    source <(tr -d '\r' < "$f")
+    set +a
+  fi
+done
 
 pkill -f 'node.*/dsh web' 2>/dev/null || true
 pkill -f 'dsh-port-relay.py' 2>/dev/null || true
