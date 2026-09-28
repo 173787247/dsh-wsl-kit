@@ -1,5 +1,35 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
+# Windows interop paths, re-added explicitly.
+#
+# WSL appends the Windows PATH when a process is started from Windows, and every
+# interop tool depends on it: clip.exe, powershell.exe, explorer.exe, cmd.exe.
+# A process started through the detached restart does NOT get that -- it inherits
+# systemd's minimal environment -- so after the first detached restart the whole
+# set became unreachable from inside dsh:
+#
+#   $ command -v powershell.exe     -> nothing
+#   $ echo $PATH | grep -c /mnt/c   -> 0
+#
+# The symptom that surfaced first was the clipboard reporting success while
+# /tmp/dsh-ui-url never reached Windows: dsh_open_browser's `command -v clip.exe`
+# guard passed by simply doing nothing, which is what a guard should do and also
+# why it stayed invisible.
+#
+# Only added when the directory exists, so a non-WSL host is unaffected, and
+# only when absent, so a PATH that already has them is left alone.
+for _d in /mnt/c/WINDOWS/system32 /mnt/c/WINDOWS \
+          /mnt/c/WINDOWS/System32/Wbem \
+          /mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0 \
+          /mnt/c/WINDOWS/System32/OpenSSH; do
+  case ":${PATH}:" in
+    *":${_d}:"*) ;;
+    *) [[ -d "$_d" ]] && PATH="${PATH}:${_d}" ;;
+  esac
+done
+unset _d
+
 export PATH="${HOME}/.local/bin:/usr/local/bin:${PATH}"
 export NODE_USE_ENV_PROXY=1
 export OLLAMA_API_KEY="${OLLAMA_API_KEY:-ollama}"
@@ -95,7 +125,13 @@ for i in 1 2 3 4 5 6; do
   fi
 done
 
-sed 's/\r$//' /mnt/c/Users/rchua/Desktop/AIFullStackDevelopment/dsh-wsl-kit/scripts/dsh-port-relay.py > "/tmp/dsh-port-relay-${DSH_RELAY_PORT}.py"
+# SCRIPT_DIR, not the Windows checkout. This line used to name
+# /mnt/c/.../dsh-wsl-kit/scripts/dsh-port-relay.py, so a script running from the
+# WSL clone still read the relay out of the other clone -- one of the two places
+# the two copies could disagree, and the one that cost a working fix earlier
+# today when a sync copied the older file back over it.
+SCRIPT_DIR_RELAY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+sed 's/\r$//' "${SCRIPT_DIR_RELAY}/dsh-port-relay.py" > "/tmp/dsh-port-relay-${DSH_RELAY_PORT}.py"
 setsid nohup python3 "/tmp/dsh-port-relay-${DSH_RELAY_PORT}.py" \
   --listen "${DSH_RELAY_PORT}" --target "${DSH_WEB_PORT}" \
   >> "/tmp/dsh-relay-${DSH_RELAY_PORT}.log" 2>&1 < /dev/null &
