@@ -21,10 +21,10 @@
 | **H** | playwright · mail · cal | **已合入** [#5789](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5789) |
 | **I** | pkg | **已合入** [#5790](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5790) |
 | **J** | remote-ssh · mac-companion · device-bridge | **已合入** [#5873](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/5873) |
-| **K** | perf · service · eventlog | 待提交（仓龄满 1 天后） |
-| **L** | registry · defender · power | 待提交 |
-| **M** | uia · winshot · winctl | 待提交 |
-| **N** | wininput | 待提交 |
+| **K** | perf · service · eventlog | **已提交** [#6044](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/6044) |
+| **L** | registry · defender · power | **已提交** [#6045](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/6045) |
+| **M** | uia · winshot · winctl | **已提交** [#6046](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/6046) |
+| **N** | wininput | **已提交** [#6047](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/6047) |
 
 A–J 全部合入。远程桥接三仓已在 awesome；本机可 `bash scripts/link-remote-bridges.sh` + ssh-lab 冒烟。
 
@@ -49,6 +49,49 @@ A–J 全部合入。远程桥接三仓已在 awesome；本机可 `bash scripts/
 「Overstating is the one thing that gets an otherwise-good plugin sent back」。
 新增的动作（`wait`、`path`、`key`、`scroll`、`state`、`topmost`、裁剪、
 `detail`、`subkeys`、provider 过滤、`all`）都写进了对应的描述里。
+
+### K–N 首次提交实录（2026-09-28）
+
+四个 PR 当天全部开出。首轮 CI 的结果值得记下来，因为**收到方的报错提示把人带偏了**：
+
+```
+check            FAILURE
+Submission gate  FAILURE
+  → data/plugins/...perf.yml — bad indentation of a mapping entry (5:40)
+  → A common cause is an encoding round-trip: a `zh:` description written in
+    UTF-8, opened by an editor as GBK and saved back, comes out as mojibake.
+```
+
+**按那段提示去查编码，是白费力气。** 实测把 fork 分支上的文件和本地做字节比对：
+
+```
+perf      本地 0f37c6f8  远端 0f37c6f8  ✓ 完全一致
+service   本地 736f2d61  远端 736f2d61  ✓ 完全一致
+```
+
+**真因是普通 YAML：** 未加引号的标量里不能出现冒号+空格，否则解析成嵌套映射。
+7 个条目都用了「X from WSL: 细节」这个句式，冒号正好落在 CI 报的那一列：
+
+```yaml
+en: Windows host performance from WSL: CPU, memory, disk and top processes.
+                                     ↑ 第 40 列
+```
+
+通过的 3 个（eventlog / registry / winshot）值里没有冒号。
+
+**修法：给 `en` / `zh` 的值加引号**，并用收录方同一个 `js-yaml` 在本地复验
+—— 解析不过的修复，现在在本地就拦住，不会走到 PR 里。10/10 通过。
+
+**修完之后的 gate：**
+
+```
+- repository is 0.7 days old (needs 1) — nothing to do: this check re-runs by
+  itself and should clear in about 8h. No need to resubmit, push, or close and
+  reopen; the age bar is the only thing failing here.
+```
+
+年龄是**唯一一个靠时间自愈**的失败项：`regate.yml` 每 6 小时（UTC 19 分）重跑一次，
+匹配 `/days old/` 这条措辞，判定会自己翻绿。**提交了什么都不用做。**
 
 **`dsh-wsl-uia` 与 `dsh-wsl-wininput` 是给 agent 操作桌面的能力**，
 收录后在 `install.sh` 里仍属独立的 `KIT_SET=desktop`，不会被 `full` 带进来。
