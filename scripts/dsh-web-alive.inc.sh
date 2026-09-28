@@ -1,5 +1,13 @@
 # shellcheck shell=bash
 # Shared helpers for dsh ≥0.1.2 launch-token auth (sourced, not executed).
+#
+# Ports and files are read from the environment on every call rather than
+# captured at source time, so the same helpers serve a second instance started
+# for a rehearsal. Defaults are the live values.
+dsh_web_port() { echo "${DSH_WEB_PORT:-3080}"; }
+dsh_relay_port() { echo "${DSH_RELAY_PORT:-3081}"; }
+dsh_web_log() { echo "${DSH_WEB_LOG:-/tmp/dsh-web.log}"; }
+dsh_ui_url_file() { echo "${DSH_UI_URL_FILE:-/tmp/dsh-ui-url}"; }
 
 dsh_http_up() {
   case "${1:-}" in
@@ -16,16 +24,18 @@ dsh_http_up() {
 # Measured on a real log: 40 NUL bytes, `grep -oE` printed nothing,
 # `grep -aoE` printed the token.
 dsh_ui_url_from_log() {
-  local log="${1:-/tmp/dsh-web.log}"
+  local log="${1:-$(dsh_web_log)}"
+  local web; web="$(dsh_web_port)"
+  local relay; relay="$(dsh_relay_port)"
   local raw=""
   if [[ -f "$log" ]]; then
     # tail -1 because a restarted process appends another token; the last is current.
-    raw="$(grep -aoE 'http://127\.0\.0\.1:3080/\?token=[A-Za-z0-9._~-]+' "$log" | tail -1 || true)"
+    raw="$(grep -aoE "http://127\.0\.0\.1:${web}/\?token=[A-Za-z0-9._~-]+" "$log" | tail -1 || true)"
   fi
   if [[ -n "$raw" ]]; then
-    echo "${raw/3080/3081}"
+    echo "${raw/:${web}\//:${relay}\/}"
   else
-    echo "http://127.0.0.1:3081/"
+    echo "http://127.0.0.1:${relay}/"
   fi
 }
 
@@ -87,10 +97,10 @@ dsh_open_browser() {
 
 dsh_write_ui_url() {
   local url
-  url="$(dsh_ui_url_from_log "${1:-/tmp/dsh-web.log}")"
-  printf '%s\n' "$url" > /tmp/dsh-ui-url
+  url="$(dsh_ui_url_from_log "${1:-$(dsh_web_log)}")"
+  printf '%s\n' "$url" > "$(dsh_ui_url_file)"
   if ! dsh_ui_url_usable "$url"; then
-    echo "warning: no token found in ${1:-/tmp/dsh-web.log}; this URL returns 401" >&2
+    echo "warning: no token found in ${1:-$(dsh_web_log)}; this URL returns 401" >&2
     echo "         the log may predate the running process -- check it was started with output to that file" >&2
   fi
   echo "$url"

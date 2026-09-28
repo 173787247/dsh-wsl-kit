@@ -19,7 +19,20 @@ export no_proxy="$NO_PROXY"
 # working and a plugin can override a single value by keeping its own .env.
 #
 # Later files win. CRLF is stripped because these get edited on the Windows side.
+# plugin-flags.env is sourced explicitly rather than living in .env, because dsh
+# reads ~/.dsh/.env itself and refuses to start if it finds a DSH_-prefixed name
+# there (BOOTSTRAP_PREFIXES in dsh-app-boot). The only names it exempts in that
+# file are HTTP_PROXY, HTTPS_PROXY, ALL_PROXY and NO_PROXY.
+#
+#   Error: dsh: ~/.dsh/.env sets "DSH_IM_DINGTALK", which only the launching
+#          environment may set
+#
+# Consolidating the old per-plugin files into .env put twelve DSH_* names there
+# and made every subsequent start fail — the running process was unaffected only
+# because it predated the file. Sourcing them here is an export from the
+# launching environment, which is what dsh asks for.
 for f in "${HOME}/.dsh/.env" \
+         "${HOME}/.dsh/plugin-flags.env" \
          "${HOME}/.dsh/dsh-wsl-im.env" \
          "${HOME}/.dsh/dsh-wsl-jev.env"; do
   if [[ -f "$f" ]]; then
@@ -30,39 +43,69 @@ for f in "${HOME}/.dsh/.env" \
   fi
 done
 
-pkill -f 'node.*/dsh web' 2>/dev/null || true
-pkill -f 'dsh-port-relay.py' 2>/dev/null || true
+# Ports, log and URL file are parameters with the live values as defaults, so a
+# second instance can be started and restarted on another port without touching
+# the one in use. That matters because a restart is the one operation that can
+# take dsh down, and until now there was no way to rehearse it: every path in
+# this script and in dsh-web-alive.inc.sh named 3080 and 3081 outright.
+#
+#   DSH_WEB_PORT=3090 DSH_RELAY_PORT=3091 \
+#   DSH_WEB_LOG=/tmp/dsh-web-3090.log DSH_UI_URL_FILE=/tmp/dsh-ui-url-3090 \
+#     bash scripts/restart-dsh-web.sh
+export DSH_WEB_PORT="${DSH_WEB_PORT:-3080}"
+export DSH_RELAY_PORT="${DSH_RELAY_PORT:-3081}"
+export DSH_WEB_LOG="${DSH_WEB_LOG:-/tmp/dsh-web.log}"
+export DSH_UI_URL_FILE="${DSH_UI_URL_FILE:-/tmp/dsh-ui-url}"
+
+# Scoped to this port. The original pattern was 'node.*/dsh web', which kills
+# every instance on the machine -- fine when there is only one, and a way to
+# take down the live server while testing a second one.
+#
+# The terminator is [^0-9] rather than an end anchor, because the real command
+# line continues past the port:
+#
+#   node .../dsh web --no-open --port 3080 --trusted-host 127.0.0.1:3081
+#
+# An earlier version of this line ended the pattern with $, which matched
+# nothing at all -- the restart would have spawned a second instance that could
+# not bind, and reported a port conflict instead of a restart. Verified against
+# the running process: see the pattern checks in the kit's own notes.
+pkill -f "dsh web .*--port ${DSH_WEB_PORT}([^0-9]|\$)" 2>/dev/null || true
+pkill -f "dsh-port-relay.*${DSH_RELAY_PORT}" 2>/dev/null || true
 sleep 1
 
-setsid nohup dsh web --no-open --port 3080 --trusted-host 127.0.0.1:3081 \
-  >> /tmp/dsh-web.log 2>&1 < /dev/null &
+setsid nohup dsh web --no-open --port "${DSH_WEB_PORT}" \
+  --trusted-host "127.0.0.1:${DSH_RELAY_PORT}" \
+  >> "${DSH_WEB_LOG}" 2>&1 < /dev/null &
 DSH_PID=$!
-echo "spawned shell pid=$DSH_PID"
+echo "spawned shell pid=$DSH_PID (port ${DSH_WEB_PORT})"
 sleep 4
-REAL="$(pgrep -n -f 'node.*/dsh web' || true)"
+REAL="$(pgrep -n -f "dsh web .*--port ${DSH_WEB_PORT}([^0-9]|\$)" || true)"
 echo "node pid=${REAL:-none}"
-ss -tlnp | grep 3080 || echo "no 3080 yet"
+ss -tlnp | grep "${DSH_WEB_PORT}" || echo "no ${DSH_WEB_PORT} yet"
 
 for i in 1 2 3 4 5 6; do
   sleep 5
-  if pgrep -f 'node.*/dsh web' >/dev/null; then
-    echo "t=$((i*5))s alive code=$(curl --noproxy '*' -s -o /dev/null -w '%{http_code}' --connect-timeout 2 http://127.0.0.1:3080/ || echo fail)"
+  if pgrep -f "dsh web .*--port ${DSH_WEB_PORT}([^0-9]|\$)" >/dev/null; then
+    echo "t=$((i*5))s alive code=$(curl --noproxy '*' -s -o /dev/null -w '%{http_code}' --connect-timeout 2 "http://127.0.0.1:${DSH_WEB_PORT}/" || echo fail)"
   else
     echo "t=$((i*5))s DEAD"
-    tail -20 /tmp/dsh-web.log
+    tail -20 "${DSH_WEB_LOG}"
     exit 1
   fi
 done
 
-sed 's/\r$//' /mnt/c/Users/rchua/Desktop/AIFullStackDevelopment/dsh-wsl-kit/scripts/dsh-port-relay.py > /tmp/dsh-port-relay.py
-setsid nohup python3 /tmp/dsh-port-relay.py >> /tmp/dsh-relay.log 2>&1 < /dev/null &
+sed 's/\r$//' /mnt/c/Users/rchua/Desktop/AIFullStackDevelopment/dsh-wsl-kit/scripts/dsh-port-relay.py > "/tmp/dsh-port-relay-${DSH_RELAY_PORT}.py"
+setsid nohup python3 "/tmp/dsh-port-relay-${DSH_RELAY_PORT}.py" \
+  --listen "${DSH_RELAY_PORT}" --target "${DSH_WEB_PORT}" \
+  >> "/tmp/dsh-relay-${DSH_RELAY_PORT}.log" 2>&1 < /dev/null &
 sleep 1
-echo "relay=$(pgrep -n -f dsh-port-relay.py || echo none)"
-curl --noproxy '*' -s -o /dev/null -w "3080=%{http_code} " --connect-timeout 3 http://127.0.0.1:3080/ || echo -n "3080=fail "
-curl --noproxy '*' -s -o /dev/null -w "3081=%{http_code}\n" --connect-timeout 3 http://127.0.0.1:3081/ || echo "3081=fail"
+echo "relay=$(pgrep -n -f "dsh-port-relay-${DSH_RELAY_PORT}" || echo none)"
+curl --noproxy '*' -s -o /dev/null -w "${DSH_WEB_PORT}=%{http_code} " --connect-timeout 3 "http://127.0.0.1:${DSH_WEB_PORT}/" || echo -n "${DSH_WEB_PORT}=fail "
+curl --noproxy '*' -s -o /dev/null -w "${DSH_RELAY_PORT}=%{http_code}\n" --connect-timeout 3 "http://127.0.0.1:${DSH_RELAY_PORT}/" || echo "${DSH_RELAY_PORT}=fail"
 # shellcheck source=dsh-web-alive.inc.sh
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/dsh-web-alive.inc.sh"
-ui="$(dsh_write_ui_url /tmp/dsh-web.log)"
+ui="$(dsh_write_ui_url "${DSH_WEB_LOG}")"
 echo "OK — open ${ui}"
-echo "(dsh ≥0.1.2: bare :3081 is 401; token is one-shot per process, also in /tmp/dsh-ui-url)"
+echo "(dsh ≥0.1.2: bare :${DSH_RELAY_PORT} is 401; token is one-shot per process, also in ${DSH_UI_URL_FILE})"
