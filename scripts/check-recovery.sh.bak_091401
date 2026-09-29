@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+# Will dsh come back if it restarts?
+#
+# check-dsh-health.sh answers a different question: is it up now. That check
+# passed every time today while the recovery path was broken in seven separate
+# ways -- a health check cannot see a future restart.
+#
+# Every check here is one of the failures that actually happened, or the
+# precondition for one:
+#
+#   1  ~/.dsh/.env carries a DSH_-prefixed name      dsh refuses to start
+#   2  the launcher scripts do not parse             nothing happens on click
+#   3  the desktop shortcut target does not resolve  nothing happens on click
+#   4  the generated distro name is not the real one \\wsl.localhost\WSL\...
+#   5  a restart script lost its interop PATH        clip.exe and friends vanish
+#   6  the restart scripts lost their shape          port-scoped kill, KillMode
+#   7  the vector store's items and rows disagree    search silently returns 0
+#
+# Exit 0 when ready, 1 when not. Prints one line per check so a failure says
+# which precondition broke rather than only that something did.
+#
+#   bash scripts/check-recovery.sh
+#   DSH_WSL_KIT=... bash scripts/check-recovery.sh
+#
+# Needs powershell.exe for the parse and shortcut checks; those are reported as
+# skipped when it is unreachable, so the script is still useful without it.
+set -uo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+KIT="${DSH_WSL_KIT:-$(cd "${SCRIPT_DIR}/.." && pwd)}"
+TRAY="${HOME}/.dsh/tray"
+fail=0
+skip=0
+
+ok()   { printf '  OK    %s\n' "$1"; }
+bad()  { printf '  FAIL  %s\n' "$1"; fail=$((fail + 1)); }
+note() { printf '  --    %s\n' "$1"; skip=$((skip + 1)); }
+
+# 1 ── dsh reads ~/.dsh/.env itself and refuses to start on a DSH_ name.
+#      BOOTSTRAP_PREFIXES in dsh-app-boot; HOME_LAYER_PROXY_NAMES is the only
+#      exemption, and only in the home layer.
+if [[ -f "${HOME}/.dsh/.env" ]]; then
+  offenders="$(grep -cE '^[[:space:]]*(export[[:space:]]+)?DSH_' "${HOME}/.dsh/.env" 2>/dev/null || true)"
+  if [[ "${offenders:-0}" == "0" ]]; then
+    ok "~/.dsh/.env has no DSH_ names"
+  else
+    bad "~/.dsh/.env has ${offenders} DSH_ names — dsh will refuse to start"
+    grep -nE '^[[:space:]]*(export[[:space:]]+)?DSH_' "${HOME}/.dsh/.env" | head -3 | sed 's/^/          /'
+  fi
+else
+  note "~/.dsh/.env absent (nothing to check)"
+fi
+
+# 2 ── the launcher scripts must parse, and must not carry the two shapes that
+#      broke them: Start-Process -ArgumentList, and an unquoted PATH assignment.
+if [[ -d "${TRAY}" ]] && command -v powershell.exe >/dev/null 2>&1; then
+  # The tray lives in WSL, so Windows reaches it through the share. Built here
+  # rather than inside PowerShell: WSL environment variables do not cross into
+  # powershell.exe, so reading them there silently produced an empty path and
+  # every file came back "absent".
+  unc_distro="$(wslpath -w / 2>/dev/null | awk -F'\\\\' '{print $4}')"
+  [[ -z "${unc_distro}" ]] && unc_distro="${WSL_DISTRO_NAME:-}"
+  unc_base="\\\\wsl.localhost\\${unc_distro}\\home\\${USER}\\.dsh\\tray"
+  ps_out="$(powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "
+    \$base = '${unc_base}'
+    foreach (\$n in @('start-dsh-web.ps1','check-dsh-health.ps1','open-dsh-ui.ps1')) {
+      \$p = Join-Path \$base \$n
+      if (-not (Test-Path \$p)) { Write-Output ('SKIP ' + \$n); continue }
+      \$t = \$null; \$e = \$null
+      [void][System.Management.Automation.Language.Parser]::ParseFile(\$p, [ref]\$t, [ref]\$e)
+      if (\$e -and \$e.Count -gt 0) { Write-Output ('FAIL ' + \$n + ' ' + \$e[0].Message) }
+      else { Write-Output ('OK ' + \$n) }
+    }" 2>/dev/null | tr -d '\r' | grep -a . || true)"
+  while IFS= read -r line; do
+    case "$line" in
+      "OK "*)   ok "parses: ${line#OK }" ;;
+      "SKIP "*) note "absent: ${line#SKIP }" ;;
+      "FAIL "*) bad "does not parse: ${line#FAIL }" ;;
+    esac
+  done <<< "${ps_out:-SKIP powershell-not-usable}"
+else
+  note "powershell.exe not reachable (cannot parse-check the launchers)"
+fi
+
+# 3 & 4 ── the desktop shortcut, and the distro name baked into the scripts.
+if [[ -d "${TRAY}" ]]; then
+  real_distro="$(wslpath -w / 2>/dev/null | sed -n 's|^\\\\wsl\(\.localhost\|\$\)\\\([^\\]*\)\\\\.*|\2|p')"
+  [[ -z "${real_distro}" ]] && real_distro="$(wslpath -w / 2>/dev/null | awk -F'\\\\' '{print $4}')"
+  if [[ -n "${real_distro}" ]]; then
+    for f in "${TRAY}"/*.ps1; do
+      [[ -f "$f" ]] || continue
+      # The generated $distro = '...' must be the distro Windows knows.
+      gen="$(grep -oE "^\\\$distro = '[^']*'" "$f" 2>/dev/null | head -1 | sed "s/.*'\(.*\)'/\1/")"
+      if [[ -n "${gen}" && "${gen}" != "${real_distro}" ]]; then
+        bad "$(basename "$f") says distro '${gen}', real one is '${real_distro}'"
+      fi
+    done
+    if ! grep -q "distro '.*'\|\\\$distro = '${real_distro}'" "${TRAY}/start-dsh-web.ps1" 2>/dev/null; then
+      ok "distro name matches wslpath (${real_distro})"
+    fi
+  else
+    note "wslpath gave no distro name (cannot cross-check)"
+  fi
+fi
+
+# 5 ── the interop PATH the detached restart has to restore.
+if grep -q '/mnt/c/WINDOWS/system32' "${KIT}/scripts/restart-dsh-web.sh" 2>/dev/null; then
+  ok "restart-dsh-web.sh restores the Windows interop PATH"
+else
+  bad "restart-dsh-web.sh does not restore the interop PATH — clip.exe will vanish"
+fi
+
+# 6 ── the shapes that took two restarts to get right.
+r="${KIT}/scripts/restart-dsh-web.sh"
+d="${KIT}/scripts/restart-dsh-web-detached.sh"
+[[ -f "$r" ]] || bad "missing ${r}"
+[[ -f "$d" ]] || bad "missing ${d}"
+if [[ -f "$r" ]]; then
+  # The pkill LINE, not the file. Checking the whole file passed while the pkill
+  # was broken, because the pgrep calls further down carry the same pattern --
+  # the check was asking "does this text appear anywhere" when the question is
+  # "does the kill use it". Same mistake as verifying a shortcut by building the
+  # path myself instead of reading the one it was written with.
+  kill_line="$(grep -E '^[[:space:]]*pkill -f .*dsh web' "$r" 2>/dev/null | head -1)"
+  if [[ -z "${kill_line}" ]]; then
+    bad "restart-dsh-web.sh has no port-scoped pkill for dsh web"
+  elif [[ "${kill_line}" == *'port ${DSH_WEB_PORT}([^0-9]|'* ]]; then
+    ok "restart kills only its own port"
+  else
+    bad "restart's pkill is not port-scoped — it will kill a rehearsal, or a live instance"
+    printf '          %s\n' "${kill_line}"
+  fi
+fi
+if [[ -f "$d" ]]; then
+  grep -q 'KillMode=process' "$d" \
+    && ok "detached restart sets KillMode=process" \
+    || bad "detached restart without KillMode=process — the unit kills the dsh it started"
+  grep -q 'date +%H%M%S' "$d" \
+    && ok "detached restart uses a unique unit name" \
+    || bad "fixed unit name — the second restart will fail with 'already loaded'"
+fi
+
+# 7 ── the vector store: items and rows must agree, or search returns nothing
+#      and reports success.
+STORE="${HOME}/.dsh/vecmem/store.json"
+VEC="${HOME}/.dsh/vecmem/store.vectors.f32"
+if [[ -f "${STORE}" && -f "${VEC}" ]]; then
+  read -r n dims < <(node -e '
+    const j = JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"));
+    console.log((j.items?.length ?? 0) + " " + (j.dims ?? 0));
+  ' "${STORE}" 2>/dev/null || echo "0 0")
+  if [[ "${dims}" == "0" || -z "${dims}" ]]; then
+    bad "vecmem store.json has no dims — search will return 0 hits and no error"
+  else
+    actual="$(stat -c %s "${VEC}" 2>/dev/null || echo 0)"
+    expect=$(( n * dims * 4 ))
+    if [[ "${actual}" == "${expect}" ]]; then
+      ok "vecmem consistent (${n} items x ${dims} dims)"
+    else
+      bad "vecmem rows do not match items: ${actual} bytes, expected ${expect}"
+    fi
+  fi
+else
+  note "vecmem store not present (nothing to check)"
+fi
+
+echo
+if [[ "${fail}" == "0" ]]; then
+  echo "  RECOVERY READY  (${skip} skipped)"
+  exit 0
+fi
+echo "  NOT READY — ${fail} problem(s), ${skip} skipped"
+echo "  A restart may not come back. Fix the FAIL lines above before relying on it."
+exit 1
