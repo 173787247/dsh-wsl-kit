@@ -57,4 +57,4 @@ fi
 echo "=== settings ollama ctx ==="
 grep -A3 'qwen38-27b-local' ~/.dsh/settings.yaml | head -8 || true
 echo "=== host_reach smoke ==="
-node /mnt/c/Users/rchua/Desktop/AIFullStackDevelopment/dsh-wsl-kit/scripts/run-host-reach.mjs 2>&1 | tail -30
+node "${SCRIPT_DIR}/run-host-reach.mjs" 2>&1 | tail -30
