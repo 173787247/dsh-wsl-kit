@@ -28,8 +28,25 @@ DETACHED="$HERE/restart-dsh-web-detached.sh"
 
 DRY=0
 [ "${1:-}" = "--dry" ] && { DRY=1; shift; }
-TARGET="${1:-}"
-[ -n "$TARGET" ] || { echo "用法: $0 [--dry] <版本，如 0.2.0-rc.1>"; exit 2; }
+RAW="${1:-}"
+[ -n "$RAW" ] || { echo "用法: $0 [--dry] <版本号 | release URL>"; exit 2; }
+
+# ★ 也接受一个 release URL —— 因为那正是人会拿到的东西。
+#   在 GitHub 的 releases 页上，能复制的是
+#     https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.0-rc.2
+#   而不是光秃秃的 "0.2.0-rc.2"。让人自己把 tag 从 URL 里抠出来是多此一举。
+#   两个 tag 前缀都要认：release 用 `dsh-v`，npm 用裸版本号。
+TARGET="$RAW"
+case "$RAW" in
+  http://*|https://*)
+    TARGET="${RAW##*/}"                 # 取最后一段
+    TARGET="${TARGET#dsh-v}"            # GitHub release 的 dsh-v 前缀
+    TARGET="${TARGET#dsh-}"
+    TARGET="${TARGET#v}"
+    ;;
+  dsh-v*) TARGET="${RAW#dsh-v}" ;;
+  dsh-*)  TARGET="${RAW#dsh-}" ;;
+esac
 
 cd "${HOME}" || true   # ★ dsh 需要 cwd 有 package.json；kit 目录没有
 
@@ -37,6 +54,7 @@ log() { printf '%s  %s\n' "$(date '+%H:%M:%S')" "$*"; }
 
 log "════ 计划 ════"
 log "  目标版本   $TARGET"
+[ "$RAW" != "$TARGET" ] && log "             （从 $RAW 解析得到）"
 log "  当前版本   $(dsh --version 2>/dev/null || echo unknown)"
 log "  安装位置   $LIVE"
 log "  流程       备份 → 升级 → 重打本地定制 → 验证 → 起回来"
