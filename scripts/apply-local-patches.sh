@@ -52,6 +52,8 @@ PATCHES=(
   "02-cordis-backports.sh|三个 cordis 补丁（进程不再被未捕获拒绝打死）"
 )
 
+cd "${HOME}" || true   # ★ 同上
+
 echo "════ 本地定制 ════"
 echo "  DSH    $DSH"
 echo "  版本   $(node -e "console.log(require('$DSH/package.json').version)" 2>/dev/null || echo '?')"

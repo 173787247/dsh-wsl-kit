@@ -66,6 +66,30 @@ dsh_open_browser() {
     printf '%s' "$url" | clip.exe >/dev/null 2>&1 || true
   fi
 
+  # ── Preferred: let Windows open it, not us ────────────────────────────────
+  #
+  # Do NOT call chrome.exe directly from WSL. Measured 2026-09-29: invoking
+  # chrome.exe over interop either attaches to nothing (a new window or a
+  # different profile, so the tab the user is looking at never updates) or
+  # hangs, and either way the shell returns 0 immediately -- the restart
+  # reports success while the browser is still on a dead token. That is why a
+  # restart that "worked" still needed the desktop shortcut clicked.
+  #
+  # `Start-Process` goes through the Windows shell, which hands the URL to the
+  # browser that is already running with the profile the user actually uses,
+  # which is exactly what start-dsh-web.ps1 has always done. Same behaviour
+  # from both entry points.
+  if command -v powershell.exe >/dev/null 2>&1; then
+    # -EncodedCommand avoids every layer of WSL->Windows quoting.
+    local ps url_b64
+    url_b64="$(printf '%s' "$url" | base64 -w0)"
+    ps="\$u=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${url_b64}')); Start-Process \$u"
+    powershell.exe -NoProfile -NonInteractive -EncodedCommand \
+      "$(printf '%s' "$ps" | iconv -f UTF-8 -t UTF-16LE | base64 -w0)" \
+      >/dev/null 2>&1 &
+    return 0
+  fi
+
   if [[ -n "${DSH_BROWSER:-}" ]]; then
     candidates+=("${DSH_BROWSER}")
   else

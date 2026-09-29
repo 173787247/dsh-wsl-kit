@@ -31,6 +31,8 @@ DRY=0
 TARGET="${1:-}"
 [ -n "$TARGET" ] || { echo "用法: $0 [--dry] <版本，如 0.2.0-rc.1>"; exit 2; }
 
+cd "${HOME}" || true   # ★ dsh 需要 cwd 有 package.json；kit 目录没有
+
 log() { printf '%s  %s\n' "$(date '+%H:%M:%S')" "$*"; }
 
 log "════ 计划 ════"
@@ -59,6 +61,15 @@ sleep 3
 
 # ── 3 升级 ─────────────────────────────────────────────────────────────────
 log "════ 3/6 安装 @deepseek-ai/dsh@$TARGET ════"
+# ★ npm 装到一半被中断会留下暂存目录 .dsh-XXXXXX，它会让【之后每一次安装】都失败：
+#   ENOTEMPTY: rename 'dsh' -> '.dsh-XXXXXX'
+#   （2026-09-29 实测踩到，残留的是 09-24 那个 547 MB 的 0.1.7-rc.1）
+#   所以装之前先清掉。
+for stale in "${LIVE%/dsh}"/.dsh-*; do
+  [ -d "$stale" ] || continue
+  log "  清理残留暂存目录 $(basename "$stale")（$(du -sh "$stale" 2>/dev/null | cut -f1)）"
+  mv "$stale" "/tmp/stale-dsh-staging-$(date +%s)" 2>/dev/null || rm -rf "$stale"
+done
 if npm install -g --prefix "${HOME}/.local" "@deepseek-ai/dsh@${TARGET}" 2>&1 | tail -4; then
   log "  ✓ 新版本 $(dsh --version 2>/dev/null || echo unknown)"
 else
