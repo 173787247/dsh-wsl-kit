@@ -347,3 +347,61 @@ Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" |
 - `upgrade-dsh-full.sh` 里发起 `systemd-run` 时**要显式把 Windows 路径加进 `PATH`**，
   否则 `command -v powershell.exe` 找不到，那一整步静默跳过。
 - **桌面快捷方式仍然是保底**，而且它从未被改动过 —— 无论 watcher 在不在，点它就是能进。
+
+---
+
+## 八、套件级的版本适配（每有新 dsh 就做一次）
+
+**用户已把这件事长期交给维护者，不必每次问。** 触发条件：dsh 发了新版本（含 pre-release）。
+
+### 8.1 顺序
+
+```sh
+# 1 全部检出做 import 自检（离线，不碰网络与 Windows）
+W=/mnt/c/Users/rchua/Desktop/AIFullStackDevelopment
+node /tmp/import-smoke.mjs "$W"        # 全部仓的 lib/*.js 能不能加载
+
+# 2 离线冒烟（覆盖核心的十个）
+DSH_WSL_ROOT="$W" bash scripts/smoke-verticals.sh
+
+# 3 版本检查（装了的 vs 兄弟仓 vs FLOOR 表）
+bash scripts/check-plugin-versions.sh
+
+# 4 ★ 先预演再改 —— 142 个文件，不能盲改
+DSH_BUMP_ROOT="$W" DSH_BUMP_DRY=1 python3 scripts/bump-verified-dsh.py
+
+# 5 正式改
+DSH_BUMP_ROOT="$W" python3 scripts/bump-verified-dsh.py
+
+# 6 提交推送 —— ★ 只 add README*.md
+for d in "$W"/dsh-*; do
+  git -C "$d" diff --quiet -- 'README*.md' || {
+    git -C "$d" add -- 'README*.md'
+    git -C "$d" -c user.name=grandocean -c user.email=173787247@qq.com \
+      commit -q -m "docs: verified against dsh <版本>"
+    git -C "$d" -c http.proxy=$HTTP_PROXY push -q origin HEAD
+  }
+done
+```
+
+### 8.2 四个坑（都踩过）
+
+| 坑 | 症状 | 处理 |
+|---|---|---|
+| **CRLF 假象** | `/mnt/c` 下几百个文件显示 "已修改" | ★ 判据不是 `--ignore-all-space`（它不忽略 `\r`），而是**把两端都 `tr -d '\r'` 后比 md5**。归一后相同 = 假象 |
+| **只 add README** | 否则会把几百个 CRLF 文件一起提交 | `git add -- 'README*.md'`，逐仓提交 |
+| **SSH 不通** | `git@github.com: Permission denied (publickey)` | 全套仓的 origin 都是 **HTTPS**，用 HTTPS；`git -c http.proxy=$HTTP_PROXY` |
+| **两份 kit** | `~/src` 与 `/mnt/c` 同名，HEAD 不同 | `~/src` 是主力。`/mnt/c` 那份是镜像，`git pull` 即同步；**改之前先确认改的是哪一份** |
+
+### 8.3 为什么要先自检再改 README
+
+**因为"适配"的结论可能是"不需要改代码"。** 2026-09-29 那次（→ `0.2.0-rc.2`）就是：
+71 个检出 import 全通过、冒烟全绿、地板版本未变 —— 于是只动了文档声明。
+**先跑测试，才知道该改什么。**
+
+### 8.4 别忘的收尾
+
+- kit 自己的 `README.md` / `README.zh.md` 的兼容性表 —— `bump` 脚本 **SKIP** 它，要手改两处
+- `scripts/check-plugin-versions.sh` 的 `FLOOR` 表（若下限变了）
+- `install.sh` 的套装组成若有变，同步改 README 的表
+
