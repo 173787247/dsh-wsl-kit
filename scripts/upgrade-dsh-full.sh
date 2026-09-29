@@ -46,6 +46,7 @@ case "$RAW" in
     ;;
   dsh-v*) TARGET="${RAW#dsh-v}" ;;
   dsh-*)  TARGET="${RAW#dsh-}" ;;
+  v*)     TARGET="${RAW#v}" ;;
 esac
 
 cd "${HOME}" || true   # ★ dsh 需要 cwd 有 package.json；kit 目录没有
