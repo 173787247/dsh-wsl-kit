@@ -391,7 +391,7 @@ done
 | **CRLF 假象** | `/mnt/c` 下几百个文件显示 "已修改" | ★ 判据不是 `--ignore-all-space`（它不忽略 `\r`），而是**把两端都 `tr -d '\r'` 后比 md5**。归一后相同 = 假象 |
 | **只 add README** | 否则会把几百个 CRLF 文件一起提交 | `git add -- 'README*.md'`，逐仓提交 |
 | **SSH 不通** | `git@github.com: Permission denied (publickey)` | 全套仓的 origin 都是 **HTTPS**，用 HTTPS；`git -c http.proxy=$HTTP_PROXY` |
-| **两份 kit** | `~/src` 与 `/mnt/c` 同名，HEAD 不同 | `~/src` 是主力。`/mnt/c` 那份是镜像，`git pull` 即同步；**改之前先确认改的是哪一份** |
+| **两份 kit** | `~/src` 与 `/mnt/c` 曾同名，HEAD 不同 | `~/src` 是主力。`/mnt/c` 那份**已改名 `dsh-wsl-kit.mirror`**（2026-09-29），不再同名；它是镜像，`git pull` 即同步。**改之前先确认改的是哪一份** |
 
 ### 8.3 为什么要先自检再改 README
 
