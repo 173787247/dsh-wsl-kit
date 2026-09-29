@@ -6,9 +6,12 @@ import json
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-OLD = "0.1.5-rc.1"
-NEW = "0.1.7-alpha.2"
+import os as _os
+# ★ 检出根目录可覆盖 —— 这套仓在 Windows 侧的检出里，不在 ~/src
+ROOT = Path(_os.environ.get("DSH_BUMP_ROOT") or Path(__file__).resolve().parents[2])
+OLD = _os.environ.get("DSH_BUMP_OLD", "0.1.7-alpha.2")
+NEW = _os.environ.get("DSH_BUMP_NEW", "0.2.0-rc.2")
+DRY = _os.environ.get("DSH_BUMP_DRY") == "1"
 SKIP = {"dsh-wsl-kit", "dsh-wsl-common"}
 
 OPTIONAL = {
@@ -142,7 +145,10 @@ def main() -> None:
         name = d.name
         if name in SKIP:
             continue
-        if not (name.startswith("dsh-wsl-") or name in {"dsh-repeat-stop", "dsh-tool-budget"}):
+        if not (name.startswith("dsh-wsl-") or name in {
+            "dsh-repeat-stop", "dsh-tool-budget",
+            "dsh-device-bridge", "dsh-mac-companion", "dsh-remote-ssh",
+        }):
             continue
 
         ver = pkg_ver(d)
@@ -153,7 +159,8 @@ def main() -> None:
             text = p.read_text(encoding="utf-8")
             new = text.replace(OLD, NEW)
             if new != text:
-                p.write_text(new, encoding="utf-8")
+                if not DRY:
+                    p.write_text(new, encoding="utf-8")
                 replaced += 1
                 changed_repos.add(name)
                 text = new

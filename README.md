@@ -67,7 +67,7 @@ flowchart TB
 
 Sibling checkout versions on **2026-09-18**. Floors enforced by [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) are the minimum, not this snapshot.
 
-Local dsh line: **`0.1.7-alpha.2`** (npm `@alpha`, 2026-09-24). npm `latest` may lag. Scripts still assume dsh **≥0.1.2**.
+Local dsh line: **`0.2.0-rc.2`** (npm `@next`, 2026-09-29). npm `latest` still points at the `0.1.7` line; `@next` carries `0.2.0`. Scripts still assume dsh **≥0.1.2**.
 
 ### Daily
 
@@ -140,7 +140,7 @@ Shared helper [dsh-wsl-common](https://github.com/173787247/dsh-wsl-common) `0.1
 
 | Piece | Status |
 |-------|--------|
-| **dsh** | This machine on **`0.1.7-alpha.2`** (npm `@alpha`, 2026-09-24). npm `latest` may lag; prefer `@next` / `@alpha` for newer lines. Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). |
+| **dsh** | This machine on **`0.2.0-rc.2`** (npm `@next`, 2026-09-29). npm `latest` still points at the `0.1.7` line, so `@next` is what carries `0.2.0`. Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). The whole plugin suite was re-verified against `0.2.0-rc.2`: every `lib/` entry point imports, the offline smoke set is green, and the tracked floor versions are unchanged — no plugin code change was needed. |
 | **DeepSeek V4.1 Flash** | Official API model id is **`deepseek-flash`**. Legacy `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` temporarily route to V4.1 Flash. **Not configured by this kit** — set under `llm-deepseek` / default model in `~/.dsh/settings.yaml`. |
 | **Agent Teams** | Opt-in experimental package (`@deepseek-ai/dsh-experimental-agent-team-profile`, same line as your dsh). **Not** part of `install.sh`. Expect longer “Deep diving” turns; use a fresh non-Teams session to smoke-test models. |
 | **Plugins** | Snapshot: [Plugin versions](#plugin-versions) (sibling checkouts 2026-09-16). Floor: [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh). Daily includes [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**. |
@@ -157,7 +157,7 @@ No kit code change is required solely for V4.1 Flash — update model ids in set
 
 ## 60-second start (recommended: Daily set)
 
-**Prereq:** `dsh` works inside WSL (profile usually `web`). Prefer `0.1.7-alpha.2` (`@alpha`) or newer from the same release train.
+**Prereq:** `dsh` works inside WSL (profile usually `web`). Prefer `0.2.0-rc.2` (`@next`) or newer from the same train.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh \

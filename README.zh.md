@@ -67,7 +67,7 @@ flowchart TB
 
 下面是 **2026-09-18** 本机兄弟仓的 `package.json`。[`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) 里的地板是下限，不是这份快照。
 
-当天本机 dsh 是 **`0.1.7-alpha.2`**（npm `@alpha`，2026-09-24）。npm `latest` 标签可能滞后。脚本仍按 dsh **≥0.1.2** 编写。
+当天本机 dsh 是 **`0.2.0-rc.2`**（npm `@next`，2026-09-29）。npm 的 `latest` 标签仍指向 `0.1.7` 线，`0.2.0` 在 `@next` 上。脚本仍按 dsh **≥0.1.2** 编写。
 
 ### 日常
 
@@ -140,7 +140,7 @@ flowchart TB
 
 | 项 | 现状 |
 |----|------|
-| **dsh** | 本机 **`0.1.7-alpha.2`**（npm `@alpha`，2026-09-24）。npm `latest` 可能滞后；要新线用 `@next` / `@alpha`。脚本按 dsh **≥0.1.2** 的 UI 一次性 `?token=`（`:3081`）编写。 |
+| **dsh** | 本机 **`0.2.0-rc.2`**（npm `@next`，2026-09-29）。npm 的 `latest` 仍指向 `0.1.7` 线，`0.2.0` 在 `@next` 上。脚本按 dsh **≥0.1.2** 的 UI 一次性 `?token=`（`:3081`）编写。全套插件已对 `0.2.0-rc.2` 重新验证：每个 `lib/` 入口都能 import、离线冒烟全绿、跟踪的地板版本未变 —— **不需要改任何插件代码**。 |
 | **DeepSeek V4.1 Flash** | 官方 API 模型 id 为 **`deepseek-flash`**。旧名 `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` 暂时会路由到 V4.1 Flash。**本 kit 不写死模型**——在 `~/.dsh/settings.yaml` 的 `llm-deepseek` / 默认模型里改。 |
 | **Agent Teams** | 可选实验包（`@deepseek-ai/dsh-experimental-agent-team-profile`，与 dsh 同版本线）。**不在** `install.sh` 里。开了 Teams 会出现更长的 “Deep diving”；测模型请先用普通新会话。 |
 | **插件** | 快照见上文 [插件版本](#插件版本)（2026-09-16 兄弟仓）。地板见 [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh)。日常套件含 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**。 |
@@ -157,7 +157,7 @@ flowchart TB
 
 ## 60 秒上手（推荐：日常套件）
 
-**前提：** WSL 里已能运行 `dsh`（通常 profile = `web`）。建议 `0.1.7-alpha.2`（`@alpha`）或同系列更新。
+**前提：** WSL 里已能运行 `dsh`（通常 profile = `web`）。建议 `0.2.0-rc.2`（`@next`）或同系列更新。
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh \
