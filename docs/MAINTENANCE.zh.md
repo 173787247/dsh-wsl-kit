@@ -166,4 +166,105 @@ bash scripts/smoke-verticals.sh        # 插件本体没坏（离线，不碰网
 | 可选插件的版本或工具列表 | `expand-optional-docs.py` 的元数据表，重跑 |
 | 插件版本下限 | `check-plugin-versions.sh` 的 `FLOOR` 表 |
 | 装进 profile 的 cordis 补丁 | `cordis.patch.yml` 与 `examples/` 两处 |
+| **加一条新的本地定制** | `local-patches/` 放幂等脚本 + `apply-local-patches.sh` 的 `PATCHES` 加一行 + 6.6 的表加一行 |
 | 新增一个插件仓 | `banner-kit-readmes.py` → `push-readme-banners.py`，README 目录加一行，awesome queue 排 wave |
+
+---
+
+## 六、升级 dsh
+
+### 6.1 为什么不能直接 `npm install -g`
+
+```sh
+npm install -g --prefix ~/.local @deepseek-ai/dsh@<版本>
+```
+
+这一条会**覆盖整个 `node_modules`**。而我们对 dsh 做过的改动就在那里面 ——
+升完就没了。**「每次升级都重头再来」不是进化，是原地打转。**
+
+### 6.2 升级会冲掉什么、不会冲掉什么
+
+| 东西 | 会不会被冲 | 在哪 |
+|---|---|---|
+| **undici 7.18.2 替换**（Cursor 修的 `web_search`） | ★ **会** | `node_modules/undici` |
+| **三个 cordis 补丁**（我打的） | ★ **会** | `node_modules/@deepseek-ai/cordis*` |
+| `cordis.patch.yml`（Cursor 改的，8558 B） | ✓ 不会 | `~/.dsh/profiles/web/` |
+| `~/.dsh/settings.yaml` | ✓ 不会 | 同上 |
+| 22 个 `link:` 插件 | ✓ 不会 | 指向 Windows 侧检出 |
+| 本仓的 32 个脚本与文档 | ✓ 不会 | 不在 `node_modules` |
+
+**★ 所以升级要重打的只有两项 —— 而它们已经做成幂等脚本。**
+
+### 6.3 一条命令升级
+
+```sh
+systemd-run --user --collect --unit=dsh-upgrade-$(date +%H%M%S) \
+  --property=KillMode=process \
+  /bin/bash ~/src/dsh-wsl-kit/scripts/upgrade-dsh-full.sh 0.2.0-rc.1
+```
+
+**★ 为什么必须 `systemd-run` 而不是直接跑**：升级会 `pkill dsh web`，
+而你的 shell 是 `dsh web` 的子进程（`bash ← dsh web ← Relay ← systemd`）——
+直接跑会在装到一半时把自己杀掉。`KillMode=process` 也是必须的，否则 unit
+拆除时会把刚起来的 dsh web 一起 SIGKILL（**这正是当初「起来 30 秒又没了」的机制，
+由 Cursor 诊断出来**）。
+
+**先干跑看清要做什么：**
+
+```sh
+bash ~/src/dsh-wsl-kit/scripts/upgrade-dsh-full.sh --dry 0.2.0-rc.1
+```
+
+脚本做六步：**备份 → 停 → 装 → 重打本地定制 → 起回来 → 总结**，
+装失败自动回滚。
+
+### 6.4 验证升级成功
+
+```sh
+dsh --version                                          # ① 版本号变了
+pgrep -f 'dsh web --no-open --port 3080'               # ② 起来了
+cat /tmp/dsh-upgrade.log                               # ③ 日志走到第 6/6
+bash ~/src/dsh-wsl-kit/scripts/apply-local-patches.sh --check   # ④ 定制都在
+```
+
+**④ 是这次升级特有的** —— 官方升级不是"装完就完"，还要确认定制都回来了。
+
+### 6.5 回滚
+
+```sh
+BK=$(cat /tmp/dsh-upgrade-backup-path)
+rm -rf ~/.local/lib/node_modules/@deepseek-ai/dsh
+cp -r "$BK/dsh-before" ~/.local/lib/node_modules/@deepseek-ai/dsh
+bash ~/src/dsh-wsl-kit/scripts/restart-dsh-web-detached.sh
+```
+
+备份在 `~/.dsh/dsh-upgrade-backup-<时间戳>/`，含 dsh 整包、`cordis.patch.yml`、
+`backport/*.patch`、升级前版本号。
+
+### 6.6 本地定制清单
+
+**唯一真相源：`local-patches/`（同目录 `README.zh.md` 有完整说明）**
+
+| # | 脚本 | 改什么 | 为什么 |
+|---|---|---|---|
+| 01 | `01-undici-7.18.2.sh` | dsh 内嵌 undici `8.11.0` → `7.18.2` | Node 24 内置 fetch 来自 undici 7.x；跨大版本的 ProxyAgent 作全局 dispatcher 会**丢响应头** → `content-encoding` 丢失 → brotli 不解压 → `web_search` 的 JSON.parse 失败。**Cursor 于 2026-09-26 诊断并修复**，记录在 `~/GO/dsh-websearch-修复记录.md` |
+| 02 | `02-cordis-backports.sh` | 三个 cordis 补丁 | 线上 cordis 的真实缺陷：插件在 `update` 时抛异常 → 逃逸成 unhandled rejection → **进程被打死**。打补丁前 15 agreed + i5 崩溃；打补丁后 19 agreed，零回归（2026-09-28 差分验证） |
+
+**加一条新定制**：在 `scripts/apply-local-patches.sh` 的 `PATCHES` 数组加一行，
+并在 `local-patches/` 放一个幂等脚本。验证器会自动带上它。
+
+### 6.7 ★ 演练过，不是"应该能用"
+
+2026-09-29 在 `/tmp/dsh-rehearsal/` 里做过一次**隔离演练**，全程没碰线上：
+
+```
+① 复制 dsh 到隔离目录
+② 模拟「官方升级」—— undici 换回 8.11.0，三个 cordis 补丁反向还原
+   → 得到 43e7e5c5 / 3e2e273b / c651cbea，与线上官方原版【逐字节相同】
+③ --check           ★ 正确报「未生效」，退出码 1
+④ apply-local-patches.sh   ✓ 3 个补丁重打 + undici 换成 7.18.2
+⑤ 再验证            ✓ 两项全通过，退出码 0
+```
+
+**★ 第 ③ 步是反向验证**：如果检查器对未打补丁的环境也说"通过"，那它就是个假检查。
+它报了失败，所以它是真的。
