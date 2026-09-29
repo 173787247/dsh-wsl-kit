@@ -96,6 +96,33 @@ bash "$DETACHED" >> /tmp/dsh-upgrade.log 2>&1
 sleep 14
 log "  pid $(pgrep -f 'dsh web .*--port 3080' | head -1)"
 
+# ★ 开浏览器必须由【Windows 侧】做，不能在 systemd 单元里做。
+#
+# 实测 2026-09-29：从 systemd 单元里调 powershell Start-Process，退出码 0，
+# 但浏览器【不出现】—— 那是非交互式会话，到不了用户的桌面。于是升级"成功"了，
+# 用户却仍要手动点桌面才能进来。重启脚本里的 dsh_open_browser 有同样的毛病。
+#
+# 桌面快捷方式一直是这么做的、也一直是成的：WSL 只负责重启，Windows 侧读 URL
+# 再 Start-Process。所以这里调那个已经证明能用的 PS1。
+log "  ── 请 Windows 侧开浏览器（systemd 里开不出来）"
+PS1_UNC='\\wsl.localhost\Ubuntu-24.04\home\rchua\.dsh\tray\open-dsh-ui.ps1'
+if command -v powershell.exe >/dev/null 2>&1; then
+  # 先写 URL，PS1 会自己从 /tmp/dsh-ui-url 读
+  url="$(grep -aoE "http://127\.0\.0\.1:[0-9]+/\?token=[A-Za-z0-9._~-]+" /tmp/dsh-web.log | tail -1 || true)"
+  if [ -n "$url" ]; then
+    printf '%s\n' "$url" > /tmp/dsh-ui-url
+    if timeout 40 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$PS1_UNC" >/dev/null 2>&1; then
+      log "  ✓ 已请 Windows 侧打开（WSL 会话 ID 之外的进程，能到你桌面）"
+    else
+      log "  ★ Windows 侧调用失败 —— 点桌面 DSH WSL 即可（等效）"
+    fi
+  else
+    log "  ★ 没抓到 token —— 点桌面 DSH WSL"
+  fi
+else
+  log "  ★ 没有 powershell.exe —— 点桌面 DSH WSL"
+fi
+
 # ── 6 总结 ─────────────────────────────────────────────────────────────────
 log "════ 6/6 总结 ════"
 log "  版本      $(dsh --version 2>/dev/null || echo unknown)"
