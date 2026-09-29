@@ -106,6 +106,13 @@ log "  pid $(pgrep -f 'dsh web .*--port 3080' | head -1)"
 # 再 Start-Process。所以这里调那个已经证明能用的 PS1。
 log "  ── 请 Windows 侧开浏览器（systemd 里开不出来）"
 PS1_UNC='\\wsl.localhost\Ubuntu-24.04\home\rchua\.dsh\tray\open-dsh-ui.ps1'
+# ★ systemd 环境的 PATH 不含 Windows 路径，powershell.exe 找不到。
+#   所以这里显式补上 —— 否则这一整步静默跳过，用户以为"升级后自己会开"。
+for _d in /mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0 \
+          /mnt/c/WINDOWS/system32 /mnt/c/WINDOWS; do
+  case ":${PATH}:" in *":${_d}:"*) ;; *) [ -d "$_d" ] && PATH="${PATH}:${_d}" ;; esac
+done
+unset _d
 if command -v powershell.exe >/dev/null 2>&1; then
   # 先写 URL，PS1 会自己从 /tmp/dsh-ui-url 读
   url="$(grep -aoE "http://127\.0\.0\.1:[0-9]+/\?token=[A-Za-z0-9._~-]+" /tmp/dsh-web.log | tail -1 || true)"

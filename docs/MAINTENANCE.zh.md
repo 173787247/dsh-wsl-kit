@@ -268,3 +268,82 @@ bash ~/src/dsh-wsl-kit/scripts/restart-dsh-web-detached.sh
 
 **★ 第 ③ 步是反向验证**：如果检查器对未打补丁的环境也说"通过"，那它就是个假检查。
 它报了失败，所以它是真的。
+
+---
+
+## 七、重启之后，浏览器怎么自己回来
+
+### 7.1 那一环为什么难
+
+```
+agent 跑在 dsh web 里
+  → 重启 dsh web = 杀掉自己
+  → 重启后要回来，需要浏览器打开【新的】 token URL（token 每进程一变）
+  → ★ 而"开浏览器"这件事，从 WSL 里做不成
+```
+
+**★★ 从 systemd 单元里调 `powershell.exe Start-Process`：退出码 0，浏览器不出现。**
+
+那是非交互式会话，到不了用户的桌面 —— 而它还返回 0，把调用者骗过去，
+于是脚本报「已打开」，人却还得点桌面。
+
+### 7.2 正确的分工
+
+```
+WSL 侧     负责重启
+Windows 侧 负责开浏览器
+```
+
+桌面快捷方式一直是这么做的（`start-dsh-web.ps1`：先 `wsl.exe ... restart`，
+再 `Start-Process $url`），所以它一直能成。
+
+### 7.3 常驻者：`~/.dsh/tray/dsh-ui-watcher.ps1`
+
+让 WSL 侧也能"自己回来"的，是 Windows 上的一个常驻进程：
+
+```powershell
+每 2 秒读 WSL 里的 /tmp/dsh-ui-url
+  内容变了（= dsh 重启了）→ Set-Clipboard + Start-Process
+```
+
+**安装**（Startup 文件夹，不需要管理员；`Register-ScheduledTask` 需要管理员，会失败）：
+
+```
+%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\DSH UI Watcher.lnk
+  → powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden
+       -File \\wsl.localhost\Ubuntu-24.04\home\rchua\.dsh\tray\dsh-ui-watcher.ps1
+```
+
+**查它活着**（★ 注意排除查询命令自身，否则会数到自己）：
+
+```powershell
+Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" |
+  Where-Object { $_.CommandLine -like '*dsh-ui-watcher.ps1*' -and
+                 $_.CommandLine -notlike '*Get-CimInstance*' -and
+                 $_.CommandLine -notlike '*-like*' }
+```
+
+**看它的日志**（v2 起有日志，v1 死过一次没留任何线索）：
+
+```
+%USERPROFILE%\dsh-ui-watcher.log
+```
+
+每分钟一行 `alive; last=…` 是心跳。**没有心跳就是死了。**
+
+### 7.4 首次成功（2026-09-29 19:48）
+
+```
+19:48:41  alive; last=http://127.0.0.1:3081/?token=Ne5Rx7RjUIa
+19:48:50  restart detected -> http://127.0.0.1:3081/?token=nBZucI3sSWQhtqC6…
+19:48:50  opened ok
+```
+
+会话没有断，人没有点桌面。**闭环第一次跑通。**
+
+### 7.5 注意
+
+- **v1 的教训**：它死过一次，而且没写日志，所以查不出原因。**所以常驻者必须写日志。**
+- `upgrade-dsh-full.sh` 里发起 `systemd-run` 时**要显式把 Windows 路径加进 `PATH`**，
+  否则 `command -v powershell.exe` 找不到，那一整步静默跳过。
+- **桌面快捷方式仍然是保底**，而且它从未被改动过 —— 无论 watcher 在不在，点它就是能进。
