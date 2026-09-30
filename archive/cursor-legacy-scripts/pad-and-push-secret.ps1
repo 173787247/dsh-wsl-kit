@@ -2,7 +2,7 @@
 $ErrorActionPreference = "Continue"
 $base = "c:\Users\<you>\Desktop\AIFullStackDevelopment"
 $hooks = Join-Path $env:USERPROFILE ".cursor\git-hooks"
-$ident = @("-c","user.name=grandocean","-c","user.email=173787247@qq.com")
+$ident = @("-c","user.name=<you>","-c","user.email=<you>@example.com")
 
 function Commit-Here([string]$msg) {
   git diff --cached --quiet 2>$null

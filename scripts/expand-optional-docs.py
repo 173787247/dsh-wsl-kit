@@ -2,6 +2,15 @@
 """Expand Chinese-first + English READMEs for optional Linux plugins; write kit catalog."""
 import os
 from pathlib import Path
+# ── 安全闸 ────────────────────────────────────────────────────────────
+# 这个脚本会【按内置模板重写 README】。模板是写脚本当时的形状，它不知道
+# README 后来被谁补过什么 —— 2026-09-30 就因此把 17 个仓的兼容性表删了。
+# 所以默认【只看不写】，要写必须显式 --write。
+import sys as _sys
+WRITE = "--write" in _sys.argv
+if not WRITE:
+    print("  DRY：只报告，不写文件。要真的写，加 --write")
+
 
 BASE = Path(os.environ.get("DSH_WSL_ROOT", str(Path.home() / "src")))
 KIT = BASE / "dsh-wsl-kit"
@@ -371,9 +380,12 @@ MIT
 
 English: [README.en.md](./README.en.md)
 """
-    (d / "README.md").write_text(zh, encoding="utf-8")
-    (d / "README.en.md").write_text(en, encoding="utf-8")
-    (d / "README.zh.md").write_text(stub, encoding="utf-8")
+    if WRITE:
+        (d / "README.md").write_text(zh, encoding="utf-8")
+    if WRITE:
+        (d / "README.en.md").write_text(en, encoding="utf-8")
+    if WRITE:
+        (d / "README.zh.md").write_text(stub, encoding="utf-8")
     print("docs", name)
 
 
@@ -439,9 +451,11 @@ Override the list with `DSH_LINK_PLUGINS` (space-separated).
 MIT (same as individual plugins).
 """
     docs = KIT / "docs"
-    docs.mkdir(exist_ok=True)
-    (docs / "OPTIONAL_PLUGINS.zh.md").write_text(zh, encoding="utf-8")
-    (docs / "OPTIONAL_PLUGINS.md").write_text(en, encoding="utf-8")
+    WRITE and docs.mkdir(exist_ok=True)
+    if WRITE:
+        (docs / "OPTIONAL_PLUGINS.zh.md").write_text(zh, encoding="utf-8")
+    if WRITE:
+        (docs / "OPTIONAL_PLUGINS.md").write_text(en, encoding="utf-8")
     print("kit catalog written")
 
 
@@ -453,6 +467,7 @@ CATALOG_ONLY = {
     "dsh-wsl-secret",
     "dsh-wsl-k8s",
 }
+
 
 
 def main() -> None:

@@ -3,7 +3,7 @@ $ErrorActionPreference = "Continue"
 $base = "c:\Users\<you>\Desktop\AIFullStackDevelopment"
 $hooks = Join-Path $env:USERPROFILE ".cursor\git-hooks"
 $plugins = @("dsh-wsl-ollama","dsh-wsl-media","dsh-wsl-search","dsh-wsl-vecmem","dsh-wsl-k8s")
-$ident = @("-c","user.name=grandocean","-c","user.email=173787247@qq.com")
+$ident = @("-c","user.name=<you>","-c","user.email=<you>@example.com")
 
 foreach ($p in $plugins) {
   Write-Host "======== $p ========"

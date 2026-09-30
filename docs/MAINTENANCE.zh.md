@@ -334,10 +334,12 @@ Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" |
 ### 7.4 首次成功（2026-09-29 19:48）
 
 ```
-19:48:41  alive; last=http://127.0.0.1:3081/?token=Ne5Rx7RjUIa
-19:48:50  restart detected -> http://127.0.0.1:3081/?token=nBZucI3sSWQhtqC6…
+19:48:41  alive; last=http://127.0.0.1:3081/?token=<token>
+19:48:50  restart detected -> http://127.0.0.1:3081/?token=<token>
 19:48:50  opened ok
 ```
+
+★ **`<token>` 是每次启动新签的一次性令牌，不是固定值** —— 所以这里不必也不能写死一个。
 
 会话没有断，人没有点桌面。**闭环第一次跑通。**
 
@@ -377,8 +379,8 @@ DSH_BUMP_ROOT="$W" python3 scripts/bump-verified-dsh.py
 for d in "$W"/dsh-*; do
   git -C "$d" diff --quiet -- 'README*.md' || {
     git -C "$d" add -- 'README*.md'
-    git -C "$d" -c user.name=grandocean -c user.email=173787247@qq.com \
-      commit -q -m "docs: verified against dsh <版本>"
+    # ★ 用你自己的提交身份；没配全局 git 身份时才需要 -c
+    git -C "$d" commit -q -m "docs: verified against dsh <版本>"
     git -C "$d" -c http.proxy=$HTTP_PROXY push -q origin HEAD
   }
 done
