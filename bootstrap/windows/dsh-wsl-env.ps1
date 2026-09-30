@@ -2,7 +2,7 @@
 #
 # ★ 为什么需要它
 #   tray 的那几个 PS1 每份都写死了 `$distro = 'Ubuntu-24.04'` 和
-#   `/home/rchua/src/dsh-wsl-kit/...`。在写它们的那台机器上没问题，别人 clone
+#   `$HOME/src/dsh-wsl-kit/...`。在写它们的那台机器上没问题，别人 clone
 #   下来就全是硬的。这里把「这台机器上 WSL 叫什么、用户是谁、kit 在哪」集中发现一次。
 #
 # ★ 这个文件必须是 UTF-8 **带 BOM**。

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Create GitHub repos and push five new dsh-wsl plugins + kit docs.
 set -euo pipefail
-BASE="/mnt/c/Users/rchua/Desktop/AIFullStackDevelopment"
+BASE="/mnt/c/Users/<you>/Desktop/AIFullStackDevelopment"
 HOOKS="${HOME}/.cursor/git-hooks"
 plugins=(dsh-wsl-ollama dsh-wsl-media dsh-wsl-search dsh-wsl-vecmem dsh-wsl-k8s)
 

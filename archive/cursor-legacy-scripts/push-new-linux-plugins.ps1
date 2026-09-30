@@ -1,6 +1,6 @@
 # Create GitHub repos and push five new dsh-wsl plugins + kit docs.
 $ErrorActionPreference = "Continue"
-$base = "c:\Users\rchua\Desktop\AIFullStackDevelopment"
+$base = "c:\Users\<you>\Desktop\AIFullStackDevelopment"
 $hooks = Join-Path $env:USERPROFILE ".cursor\git-hooks"
 $plugins = @("dsh-wsl-ollama","dsh-wsl-media","dsh-wsl-search","dsh-wsl-vecmem","dsh-wsl-k8s")
 $ident = @("-c","user.name=grandocean","-c","user.email=173787247@qq.com")

@@ -67,7 +67,7 @@ python3 scripts/fix-plugin-version.py     # 能机械修的那一类
 
 ```
 ★ 插件仓            70 个（GitHub 上 75 个 dsh*，减去 4 个非插件仓与 1 个库）
-★★ 检出位置          /mnt/c/Users/rchua/Desktop/AIFullStackDevelopment/dsh-*
+★★ 检出位置          <你的检出根>（本机是 /mnt/c/Users/<你>/Desktop/AIFullStackDevelopment）/dsh-*
 ★★★ origin 全部 HTTPS（不是 SSH —— SSH key 没通）
 ```
 

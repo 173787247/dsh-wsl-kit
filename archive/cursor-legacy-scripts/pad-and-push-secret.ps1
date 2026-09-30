@@ -1,6 +1,6 @@
 # Pad commits + awesome drafts + push secret. Run from Windows PowerShell.
 $ErrorActionPreference = "Continue"
-$base = "c:\Users\rchua\Desktop\AIFullStackDevelopment"
+$base = "c:\Users\<you>\Desktop\AIFullStackDevelopment"
 $hooks = Join-Path $env:USERPROFILE ".cursor\git-hooks"
 $ident = @("-c","user.name=grandocean","-c","user.email=173787247@qq.com")
 

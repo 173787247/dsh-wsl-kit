@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """Expand Chinese-first + English READMEs for optional Linux plugins; write kit catalog."""
+import os
 from pathlib import Path
 
-BASE = Path(r"c:\Users\rchua\Desktop\AIFullStackDevelopment")
+BASE = Path(os.environ.get("DSH_WSL_ROOT", str(Path.home() / "src")))
 KIT = BASE / "dsh-wsl-kit"
 
 # name -> {ver, one_zh, one_en, tools: [(tool, zh, en)], notes_zh, notes_en, config_zh, config_en}

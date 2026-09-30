@@ -1,8 +1,8 @@
 # Submit one awesome wave from kit drafts. Usage: .\submit-awesome-wave.ps1 B
 param(
   [Parameter(Mandatory = $true)][string]$Wave,
-  [string]$Work = "C:\Users\rchua\AppData\Local\Temp\awesome-dsh-plugin-submit",
-  [string]$KitQ = "c:\Users\rchua\Desktop\AIFullStackDevelopment\dsh-wsl-kit\docs\awesome-queue"
+  [string]$Work = (Join-Path $env:TEMP "awesome-dsh-plugin-submit"),
+  [string]$KitQ = (Join-Path $PSScriptRoot "..\docs\awesome-queue")
 )
 $ErrorActionPreference = "Continue"
 $hooks = Join-Path $env:USERPROFILE ".cursor\git-hooks"

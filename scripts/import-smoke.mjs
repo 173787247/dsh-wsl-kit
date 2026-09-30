@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 // 默认扫 Windows 侧的检出根（全套插件在那）
-const W = process.argv[2] || process.env.DSH_WSL_ROOT || '/mnt/c/Users/rchua/Desktop/AIFullStackDevelopment';
+const W = process.argv[2] || process.env.DSH_WSL_ROOT || (process.env.HOME + '/src');
 const repos = readdirSync(W).filter(n => n.startsWith('dsh-')).sort();
 
 let pass = 0, fail = 0, noentry = 0;

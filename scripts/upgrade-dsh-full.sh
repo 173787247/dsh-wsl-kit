@@ -124,7 +124,8 @@ log "  pid $(pgrep -f 'dsh web .*--port 3080' | head -1)"
 # 桌面快捷方式一直是这么做的、也一直是成的：WSL 只负责重启，Windows 侧读 URL
 # 再 Start-Process。所以这里调那个已经证明能用的 PS1。
 log "  ── 请 Windows 侧开浏览器（systemd 里开不出来）"
-PS1_UNC='\\wsl.localhost\Ubuntu-24.04\home\rchua\.dsh\tray\open-dsh-ui.ps1'
+# ★ 不写死发行版与用户名：用 WSL_DISTRO_NAME + 当前家目录动态拼
+PS1_UNC="\\\\wsl.localhost\\${WSL_DISTRO_NAME:-Ubuntu}\\$(wslpath -w "$HOME/.dsh/tray/open-dsh-ui.ps1" 2>/dev/null || true)"
 # ★ systemd 环境的 PATH 不含 Windows 路径，powershell.exe 找不到。
 #   所以这里显式补上 —— 否则这一整步静默跳过，用户以为"升级后自己会开"。
 for _d in /mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0 \

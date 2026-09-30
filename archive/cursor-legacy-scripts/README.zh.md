@@ -21,6 +21,6 @@
 
 ## 那份旧副本
 
-这些脚本原在 `/mnt/c/Users/rchua/Desktop/AIFullStackDevelopment/dsh-wsl-kit/` ——
+这些脚本原在 `/mnt/c/Users/<you>/Desktop/AIFullStackDevelopment/dsh-wsl-kit/` ——
 那是 Cursor 时代的工作副本，已落后于 `~/src/dsh-wsl-kit`（主力）。
 它曾在三个主力脚本里被硬编码引用，已于 2026-09-29 改成自定位。

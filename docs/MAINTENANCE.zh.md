@@ -311,7 +311,7 @@ Windows 侧 负责开浏览器
 ```
 %APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\DSH UI Watcher.lnk
   → powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden
-       -File \\wsl.localhost\Ubuntu-24.04\home\rchua\.dsh\tray\dsh-ui-watcher.ps1
+       -File \\wsl.localhost\<发行版>\home\<用户>\.dsh\tray\dsh-ui-watcher.ps1
 ```
 
 **查它活着**（★ 注意排除查询命令自身，否则会数到自己）：
@@ -358,7 +358,7 @@ Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" |
 
 ```sh
 # 1 全部检出做 import 自检（离线，不碰网络与 Windows）
-W=/mnt/c/Users/rchua/Desktop/AIFullStackDevelopment
+W=<你的检出根>（本机是 /mnt/c/Users/<你>/Desktop/AIFullStackDevelopment）
 node /tmp/import-smoke.mjs "$W"        # 全部仓的 lib/*.js 能不能加载
 
 # 2 离线冒烟（覆盖核心的十个）

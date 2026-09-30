@@ -7,7 +7,7 @@ DRY=1 时只报告。
 import json, os, pathlib, re, sys
 
 ROOT = pathlib.Path(os.environ.get('DSH_FIX_ROOT',
-        '/mnt/c/Users/rchua/Desktop/AIFullStackDevelopment'))
+        os.environ.get('DSH_FIX_ROOT', str(pathlib.Path.home() / 'src'))))
 DRY = os.environ.get('DSH_FIX_DRY') == '1'
 
 # 匹配 | **插件** | `name` **1.2.3** |   （中英两种标签）

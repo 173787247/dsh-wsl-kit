@@ -16,7 +16,7 @@ import json, os, pathlib, re, sys
 
 ROOT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else
                     os.environ.get('DSH_AUDIT_ROOT',
-                    '/mnt/c/Users/rchua/Desktop/AIFullStackDevelopment'))
+                    os.environ.get('DSH_WSL_ROOT', '~/src')))
 READMES = ('README.md', 'README.zh.md', 'README.en.md')
 ROW = re.compile(r'\|\s*\*\*(?:插件|Plugin)\*\*\s*\|\s*`(?P<name>[a-z0-9-]+)`\s*\*\*(?P<ver>[0-9.]+)\*\*')
 LINK = re.compile(r'\]\((?!https?:|#|mailto:)([^)]+)\)')

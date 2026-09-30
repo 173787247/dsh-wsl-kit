@@ -3,7 +3,7 @@
 # Override: DSH_LINK_PLUGINS="dsh-wsl-ollama dsh-wsl-secret" bash scripts/link-linux-plugins.sh
 set -euo pipefail
 export PATH="${HOME}/.local/bin:${PATH}"
-BASE="${DSH_PLUGINS_BASE:-/mnt/c/Users/rchua/Desktop/AIFullStackDevelopment}"
+BASE="${DSH_PLUGINS_BASE:-$HOME/src}"
 
 DEFAULT_PLUGINS=(
   dsh-wsl-ollama
