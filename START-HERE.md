@@ -56,10 +56,17 @@ tr -d '\r' < FILE | md5sum
 
 ### 3.3 推之前先看文档有没有漂
 
+两个脚本都从 `DSH_WSL_ROOT` 取检出根；不给的话，审计取 kit 自己的上一级目录。
+插件与 kit 不在同一级时就必须给。
+
 ```sh
+export DSH_WSL_ROOT=<你的检出根>
 python3 scripts/audit-readmes.py          # 退出码 1 = 有发现
 python3 scripts/fix-plugin-version.py     # 能机械修的那一类
 ```
+
+审计只认**插件仓** —— 判据是 `package.json` 里有 `dsh` 字段。同一目录下的库
+（`dsh-wsl-common`）、独立工具（`dsh-steward`）、草稿目录都不是插件，会被跳过。
 
 ---
 

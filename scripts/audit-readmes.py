@@ -9,21 +9,29 @@
   5 中英配对：README.zh.md 与 README.md 的兼容性表内容一致
 
 用法:
-  python3 scripts/audit-readmes.py [检出根]
-  DSH_AUDIT_ROOT=/path python3 scripts/audit-readmes.py
+  DSH_AUDIT_ROOT=/path python3 scripts/audit-readmes.py   # 本机：检出根不在 kit 旁边时用这个
+  python3 scripts/audit-readmes.py [检出根]                 # 同上，位置参数
+  python3 scripts/audit-readmes.py                         # 缺省 = kit 自己的上一级目录
 """
 import json, os, pathlib, re, sys
 
+# Precedence: an explicit argument, then the environment, then the kit's own checkout root —
+# which is where the plugins sit when a clone keeps them side by side. `~/src` used to be spelled
+# here as a literal, and pathlib does not expand `~`, so the documented no-argument run died with
+# FileNotFoundError before it read anything.
 ROOT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else
-                    os.environ.get('DSH_AUDIT_ROOT',
-                    os.environ.get('DSH_WSL_ROOT', '~/src')))
+                    os.environ.get('DSH_AUDIT_ROOT')
+                    or os.environ.get('DSH_WSL_ROOT')
+                    or pathlib.Path(__file__).resolve().parent.parent.parent)
 READMES = ('README.md', 'README.zh.md', 'README.en.md')
 ROW = re.compile(r'\|\s*\*\*(?:插件|Plugin)\*\*\s*\|\s*`(?P<name>[a-z0-9-]+)`\s*\*\*(?P<ver>[0-9.]+)\*\*')
 LINK = re.compile(r'\]\((?!https?:|#|mailto:)([^)]+)\)')
 TAIL = re.compile(r'^## (Compatibility|兼容性)(\s*\(.*\))?\s*$', re.M)
-# dsh-wsl-common 是库（无 dsh 字段），不是插件
-# dsh-wsl-common 是库（无 dsh 字段）；*.mirror 是同一个仓的另一份检出
-EXEMPT = {'dsh-wsl-common'}
+# A repo is a plugin iff its package.json declares a `dsh` field: that is what the installer reads
+# and what gives the repo a place in the compatibility table. dsh-wsl-common is the shared library
+# and declares none; a standalone tool or a scratch checkout sitting in the same directory is not a
+# plugin either. Keying off the field rather than a list of names is what keeps this true in someone
+# else's checkout, where the non-plugins are a different set.
 EXEMPT_PREFIX = ('dsh-wsl-kit',)
 
 findings = []
@@ -34,14 +42,19 @@ repos = [d for d in sorted(ROOT.iterdir())
 if not repos:
     print(f'  ★ {ROOT} 下没有仓'); sys.exit(2)
 
+plugins = []
 for d in repos:
-    if d.name in EXEMPT or d.name.startswith(EXEMPT_PREFIX):
+    if d.name.startswith(EXEMPT_PREFIX):
         continue
     pj = d / 'package.json'
-    actual = None
+    manifest = None
     if pj.is_file():
-        try: actual = json.loads(pj.read_text(encoding='utf-8')).get('version')
+        try: manifest = json.loads(pj.read_text(encoding='utf-8'))
         except Exception: pass
+    if isinstance(manifest, dict) and 'dsh' in manifest:
+        plugins.append((d, manifest.get('version')))
+
+for d, actual in plugins:
 
     for f in READMES:
         p = d / f
@@ -83,7 +96,7 @@ for d in repos:
                 findings.append(('中英不一致', d.name, 'README.md vs .zh.md', f'{a} vs {b}'))
 
 print(f'  {ROOT}')
-print(f'  检查 {len(repos)} 个仓 · 表 {checked["table"]} · 版本行 {checked["version"]} · 链接 {checked["link"]}')
+print(f'  检查 {len(plugins)} 个插件仓 · 表 {checked["table"]} · 版本行 {checked["version"]} · 链接 {checked["link"]}')
 if not findings:
     print('  ✓ 无发现')
     sys.exit(0)
