@@ -271,6 +271,43 @@ bash ~/src/dsh-wsl-kit/scripts/restart-dsh-web-detached.sh
 
 ---
 
+### 6.7 由谁执行重启：为什么必须交给 Windows 侧
+
+WSL 侧用 `systemd-run --user` 发起重启**不可靠**，实测两次都失败，机理相同：
+
+- 这类重启会重建 `systemd --user` 实例。判据是它名下出现过多个 manager PID：
+
+  ```sh
+  journalctl --user | grep -oE 'systemd\[[0-9]+\]' | sort -u
+  ```
+
+- 管理器一被重建，它名下所有单元里的进程一起死 —— 包括刚被拉起来的 `dsh web` 本身。
+  旁证：同一个管理器起的取样进程，本该采样 44 次，只写出 4 次就没了。
+- 能活下来的只有 Windows 侧拉起的进程：它们的父进程链最终落到 Windows 侧的 Relay，
+  而不是 `systemd --user`。
+
+所以重启这样发起（`scripts/restart-dsh-web-via-windows.sh`）：
+
+```
+WSL 侧 ——interop——> Windows 侧 PS1（托盘的 start-dsh-web.ps1）
+                   ——调——> revive-dsh.sh：逐层诊断 → 必要时修 → 起 web + 中继 → 等端口真的应答
+                   ——并——> 由 Windows 侧打开带 token 的页面（这一步只有 Windows 能做）
+```
+
+`Start-Process` 那一层分离是必须的：否则那个 PowerShell 会随发起它的互操作调用一起死。
+
+判断「重启是否真的成功」**不能**只看 pid 变了、端口有应答 —— 那是把「现象在」当成
+「我做的」。要看**是谁把它拉起来的**：
+
+```sh
+ps -o pid,ppid,lstart,cmd -p $(pgrep -f '[d]sh web --no-open --port 3080')
+# 再对 ppid 重复，直到链子落到 Windows 侧 Relay 或 PID 1
+```
+
+`scripts/check-self-restart.sh` 就是按这个判据做的：它比对重启前后的服务进程，
+并报出各自的归属。
+
+
 ## 七、重启之后，浏览器怎么自己回来
 
 ### 7.1 那一环为什么难
