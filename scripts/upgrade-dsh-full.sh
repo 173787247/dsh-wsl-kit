@@ -99,6 +99,58 @@ else
   exit 1
 fi
 
+# ── 3b ★ 依赖树完整性 ────────────────────────────────────────────────────────
+# 一次被打断的安装会留下三处伤，这是最隐蔽的一处：依赖树残缺。
+# 症状不是起不来，而是【进程照起、端口照答，只在真正用到那条路径时才炸】——
+# 2026-10-05 实测：zod 少到 614/840（缺 v4/locales/index.js）就让 dsh web 起来 5 秒后死；
+# @smithy/core 少到 495/1109（缺 package.json）则连启动都看不出来，属隐伤。
+# 所以这里必须查，而且补不回时要当成失败、走下面的回滚 —— 而不是留给人去翻日志。
+log "════ 3b/6 依赖树完整性 ════"
+_tree_broken() {
+  node -e '
+const fs = require("fs"), p = process.argv[1];
+let names = [];
+for (const d of fs.readdirSync(p)) {
+  if (d.startsWith(".")) continue;
+  if (d.startsWith("@")) { for (const s of fs.readdirSync(p + "/" + d)) names.push(d + "/" + s); }
+  else names.push(d);
+}
+const bad = [];
+for (const n of names) {
+  const pj = p + "/" + n + "/package.json";
+  if (!fs.existsSync(pj)) { bad.push(n); continue; }
+  try { JSON.parse(fs.readFileSync(pj, "utf8")); } catch { bad.push(n); }
+}
+console.log(bad.join("\n"));
+' "$LIVE/node_modules" 2>/dev/null || true
+}
+BROKEN_TREE="$(_tree_broken)"
+if [ -z "${BROKEN_TREE//[[:space:]]/}" ]; then
+  log "  ✓ 依赖树完整"
+else
+  log "  ★ 依赖树残缺 $(printf '%s\n' "$BROKEN_TREE" | grep -c .) 个包 —— 尝试从备份按包补回"
+  while read -r pkg; do
+    [ -n "$pkg" ] || continue
+    src="$BK/dsh-before/node_modules/$pkg"; dst="$LIVE/node_modules/$pkg"
+    if [ -d "$src" ] && [ -f "$src/package.json" ]; then
+      mkdir -p "$dst"
+      if cp -a "$src/." "$dst/" 2>/dev/null; then log "     ✓ 补回 $pkg"; else log "     ✗ 补 $pkg 失败"; fi
+    else
+      log "     ✗ 备份里也没有完整的 $pkg"
+    fi
+  done <<< "$BROKEN_TREE"
+  STILL_BROKEN="$(_tree_broken)"
+  if [ -z "${STILL_BROKEN//[[:space:]]/}" ]; then
+    log "  ✓ 补齐后依赖树完整"
+  else
+    log "  ★ 仍有残缺：$(printf '%s' "$STILL_BROKEN" | tr '\n' ' ') —— 回滚"
+    rm -rf "$LIVE"; cp -r "$BK/dsh-before" "$LIVE"
+    log "  ✓ 已回滚到 $(dsh --version 2>/dev/null || echo unknown)"
+    bash "$DETACHED" >> /tmp/dsh-upgrade.log 2>&1
+    exit 1
+  fi
+fi
+
 # ── 4 ★ 重打本地定制（这一步是关键，不能跳） ────────────────────────────────
 log "════ 4/6 重打本地定制 ════"
 if bash "$HERE/apply-local-patches.sh" 2>&1 | sed 's/^/  /'; then
