@@ -1,0 +1,66 @@
+{
+  "name": "dsh-wsl-kit",
+  "version": "0.1.0",
+  "description": "The WSL side of DeepSeek Harness in one install: one bundle that pulls in the whole dsh-wsl-* set.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/173787247/dsh-wsl-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/173787247/dsh-wsl-kit/issues"
+  },
+  "homepage": "https://github.com/173787247/dsh-wsl-kit#readme",
+  "type": "module",
+  "files": [
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "wsl",
+    "bundle",
+    "meta-package"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "dsh-wsl-env": "github:173787247/dsh-wsl-env",
+    "dsh-wsl-net": "github:173787247/dsh-wsl-net",
+    "dsh-wsl-fetch": "github:173787247/dsh-wsl-fetch",
+    "dsh-wsl-open": "github:173787247/dsh-wsl-open",
+    "dsh-repeat-stop": "github:173787247/dsh-repeat-stop",
+    "dsh-tool-budget": "github:173787247/dsh-tool-budget",
+    "dsh-wsl-clipboard": "github:173787247/dsh-wsl-clipboard",
+    "dsh-wsl-launch": "github:173787247/dsh-wsl-launch",
+    "dsh-wsl-path": "github:173787247/dsh-wsl-path",
+    "dsh-wsl-gpu": "github:173787247/dsh-wsl-gpu",
+    "dsh-wsl-port": "github:173787247/dsh-wsl-port",
+    "dsh-wsl-distro": "github:173787247/dsh-wsl-distro",
+    "dsh-wsl-cred": "github:173787247/dsh-wsl-cred",
+    "dsh-wsl-github": "github:173787247/dsh-wsl-github",
+    "dsh-wsl-notify": "github:173787247/dsh-wsl-notify",
+    "dsh-wsl-browser": "github:173787247/dsh-wsl-browser",
+    "dsh-wsl-workspace-check": "github:173787247/dsh-wsl-workspace",
+    "dsh-wsl-picker": "github:173787247/dsh-wsl-picker",
+    "dsh-wsl-tray-launcher": "github:173787247/dsh-wsl-tray",
+    "dsh-wsl-portproxy": "github:173787247/dsh-wsl-expose",
+    "dsh-wsl-hostsvc": "github:173787247/dsh-wsl-hostsvc",
+    "dsh-wsl-clock": "github:173787247/dsh-wsl-clock",
+    "dsh-wsl-dns": "github:173787247/dsh-wsl-dns",
+    "dsh-wsl-mnt": "github:173787247/dsh-wsl-mnt",
+    "dsh-wsl-editor": "github:173787247/dsh-wsl-editor",
+    "dsh-wsl-shot": "github:173787247/dsh-wsl-shot",
+    "dsh-wsl-docker": "github:173787247/dsh-wsl-docker",
+    "dsh-wsl-ssh-agent": "github:173787247/dsh-wsl-ssh-agent",
+    "dsh-wsl-encoding": "github:173787247/dsh-wsl-encoding",
+    "dsh-wsl-wslconfig": "github:173787247/dsh-wsl-wslconfig",
+    "dsh-wsl-download": "github:173787247/dsh-wsl-download"
+  }
+}
