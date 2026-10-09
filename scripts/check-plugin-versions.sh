@@ -14,13 +14,13 @@ declare -A FLOOR=(
   [dsh-wsl-fetch]=0.1.2
   [dsh-wsl-dns]=0.2.0
   [dsh-wsl-clock]=0.2.0
-  [dsh-wsl-workspace]=0.2.0
+  [dsh-wsl-workspace-check]=0.2.0
   [dsh-wsl-distro]=0.2.0
   [dsh-wsl-github]=0.2.0
   [dsh-wsl-hostsvc]=0.4.3
   [dsh-wsl-docker]=0.2.2
   [dsh-wsl-gpu]=0.2.2
-  [dsh-wsl-tray]=0.2.4
+  [dsh-wsl-tray-launcher]=0.2.4
   [dsh-wsl-mnt]=0.2.0
   [dsh-wsl-encoding]=0.2.0
   [dsh-wsl-ssh-agent]=0.2.0
@@ -46,13 +46,13 @@ TRACKED=(
   dsh-wsl-fetch
   dsh-wsl-dns
   dsh-wsl-clock
-  dsh-wsl-workspace
+  dsh-wsl-workspace-check
   dsh-wsl-distro
   dsh-wsl-github
   dsh-wsl-hostsvc
   dsh-wsl-docker
   dsh-wsl-gpu
-  dsh-wsl-tray
+  dsh-wsl-tray-launcher
   dsh-wsl-mnt
   dsh-wsl-encoding
   dsh-wsl-ssh-agent

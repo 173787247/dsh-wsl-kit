@@ -139,3 +139,19 @@ pnpm 禁止 git 解析的依赖出现在另一个 git 解析的包里 ⇒ `githu
   `<repo>/cordis.patch.yml` 的 `name:`、profile 的 `dependencies` 键、profile 的 `dsh.profile.bundles`。
   漏掉任何一处，表现是"插件静默消失"，不报错。`cordis.patch.yml` 与 profile 里的 `id:` 不要改 ——
   它是配置覆盖的引用点。
+
+### 改名后要同步的地方（实测清单）
+
+包名与仓名可以不同，但**引用包名的地方**必须跟着改。区分靠"它去哪找东西"：
+
+| 去哪找 | 用什么名字 | 例 |
+|---|---|---|
+| profile 的 `node_modules/<name>` | **包名** | `scripts/check-plugin-versions.sh` 的 `FLOOR` 键与 `TRACKED` 列表 |
+| `~/src/<name>`（同级检出） | **仓名** | `scripts/smoke-verticals.sh` 的 `need_dir` 与 `load` |
+| `github.com/173787247/<name>` | **仓名** | 所有 README 链接、`docs/awesome-queue/*.yml` |
+| `cordis.patch.yml` 的 `id:` | 不改 | 它是配置覆盖的引用点 |
+| `cordis.patch.yml` 的 `name:` | **包名** | Cordis 解析 `node_modules` 的键 |
+
+2026-10-09 改过名的三个：`dsh-wsl-tray→dsh-wsl-tray-launcher`、`dsh-wsl-expose→dsh-wsl-portproxy`、
+`dsh-wsl-workspace→dsh-wsl-workspace-check`。当时漏了 `check-plugin-versions.sh`，那个检查器
+因此报 MISSING 却看不出原因 —— **改完名要跑一次 `scripts/check-plugin-versions.sh`**。
