@@ -105,7 +105,7 @@
         timeoutMs: 15000
 
     - id: dsh-wsl-workspace
-      name: dsh-wsl-workspace
+      name: dsh-wsl-workspace-check
       config:
         timeoutMs: 15000
 
@@ -116,12 +116,12 @@
         maxEntries: 200
 
     - id: dsh-wsl-tray
-      name: dsh-wsl-tray
+      name: dsh-wsl-tray-launcher
       config:
         timeoutMs: 30000
 
     - id: dsh-wsl-expose
-      name: dsh-wsl-expose
+      name: dsh-wsl-portproxy
       config:
         timeoutMs: 30000
         defaultPort: 3080
