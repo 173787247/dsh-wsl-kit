@@ -170,10 +170,27 @@ Shared helper [dsh-wsl-common](https://github.com/173787247/dsh-wsl-common) `0.1
 
 | Piece | Status |
 |-------|--------|
-| **dsh** | This machine on **`0.2.0-rc.2`** (npm `@next`, 2026-09-29). npm `latest` still points at the `0.1.7` line, so `@next` is what carries `0.2.0`. Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). The whole plugin suite was re-verified against `0.2.0-rc.2`: every `lib/` entry point imports, the offline smoke set is green, and the tracked floor versions are unchanged — no plugin code change was needed. |
+| **dsh** | Verified against **`0.2.1-alpha.2`** (2026-10-09). ⚠️ That release has breaking changes — see the section below. Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). **Upgrading to alpha.2 requires one plugin code change**: the `{{cwd}}` variable in [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) (already fixed). The remaining plugins' `lib/` entry points and the offline smoke set pass on alpha.2. |
 | **DeepSeek V4.1 Flash** | Official API model id is **`deepseek-flash`**. Legacy `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` temporarily route to V4.1 Flash. **Not configured by this kit** — set under `llm-deepseek` / default model in `~/.dsh/settings.yaml`. |
 | **Agent Teams** | Opt-in experimental package (`@deepseek-ai/dsh-experimental-agent-team-profile`, same line as your dsh). **Not** part of `install.sh`. Expect longer “Deep diving” turns; use a fresh non-Teams session to smoke-test models. |
 | **Plugins** | Snapshot: [Plugin versions](#plugin-versions) (sibling checkouts 2026-09-16). Floor: [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh). Daily includes [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**. |
+
+### ⚠️ Breaking changes in dsh 0.2.1-alpha.2 (released 2026-10-09)
+
+These hit things in this kit. **Read this before upgrading**, not after the UI stops working.
+
+| Change | Impact | What to do |
+|---|---|---|
+| **`{{cwd}}` is no longer a prompt variable** | The official `dsh-system-prompt` README states the loop does not register it. Leaving it in a prompt makes assembly **fail** — every message reports `unknown prompt variable` and the UI looks dead | Use plain prose. The working directory now comes from runtime context and the new `working_directory` tool. [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) is fixed (`a674c70`) |
+| **`agent-instructions` drops per-line `dshHome` config** | Instruction directories now come from the process's `DSH_HOME` or the default | Check the profile patch for a `dshHome` entry under `agent-instructions` and remove it |
+| **Tool display `both` mode removed** | Only `native` and `ptc` remain | Update old configs and API calls |
+| **Agent Team messages go straight to the target Inbox** | The standalone outbox, auto-retry and resend dedup are gone | Config and result fields need migrating |
+| **Python PTC now uses the session sandbox policy** | Custom compositions must provide `sandbox` and `sandboxPolicy` services | Add them to hand-made compositions |
+| **Default SDK profile is now a general AI Agent** | No longer a fixed coding Agent | Compositions relying on the old default identity must state it |
+
+**What you gain**: the `working_directory` tool, shared `AGENTS.md` from an agents directory (`DSH_AGENTS_HOME`), an experimental Git Worktrees plugin, session state-record APIs, Web binding to a chosen address with native HTTPS, pi-ai 1.0.2.
+
+**One habit**: read the release notes' "Other changes" section before upgrading — every breaking change lives there. We upgraded first and read afterwards, and paid for it with a night of debugging.
 
 ### Plugin README policy
 

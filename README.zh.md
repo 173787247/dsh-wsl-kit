@@ -167,10 +167,27 @@ pnpm 不允许"以 git 解析的依赖"再出现在"另一个以 git 解析的�
 
 | 项 | 现状 |
 |----|------|
-| **dsh** | 本机 **`0.2.0-rc.2`**（npm `@next`，2026-09-29）。npm 的 `latest` 仍指向 `0.1.7` 线，`0.2.0` 在 `@next` 上。脚本按 dsh **≥0.1.2** 的 UI 一次性 `?token=`（`:3081`）编写。全套插件已对 `0.2.0-rc.2` 重新验证：每个 `lib/` 入口都能 import、离线冒烟全绿、跟踪的地板版本未变 —— **不需要改任何插件代码**。 |
+| **dsh** | 针对 **`0.2.1-alpha.2`**（2026-10-09）验证。⚠️ 这一版有破坏性变更，见下面那节。脚本按 dsh **≥0.1.2** 的 UI 一次性 `?token=`（`:3081`）编写。**升级到 alpha.2 需要动一处插件代码**：[dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) 的 `{{cwd}}`（已修）。其余插件的 `lib/` 入口与离线冒烟在 alpha.2 上通过。 |
 | **DeepSeek V4.1 Flash** | 官方 API 模型 id 为 **`deepseek-flash`**。旧名 `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` 暂时会路由到 V4.1 Flash。**本 kit 不写死模型**——在 `~/.dsh/settings.yaml` 的 `llm-deepseek` / 默认模型里改。 |
 | **Agent Teams** | 可选实验包（`@deepseek-ai/dsh-experimental-agent-team-profile`，与 dsh 同版本线）。**不在** `install.sh` 里。开了 Teams 会出现更长的 “Deep diving”；测模型请先用普通新会话。 |
 | **插件** | 快照见上文 [插件版本](#插件版本)（2026-09-16 兄弟仓）。地板见 [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh)。日常套件含 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**。 |
+
+### ⚠️ dsh 0.2.1-alpha.2 的破坏性变更（2026-10-09 发布）
+
+升到这一版时，下面几条会打到这里的东西。**升级前先读完这一节**，别等界面打不开才回头查。
+
+| 变更 | 影响 | 怎么办 |
+|---|---|---|
+| **`{{cwd}}` 不再是提示词变量** | 官方 `dsh-system-prompt` README 写明 the loop does not register it。提示词里留着它 ⇒ **组装失败**，一发消息就报 `unknown prompt variable`，界面像打不开 | 改成普通文案。工作目录现在走 runtime context 与新的 `working_directory` 工具。[dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) 已修（`a674c70`） |
+| **`agent-instructions` 移除逐行 `dshHome` 配置** | 指令目录改从进程的 `DSH_HOME` 或默认目录读 | 检查 profile 的 patch 里有没有给 `agent-instructions` 写 `dshHome`，有就删掉 |
+| **移除工具展示的 `both` 混合模式** | 只保留 `native` 与 `ptc` | 旧配置与 API 调用里的 `both` 要换 |
+| **Agent Team 消息改直投目标 Inbox** | 移除独立 outbox、自动重试、重发去重 | 相关配置与结果字段要迁移 |
+| **Python PTC 接入 Session 沙箱策略** | 自定义组合需提供 `sandbox` 与 `sandboxPolicy` 服务 | 自制组合要补齐这两个服务 |
+| **默认 SDK profile 改为通用 AI Agent** | 不再是固定的编程 Agent | 依赖旧默认身份的组合要显式指定 |
+
+**新增能力（这些是升级的理由）**：`working_directory` 工具、全局指令可读共享 agents 目录（`DSH_AGENTS_HOME`）、实验性 Git Worktrees 插件、Session 状态记录接口、Web 可绑指定地址与原生 HTTPS、pi-ai 1.0.2。
+
+**一条方法论**：升级前先读发布说明的「其他变更 / Other changes」那一节 —— 破坏性变更都在那儿。我们这次是先升级、后读，代价是排查了一晚上。
 
 ### 子插件 README 约定
 
