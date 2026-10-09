@@ -28,6 +28,10 @@ flowchart TB
       guards["repeat-stop + tool-budget"]
       more["GitHub / LLM / Full doctors"]
     end
+    subgraph winread [Windows read-only diagnostics · not in install.sh]
+      wdiag["defender · eventlog · perf · power · registry · service"]
+    end
+    revive["dsh-wsl-revive — installs and reports the UI resident"]
     subgraph linuxOpt [Optional Linux local · not in install.sh]
       infer["ollama · llamacpp · vllm · vecmem"]
       media["media · search · secret · struct"]
@@ -83,6 +87,13 @@ Until then: **use [`install.sh`](./install.sh)** (or `dsh plugin add` per plugin
 description of the destination, not a second route to it.
 
 ## Plugin versions
+
+> **Three plugins install under a different name than their repository.** npm already had
+> `dsh-wsl-tray`, `dsh-wsl-expose` and `dsh-wsl-workspace` taken by other authors' plugins, so these
+> three publish under `dsh-wsl-tray-launcher`, `dsh-wsl-portproxy` and `dsh-wsl-workspace-check`.
+> The repositories are unchanged — only `dsh plugin add` needs the package name. Everything else on
+> this page links to the repository, which is what you clone or read.
+
 
 Sibling checkout versions on **2026-09-18**. Floors enforced by [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) are the minimum, not this snapshot.
 

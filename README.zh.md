@@ -28,6 +28,10 @@ flowchart TB
       guards["repeat-stop + tool-budget"]
       more["GitHub / LLM / Full 诊断"]
     end
+    subgraph winread [Windows 只读诊断 · 不进 install.sh]
+      wdiag["defender · eventlog · perf · power · registry · service"]
+    end
+    revive["dsh-wsl-revive — 让常驻者可装可查"]
     subgraph linuxOpt [可选 Linux 本地能力 · 不进 install.sh]
       infer["ollama · llamacpp · vllm · vecmem"]
       media["media · search · secret · struct"]
@@ -81,6 +85,12 @@ pnpm 不允许"以 git 解析的依赖"再出现在"另一个以 git 解析的�
 目的地，不是第二条路。
 
 ## 插件版本
+
+> **有三个插件，装的时候用的名字和仓库名不一样。** npm 上 `dsh-wsl-tray`、`dsh-wsl-expose`、
+> `dsh-wsl-workspace` 已被别人的插件占用，所以这三个以 `dsh-wsl-tray-launcher`、
+> `dsh-wsl-portproxy`、`dsh-wsl-workspace-check` 发布。**仓库名没有变** —— 只有 `dsh plugin add`
+> 需要用包名；本页其它地方链的都是仓库，那也是你要克隆和阅读的东西。
+
 
 下面是 **2026-09-18** 本机兄弟仓的 `package.json`。[`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) 里的地板是下限，不是这份快照。
 
