@@ -155,3 +155,48 @@ pnpm 禁止 git 解析的依赖出现在另一个 git 解析的包里 ⇒ `githu
 2026-10-09 改过名的三个：`dsh-wsl-tray→dsh-wsl-tray-launcher`、`dsh-wsl-expose→dsh-wsl-portproxy`、
 `dsh-wsl-workspace→dsh-wsl-workspace-check`。当时漏了 `check-plugin-versions.sh`，那个检查器
 因此报 MISSING 却看不出原因 —— **改完名要跑一次 `scripts/check-plugin-versions.sh`**。
+
+
+---
+
+## TODO（2026-10-09 晚整理，按阻塞关系排）
+
+### ① npm 令牌 —— 后面几项的总闸门
+
+没有它，下面 ②③ 都做不了。它挡的不是"下载量好看"，是**集合包本身能不能成立**。
+
+### ② 集合包：把依赖从 `github:` 换成版本号
+
+`package.json` 已经写好（31 个依赖 + `dsh.bundle.patch` → `cordis.patch.yml`），
+但它现在**装不起来**：
+
+```
+pnpm add github:173787247/dsh-wsl-kit
+  → ERR_PNPM_EXOTIC_SUBDEP: Exotic dependency … is not allowed in subdependencies
+    when blockExoticSubdeps is enabled
+```
+
+pnpm 不允许 git 解析的依赖出现在另一个 git 解析的包里。**插件上了 npm 之后，依赖改成
+`"dsh-wsl-env": "^0.3.0"` 这种版本范围，这个包就成立了。** 在那之前两个 README 都指向
+`install.sh`，别删那一段。
+
+### ③ 七个插件在仓里，但不在 kit 的正文与集合包里
+
+`dsh-wsl-defender` · `dsh-wsl-eventlog` · `dsh-wsl-perf` · `dsh-wsl-power` ·
+`dsh-wsl-registry` · `dsh-wsl-service`（这六个是 Windows 只读诊断）· `dsh-wsl-revive`
+
+它们已经画进 README 的图里，但**不在版本表里，也不在 `package.json` 的依赖里** ——
+所以既不在 `install.sh` 的套件里，也不会进集合包。要收进来就补两处。
+
+### ④ 大 kit / 跨平台索引 —— 先别做
+
+"一个更大的包同时依赖 wsl-kit + mac-kit + …" 会撞和 ② 同一堵墙（集合包嵌集合包）。
+真要做，形状应该是**一份索引文档**（哪个平台、哪些插件、怎么装），不依赖任何东西 ——
+那样今天就能存在。kit 的 README 里「kit 之外怎么长」那一节是它的雏形。
+
+### ⑤ Mac / HarmonyOS —— 机制已经在，缺的是各平台一份实现
+
+不用动架构：`dsh-device-bridge` 是通用 **Companion 协议**客户端
+（`GET /v1/health` + `POST /v1/invoke`），`dsh-mac-companion` 就是 Mac 那一份实现。
+接入一个新平台 = 在那边实现这两个端点，然后在 kit 的「远程桥接」分类里加一行。
+`dsh-wsl-*` 那 68 个是 WSL 侧的实现，不需要改。
