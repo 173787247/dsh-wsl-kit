@@ -23,7 +23,7 @@ flowchart TB
   subgraph wslbox [WSL]
     relay["端口中继"]
     dsh["dsh web :3080"]
-    subgraph kitPlugins [install.sh 套件]
+    subgraph kitPlugins ["install.sh 套件 · package.json 集合包（待 npm）"]
       daily["Daily：env net fetch open clipboard path browser launch"]
       guards["repeat-stop + tool-budget"]
       more["GitHub / LLM / Full 诊断"]
@@ -62,6 +62,23 @@ flowchart TB
 | IM | `dsh-wsl-im` 出站 WS/Stream/Gateway → `ctx.agents`。每个 IM 一个工作区，每个聊天一条会话 |
 | Obsidian | `dsh-wsl-obsidian`：WSL agent ↔ Windows NTFS vault + `obsidian://` |
 | Jev | `dsh-wsl-jev`：System One（`jev_ask` / `check` / `rank`），OpenRouter 或 TypeSafe |
+
+### 集合包，以及为什么现在还是走 `install.sh`
+
+这里有一个 `package.json`，把同样那 31 个插件描述成一个集合包
+（`dsh.bundle.patch` → `cordis.patch.yml`，config 都在那里）。**它今天装不起来**，原因值得先知道：
+
+```
+pnpm add github:173787247/dsh-wsl-kit
+  → ERR_PNPM_EXOTIC_SUBDEP: Exotic dependency "dsh-wsl-tray-launcher" (resolved via
+    git-repository) is not allowed in subdependencies when blockExoticSubdeps is enabled
+```
+
+pnpm 不允许"以 git 解析的依赖"再出现在"另一个以 git 解析的包"里。所以 `github:` 的集合包不能依赖
+`github:` 的插件 —— 只有等这些插件**上了 npm**、依赖变成普通版本范围，这个包才装得起来。
+
+在那之前：**用 [`install.sh`](./install.sh)**（或逐个 `dsh plugin add`）。这个 `package.json` 描述的是
+目的地，不是第二条路。
 
 ## 插件版本
 

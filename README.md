@@ -23,7 +23,7 @@ flowchart TB
   subgraph wslbox [WSL]
     relay["port relay"]
     dsh["dsh web :3080"]
-    subgraph kitPlugins [install.sh suites]
+    subgraph kitPlugins ["install.sh suites · package.json bundle (npm-gated)"]
       daily["Daily: env net fetch open clipboard path browser launch"]
       guards["repeat-stop + tool-budget"]
       more["GitHub / LLM / Full doctors"]
@@ -62,6 +62,25 @@ flowchart TB
 | IM | `dsh-wsl-im` outbound WS/Stream/Gateway → `ctx.agents`. One workspace per IM, one session per chat |
 | Obsidian | `dsh-wsl-obsidian`: WSL agent ↔ Windows NTFS vault + `obsidian://` |
 | Jev | `dsh-wsl-jev`: System One (`jev_ask` / `check` / `rank`) via OpenRouter or TypeSafe |
+
+### The bundle package, and why `install.sh` is still the way in
+
+There is a `package.json` here that describes the same 31 plugins as one bundle
+(`dsh.bundle.patch` → `cordis.patch.yml`, which carries their `config`). **It does not install today**, and
+the reason is worth knowing before you try it:
+
+```
+pnpm add github:173787247/dsh-wsl-kit
+  → ERR_PNPM_EXOTIC_SUBDEP: Exotic dependency "dsh-wsl-tray-launcher" (resolved via
+    git-repository) is not allowed in subdependencies when blockExoticSubdeps is enabled
+```
+
+pnpm refuses a git-resolved dependency inside another git-resolved package. A `github:` bundle therefore
+cannot depend on `github:` plugins — so the bundle only becomes installable once the plugins are **on npm**,
+at which point its dependencies become ordinary version ranges.
+
+Until then: **use [`install.sh`](./install.sh)** (or `dsh plugin add` per plugin). The `package.json` is the
+description of the destination, not a second route to it.
 
 ## Plugin versions
 

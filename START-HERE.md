@@ -111,3 +111,31 @@ python3 scripts/fix-plugin-version.py     # 能机械修的那一类
 | MAINTENANCE 第六节 | 升级流程演练过（`/tmp/dsh-rehearsal`），实跑过两次（rc.1 → rc.2） |
 | 上游 20 个 PR | 全 open，一个未合 —— 所以 `local-patches/` 仍必需 |
 | `dsh-wsl-kit.mirror` | 同步正常，若不再需要可删 |
+
+## 2026-10-09 · 集合包（`package.json`）
+
+kit 里加了一个 `package.json`，把同样那 31 个插件描述成一个集合包
+（`dsh.bundle.patch` → `cordis.patch.yml`）。
+
+**它现在装不起来**，实测：
+
+```
+pnpm add github:173787247/dsh-wsl-kit
+  → ERR_PNPM_EXOTIC_SUBDEP: Exotic dependency "dsh-wsl-tray-launcher"
+    (resolved via git-repository) is not allowed in subdependencies
+    when blockExoticSubdeps is enabled
+```
+
+pnpm 禁止 git 解析的依赖出现在另一个 git 解析的包里 ⇒ `github:` 集合包不能依赖 `github:` 插件。
+**只有插件上了 npm、依赖变成普通版本范围，这个包才成立。**
+
+⇒ 在那之前 `install.sh` 仍是唯一入口；两个 README 里都写了这一段，别删。
+
+另外两件同一晚确定的事：
+
+- **awesome 明确不收录 kit**（见 `docs/AWESOME_QUEUE.zh.md:6`）。规则第 7 条是"纯聚合包不单独收录"；
+  kit 因为 patch 里每条 insert 都带 config（合成配置）落在例外里，但那边已经表过态，不必再试。
+- **插件包名与仓名可以不同，但有四处必须一致**：`<repo>/package.json` 的 `name`、
+  `<repo>/cordis.patch.yml` 的 `name:`、profile 的 `dependencies` 键、profile 的 `dsh.profile.bundles`。
+  漏掉任何一处，表现是"插件静默消失"，不报错。`cordis.patch.yml` 与 profile 里的 `id:` 不要改 ——
+  它是配置覆盖的引用点。
