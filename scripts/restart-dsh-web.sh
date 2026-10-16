@@ -87,6 +87,14 @@ export DSH_RELAY_PORT="${DSH_RELAY_PORT:-3081}"
 export DSH_WEB_LOG="${DSH_WEB_LOG:-/tmp/dsh-web.log}"
 export DSH_UI_URL_FILE="${DSH_UI_URL_FILE:-/tmp/dsh-ui-url}"
 
+# The launcher's cwd becomes the Host's cwd. It is the default project directory
+# of a new Session, and it decides how a Windows child process resolves a Linux
+# path argument: launched from a Windows-mounted cwd (/mnt/<drive>/...), such a
+# child reads `/tmp/....ps1` as a path on its own drive, so `powershell.exe
+# -File` prints its banner, exits 0 without running the script, and every caller
+# that parses that stdout as JSON fails. Never inherit the caller's directory.
+cd "${DSH_WEB_CWD:-$HOME}"
+
 # Scoped to this port. The original pattern was 'node.*/dsh web', which kills
 # every instance on the machine -- fine when there is only one, and a way to
 # take down the live server while testing a second one.

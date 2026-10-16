@@ -25,6 +25,7 @@ Agent 在 WSL、浏览器在 Windows 时，问题常出在「跨系统网络」�
 | WSL 与 Windows 对同一主机 A 记录不一致 | `dns_doctor`（对比两侧；再 `net_doctor` / `wslconfig_hint`） | dsh-wsl-dns |
 | TLS / 证书时间错误；休眠后 skew；GitHub App JWT 异常 | `clock_doctor`（必要时 `wsl --shutdown`） | [dsh-wsl-clock](https://github.com/173787247/dsh-wsl-clock) |
 | 仓库 / 工作区开在 Desktop、Downloads（`/mnt/c/...`） | `wsl_workspace` + `mnt_doctor` | [dsh-wsl-workspace](https://github.com/173787247/dsh-wsl-workspace) |
+| 文件卡片「用应用打开」永远 `Could not load applications` | `readlink /proc/$(pgrep -f "dsh web .*--port")/cwd`；在 `/mnt/*` 下就是它 → `apply-local-patches.sh` 的 03，再用 `restart-dsh-web.sh` 重启（脚本现在自己 `cd` 到 `$HOME`） | [dsh-wsl-kit](https://github.com/173787247/dsh-wsl-kit) |
 | Agent 乱用 Windows 路径 | （自动） | [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) |
 | 简单问题也一直 “Deep diving” | **新开会话**且不要开 Agent Teams（实验功能，工具链重） | 上游 Agent Teams |
 | 模型名过时 / 选错 | V4.1 Flash 用 **`deepseek-flash`**；`deepseek-v4-flash` 仅临时别名 | `~/.dsh/settings.yaml` |

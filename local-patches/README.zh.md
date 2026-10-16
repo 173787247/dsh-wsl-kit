@@ -21,6 +21,7 @@ bash ~/src/dsh-wsl-kit/scripts/apply-local-patches.sh --check  # 只检查，不
 |---|---|---|---|
 | 01 | `01-undici-7.18.2.sh` | dsh 内嵌的 undici `8.11.0` → `7.18.2` | Node 24 内置 fetch 是 undici 7.x；跨大版本的 ProxyAgent 作全局 dispatcher 会丢响应头 → `web_search` 的 brotli 响应不解压 → JSON.parse 失败。**Cursor 于 2026-09-26 修复** |
 | 02 | `02-cordis-backports.sh` | 三个 cordis 补丁 | 线上 cordis 的真实缺陷：插件在 update 时抛异常会逃逸成 unhandled rejection 打死进程。**2026-09-28 差分验证过** |
+| 03 | `03-wsl-powershell-script-path.sh` | `dsh-native-command` 里交给 `powershell.exe -File` 的脚本路径改成 `wslpath -w` 的结果 | 从 `/mnt/<盘>` 下的 cwd 启动时，Windows 子进程把 Linux 路径解析到自己盘符下 ⇒ 脚本没跑、`powershell` 只打印横幅并退出 0 ⇒ 调用方 `JSON.parse` 炸 ⇒ 文件卡片「用应用打开」永远 `Could not load applications`。配套：`scripts/restart-dsh-web.sh` 里的 `cd "${DSH_WEB_CWD:-$HOME}"` |
 
 ## 不受升级影响的东西（不用重打）
 

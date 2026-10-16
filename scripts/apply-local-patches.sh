@@ -36,6 +36,11 @@ const checks = [
     fn: () => crypto.createHash('md5')
       .update(fs.readFileSync(path.join(DSH, 'node_modules/@deepseek-ai/cordis/lib/index.js')))
       .digest('hex').slice(0, 8) === '2e0212db' },
+  { name: 'native-command WSL 脚本路径',
+    fn: () => {
+      const src = fs.readFileSync(path.join(DSH, 'node_modules/@deepseek-ai/dsh-native-command/lib/index.js'), 'utf8');
+      return src.includes('async function windowsScriptPath(') && src.includes('const launchPath = await windowsScriptPath(');
+    } },
 ];
 let bad = 0;
 for (const c of checks) {
@@ -50,6 +55,7 @@ JS
 PATCHES=(
   "01-undici-7.18.2.sh|dsh 内嵌 undici → 7.18.2（web_search 修复）"
   "02-cordis-backports.sh|三个 cordis 补丁（进程不再被未捕获拒绝打死）"
+  "03-wsl-powershell-script-path.sh|powershell -File 的脚本路径翻成 Windows 路径（文件卡片「用应用打开」）"
 )
 
 cd "${HOME}" || true   # ★ 同上

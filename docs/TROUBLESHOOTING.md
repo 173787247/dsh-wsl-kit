@@ -23,6 +23,7 @@ Chinese fault tree: [TROUBLESHOOTING.zh.md](./TROUBLESHOOTING.zh.md). Kit overvi
 | WSL vs Windows A-record mismatch for same host | `dns_doctor` (then `net_doctor` / `wslconfig_hint`) | dsh-wsl-dns |
 | TLS clock skew / post-sleep skew / GitHub App JWT oddities | `clock_doctor` (then `wsl --shutdown` if needed) | [dsh-wsl-clock](https://github.com/173787247/dsh-wsl-clock) |
 | Workspace on Desktop/Downloads (`/mnt/c/...`) | `wsl_workspace` + `mnt_doctor` | [dsh-wsl-workspace](https://github.com/173787247/dsh-wsl-workspace) |
+| File card “Open in app” always says `Could not load applications` | `readlink /proc/$(pgrep -f "dsh web .*--port")/cwd`; a `/mnt/*` cwd is the cause → patch 03 in `apply-local-patches.sh`, then `restart-dsh-web.sh` (it now `cd`s to `$HOME` itself) | [dsh-wsl-kit](https://github.com/173787247/dsh-wsl-kit) |
 | Browser cannot open WSL dsh web | `check-dsh-health` → `port_doctor` → `restart-dsh-web` → (LAN only) `wsl_expose`; see §0 | [dsh-wsl-port](https://github.com/173787247/dsh-wsl-port) / expose |
 | “Deep diving” forever on a trivial question | New session **without** Agent Teams; Teams is experimental and tool-heavy | upstream Agent Teams |
 | Wrong / retired model id | Use **`deepseek-flash`** for V4.1 Flash; old `deepseek-v4-flash` only aliases temporarily | `~/.dsh/settings.yaml` |
