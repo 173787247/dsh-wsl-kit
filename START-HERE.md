@@ -207,26 +207,32 @@ pnpm 不允许 git 解析的依赖出现在另一个 git 解析的包里。**插
 
 判据都实测过。**没做的原因写在每一条里** —— 不写成"待办"了事。
 
-### ① `cordis-plugin-loader` 的补丁要按 1.0.6 重新适配 —— 它修的东西还在
+### ① ~~`dsh-wsl-tray` 需要改~~ => **实测：不需要**（2026-10-17 修正）
 
-判据与推导见 `local-patches/README.zh.md`。要点：
+**先前写在这里的判断是错的。** 把这段留下而不是删掉，是因为它说明了一件事：
+**先查链路，再改代码。**
 
 ```
-补丁针对 1.0.5 · 实际装 1.0.6  ⇒ 上下文行对不上 ⇒ patch 报失败
-而缺陷在 1.0.6 里【依然存在】:
-  grep -c 'Promise.all(ids.map('                    lib/index.js  ⇒ 1
-  grep -c 'for (const id of ids) if (!newMap[id])'  lib/index.js  ⇒ 0
+模板 lib/tray.js:133  const bashRestart =
+    `if [ -f '<kit>/scripts/revive-dsh.sh' ]; then bash '<kit>/scripts/revive-dsh.sh';
+     else bash '<kit>/scripts/restart-dsh-web.sh'; fi`
+  而它执行的唯一动作，就是跑这个 bashRestart
+
+kit 的 revive-dsh.sh:235-252  *** 已经在服务就别再起第二份
+    if dsh_http_up "$_c" && dsh_http_up "$_r"; then
+      say "  OK 已经在服务 => 不再起第二份"
 ```
 
-★ 补丁里针对 `src/` 的 hunk **用不上** —— 发布出来的包里没有 `src/`
-（只有 `lib/` 与 `lib/types/`）。所以只能按 `lib/index.js` 重做。
+=> **链路成立**：按钮 -> `revive-dsh.sh` -> 守卫 => dsh 活着时点按钮**不会起第二份**
+=> **模板不需要改。**
 
-**最小做法**：只改那一处 —— 把并发的 `Promise.all(ids.map(…))`
-换成串行 `for` + 逐条 `catch` —— 然后按 1.0.6 生成新补丁，删掉 1.0.5 那个。
+* 而当时手工改过的 `~/.dsh/tray/start-dsh-web.ps1`（先探 3080、优先 `systemctl start`）
+是**多余且更差**的：它绕过了 `revive-dsh.sh` 的修复能力。下次 `install_scripts`
+重新生成那个文件时会把它换回模板版 —— **那是好事，不用拦。**
 
-**为什么没做**：这一步要改一个**正在运行的安装**的 `node_modules`。
-改错会在**下一次重启**时才显形。做之前该先停服务，或做完立刻重启验一次 ——
-两件都不是能顺手做的，而当晚还有别的会话在跑。
+* **教训（值得单列）**：改一个**生成出来的文件**之前，先问"生成它的模板调用了什么"。
+这里如果先看 `ps1Body()`，就会知道守卫该加、也只需加在 `revive-dsh.sh` 里 ——
+而那时确实也加了，只是没意识到：那样一来，手工改的那个文件就多余了。
 
 ### ② 4b 失败时的**自动回退** —— 现在只报不退
 
