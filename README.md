@@ -192,6 +192,28 @@ These hit things in this kit. **Read this before upgrading**, not after the UI s
 
 **One habit**: read the release notes' "Other changes" section before upgrading — every breaking change lives there. We upgraded first and read afterwards, and paid for it with a night of debugging.
 
+### ⚠️ Breaking changes in dsh 0.2.1-alpha.3 and 0.2.1-alpha.4
+
+Read from the upstream release notes on 2026-10-16, after upgrading to alpha.4 without
+reading them first. The one change that mattered was a single line under **Other changes**.
+
+| Version | Change | Impact | What to do |
+|---|---|---|---|
+| **alpha.4** | Plugin compatibility is decided by **`engines.dsh`** when a plugin declares it | A plugin declaring a range narrower than the core is **disabled outright**: `disabling profile plugin row "<id>": Plugin <pkg>@<old> is incompatible with dsh <new>`. It is not an error you see — the tools and panels are simply absent | Keep pinned `@deepseek-ai/*` plugins on the **same version track** as the core: `dsh plugin --profile <name> add <pkg>@<version>` |
+| **alpha.3** | Credential precedence changed: Web and Desktop prefer **saved** credentials; headless uses environment and `.env` and **no longer reads saved keys** | A headless profile that relied on a saved key stops authenticating | Give headless an explicit key through the environment or `.env` |
+| **alpha.3** | The Azure provider is now named **`azure`** | Provider configs still using `azure-openai-responses` stop resolving | Rename the provider |
+| **alpha.3** | `--from-default-profile` now **replaces** the target custom profile, including its plugins and settings | Running it against a profile you care about destroys that profile's plugin set | Back the profile up first; do not use it to "refresh" a working profile |
+| **alpha.3** | Fixes *"some sessions cannot be continued after a restart"* and *"history compatibility errors when switching to DeepSeek"* | Both symptoms are fixed upstream from alpha.3 | If they still happen on alpha.3 or later, the cause is local rather than the version |
+
+**How to check the second row for yourself**
+
+```sh
+grep 'disabling profile plugin row' /tmp/dsh-web.log     # a plugin was disabled at startup
+```
+
+The log is appended across restarts, so count the lines **before** upgrading and compare
+afterwards — a bare `grep -c` reports every past start as well.
+
 ### Plugin README policy
 
 - **This Compatibility section is the suite matrix.** Each plugin README has a matching **Compatibility** table (EN + ZH): minimum dsh **≥0.1.2**, pointer here for **latest verified**, kit set, and notes that cloud Flash / Agent Teams are not owned by WSL plugins.
