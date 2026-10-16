@@ -150,6 +150,14 @@ log "════ 1/6 备份到 $BK ════"
 mkdir -p "$BK"
 cp -r "$LIVE" "$BK/dsh-before" 2>/dev/null && log "  ✓ dsh 包"
 cp "$HOME/.dsh/profiles/web/cordis.patch.yml" "$BK/" 2>/dev/null && log "  ✓ cordis.patch.yml"
+# ★ 2026-10-16: profile 的 package.json 也要备份 —— 4b 会改它（把 @deepseek-ai/* 升到新版本），
+#   而原来没有它 ⇒ 4b 一旦失败就【回退不到干净状态】：核心回退了、profile 却已经动过。
+for _pf in "$HOME"/.dsh/profiles/*/package.json; do
+  [ -f "$_pf" ] || continue
+  _pn="$(basename "$(dirname "$_pf")")"
+  cp "$_pf" "$BK/profile-${_pn}-package.json" 2>/dev/null && log "  ✓ profile/${_pn}/package.json"
+done
+unset _pf _pn
 cp -r "$HOME/src/cordis-dsh-audit/backport" "$BK/backport" 2>/dev/null && log "  ✓ backport/*.patch"
 dsh --version > "$BK/version-before.txt" 2>&1 || true
 echo "$BK" > /tmp/dsh-upgrade-backup-path
@@ -300,6 +308,43 @@ else
   log "  跳过（版本号形如 $_TRACK，无法判断同轨）"
 fi
 unset _TRACK
+
+# ── 4b 复核 ★ 光"跑过"不算数，要看【结果】
+#
+#   为什么要复核：2026-10-16 那次 4b 因为一个未定义变量当场中止（set -u），
+#   一行都没执行 ⇒ 核心升了、插件没升 ⇒ 启动日志里 32 条 disabling。
+#   而当时的脚本对"4b 到底成没成"没有任何判断。
+_off="$(node -e '
+  const fs=require("fs"), path=require("path");
+  const base=process.argv[1], track=process.argv[2];
+  let bad=[];
+  for (const prof of fs.readdirSync(base)) {
+    const pj=path.join(base,prof,"package.json");
+    let d; try { d=JSON.parse(fs.readFileSync(pj,"utf8")); } catch { continue; }
+    for (const [k,v] of Object.entries(d.dependencies||{})) {
+      if (!k.startsWith("@deepseek-ai/")) continue;
+      if (!/^\d+\.\d+\.\d+-/.test(v)) continue;
+      if (!v.startsWith(track+".")) continue;
+      const inst=path.join(base,prof,"node_modules",...k.split("/"),"package.json");
+      let iv=null; try { iv=JSON.parse(fs.readFileSync(inst,"utf8")).version; } catch {}
+      if (iv !== v) bad.push(prof+": "+k+" 钉"+v+" 装"+(iv||"缺"));
+    }
+  }
+  console.log(bad.join("\n"));
+' "$HOME/.dsh/profiles" "${TARGET%.*}" 2>/dev/null || true)"
+if [ -n "${_off//[[:space:]]/}" ]; then
+  log "  ★★ profile 里仍有没跟上的插件 —— 这次升级【不算完成】"
+  printf '%s\n' "$_off" | sed 's/^/     /'
+  log "  多半是 4b 没跑成（例如脚本中途中止）。修法："
+  log "     bash $0 $TARGET          # 重跑一次（4b 是幂等的）"
+  log "  或手工："
+  log "     dsh plugin --profile web add <包名>@$TARGET"
+  log "  ★ 而【不要】就这么重启 —— 插件没跟上核心时，dsh 会把那些插件整行禁用"
+  _UPGRADE_INCOMPLETE=1
+else
+  log "  ✓ profile 里的插件都跟上了"
+fi
+unset _off
 
 log "════ 5/6 起回 dsh web ════"
 bash "$DETACHED" >> /tmp/dsh-upgrade.log 2>&1
