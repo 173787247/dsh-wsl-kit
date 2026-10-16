@@ -162,6 +162,63 @@ else
 fi
 
 # ── 5 起回来 ───────────────────────────────────────────────────────────────
+# ── 4b ★★★ 同步 profile 里钉的 @deepseek-ai/* 插件版本 ────────────────────
+#
+# ★ 为什么必须单独有这一步（2026-10-16 实测漏掉它，症状是"界面能开，但功能悄悄少了"）
+#
+#   升级只换 dsh 本体是不够的：profile 的 package.json 里还钉着一批插件版本。
+#   本体升了、插件没升 ⇒ 启动时 dsh 会打印
+#
+#     dsh: disabling profile plugin row "agent-team":
+#          Plugin @deepseek-ai/dsh-experimental-agent-team@<旧> is incompatible
+#          with dsh <新>: requirements {"@deepseek-ai/dsh-agent":"<旧>", ...}
+#
+#   并把那一行【整行禁用】⇒ 该插件提供的工具与面板全部消失。
+#   ★ 它不是报错，是安静地没有 —— 所以不看启动日志就发现不了。
+#
+# ★ 怎么升：必须用 dsh 自己的安装器，它走 pnpm。
+#     普通 `npm install` 会因为 profile 里的 `link:` / `github:` 依赖直接
+#     EUNSUPPORTEDPROTOCOL 失败（实测 2026-10-16）。
+#
+# ★ 只升"同一条版本轨"的包：本体是 0.2.1-alpha.4 ⇒ 只把 0.2.1-alpha.N 的升成 0.2.1-alpha.4。
+#   不在同一轨的（例如 0.1.x 的插件）不碰 —— 它们未必跟本体同版本发布。
+#
+# ★ 怎么验：重启后启动日志里【不该再有】"disabling profile plugin row"。
+log "════ 4b/6 同步 profile 插件版本 ════"
+_TRACK="$(printf '%s' "$TARGET" | sed -E 's/\.[0-9]+$//')"     # 0.2.1-alpha.4 -> 0.2.1-alpha
+if [ -n "$_TRACK" ] && [ "$_TRACK" != "$TARGET" ]; then
+  for _pj in "${HOME}"/.dsh/profiles/*/package.json; do
+    [ -f "$_pj" ] || continue
+    _prof="$(basename "$(dirname "$_pj")")"
+    _stale="$(node -e '
+      const fs=require("fs");
+      const t=process.argv[1], track=process.argv[2], out=[];
+      let d={}; try { d=JSON.parse(fs.readFileSync(process.argv[3],"utf8")); } catch { process.exit(0); }
+      for (const [k,v] of Object.entries(d.dependencies||{})) {
+        if (!k.startsWith("@deepseek-ai/")) continue;
+        if (!/^\d+\.\d+\.\d+-/.test(v)) continue;          // 只处理具体版本号
+        if (v === t) continue;
+        if (v.startsWith(track + ".")) out.push(k + "@" + t); // 同一条轨才升
+      }
+      console.log(out.join("\n"));
+    ' "$TARGET" "$_TRACK" "$_pj" 2>/dev/null)"
+    [ -n "$_stale" ] || continue
+    while IFS= read -r _spec; do
+      [ -n "$_spec" ] || continue
+      log "  $prof: $_spec"
+      if dsh plugin --profile "$_prof" add "$_spec" >/tmp/dsh-plugin-add-$$.log 2>&1; then
+        log "     ✓ 已升"
+      else
+        log "     ★ 升级失败 —— 见 /tmp/dsh-plugin-add-$$.log（不影响 dsh 本体）"
+      fi
+    done <<< "$_stale"
+  done
+  unset _prof _pj _stale _spec
+else
+  log "  跳过（版本号形如 $_TRACK，无法判断同轨）"
+fi
+unset _TRACK
+
 log "════ 5/6 起回 dsh web ════"
 bash "$DETACHED" >> /tmp/dsh-upgrade.log 2>&1
 sleep 14
