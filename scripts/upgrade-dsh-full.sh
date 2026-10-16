@@ -24,10 +24,18 @@ export NODE_USE_ENV_PROXY=1
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LIVE="${HOME}/.local/lib/node_modules/@deepseek-ai/dsh"
-DETACHED="$HERE/restart-dsh-web-detached.sh"
+# ★ 可被 DSH_UPGRADE_DETACHED 覆盖 —— 这样"退出兜底"能在【不真重启】的情况下被验到。
+DETACHED="${DSH_UPGRADE_DETACHED:-$HERE/restart-dsh-web-detached.sh}"
 
 DRY=0
-[ "${1:-}" = "--dry" ] && { DRY=1; shift; }
+SKIP_NOTES=0
+for _a in "$@"; do
+  case "$_a" in
+    --dry)        DRY=1 ;;
+    --skip-notes) SKIP_NOTES=1 ;;
+  esac
+done
+set -- $(printf '%s\n' "$@" | grep -v -e '^--dry$' -e '^--skip-notes$')
 RAW="${1:-}"
 [ -n "$RAW" ] || { echo "用法: $0 [--dry] <版本号 | release URL>"; exit 2; }
 
@@ -60,7 +68,81 @@ log "  当前版本   $(dsh --version 2>/dev/null || echo unknown)"
 log "  安装位置   $LIVE"
 log "  流程       备份 → 升级 → 重打本地定制 → 验证 → 起回来"
 log "  失败处理   自动回滚到备份"
+# ── ★★★ 退出兜底：无论脚本因为什么退出，都不能把 dsh 留在停止状态 ──────────
+#
+# ★ 为什么要有它（2026-10-16 实测）
+#   脚本设了 `set -uo pipefail`。`-u` 在【未定义变量】时直接终止进程 ——
+#   而那一晚就真的发生了：4b 里 `$prof` 打成了 `$prof`（应为 `$_prof`），
+#   进程当场结束 ⇒ 5/6「起回来」永远没跑 ⇒ **dsh 被留在停止状态**，
+#   只能由人手工跑 restart-dsh-web.sh 才回来。
+#
+#   已经有三条 exit 路径会主动把 dsh 起回来（安装失败 / 依赖树坏 / 正常结束），
+#   但它们只覆盖【预料到的】失败。这个 trap 覆盖【任何原因的】结束 ——
+#   包括未定义变量、被 kill、以及我没预料到的那些。
+#
+# ★ 它为什么不会和别的东西抢
+#   先探 3080：应答（401 也算活）⇒ 直接返回，什么都不做。
+#   而这与 revive-dsh.sh 里那个守卫是同一个判据 ⇒ 两层都不会起第二份。
+_ensure_up() {
+  local _c
+  # ★ 不要 `|| echo 000`：curl 连不上时自己就打 000，再接一个就成了 "000000"。
+  _c="$(curl --noproxy '*' -s -o /dev/null -w '%{http_code}' --max-time 5 \
+        "http://127.0.0.1:${DSH_WEB_PORT:-3080}/" 2>/dev/null)"
+  _c="${_c:-000}"
+  case "$_c" in
+    200|301|302|303|401) return 0 ;;
+  esac
+  printf '%s  退出兜底: :%s ⇒ %s ⇒ 起回来\n' \
+    "$(date '+%H:%M:%S')" "${DSH_WEB_PORT:-3080}" "${_c:-000}" >> /tmp/dsh-upgrade.log
+  bash "$DETACHED" >> /tmp/dsh-upgrade.log 2>&1 || true
+}
+trap _ensure_up EXIT
+
 if [ "$DRY" = 1 ]; then log "  ★ --dry：到此为止"; exit 0; fi
+
+# ── 0 ★★★ 先读目标版本的 release notes（2026-10-16 加） ────────────────────
+#
+# ★ 为什么必须在【装任何东西之前】
+#   dsh 0.2.1-alpha.4 把插件兼容性改成"按插件声明的 engines.dsh 判定"——
+#   而这一条只写在 release notes 的「其他变更 / Other changes」一节里。
+#   升级前没人读它 ⇒ 升完插件被【整行禁用】：
+#       disabling profile plugin row "<id>": Plugin <pkg>@<old> is incompatible …
+#   ⇒ 界面照常打开，而那个插件提供的工具与面板【安静地没有】。
+#
+#   而 release notes 里那一节通常只有一两行，读它的成本是【十秒】。
+#
+# ★ 读不到就停下（除非显式 --skip-notes）
+#   "不知道改了什么就往下装"正是出事的那条路。
+log "════ 0/6 读 $TARGET 的 release notes ════"
+_dsh_core_log="$(dsh --version >/dev/null 2>&1; echo "${DSH_WEB_LOG:-/tmp/dsh-web.log}")"
+_NOTES_BEFORE_COUNT="$(grep -c 'disabling profile plugin row' "$_dsh_core_log" 2>/dev/null || echo 0)"
+_NOTES_BEFORE_SIZE="$(stat -c%s "$_dsh_core_log" 2>/dev/null || echo 0)"
+echo "$_NOTES_BEFORE_COUNT" > /tmp/dsh-upgrade-notes-before-count
+echo "$_NOTES_BEFORE_SIZE"  > /tmp/dsh-upgrade-notes-before-size
+log "  基线: 启动日志 $_dsh_core_log · 禁用行 $_NOTES_BEFORE_COUNT 条 · $_NOTES_BEFORE_SIZE 字节"
+
+_notes="$(curl -fsSL --max-time 30 \
+  "https://api.github.com/repos/deepseek-ai/deepseek-harness/releases/tags/dsh-v${TARGET}" 2>/dev/null \
+  | node -e '
+let s=""; process.stdin.on("data",d=>s+=d).on("end",()=>{
+  try {
+    const b = JSON.parse(s).body || "";
+    let at = b.search(/其他变更|Other Changes/);
+    if (at < 0) { at = b.search(/新增功能|New Features/); }
+    console.log(at < 0 ? "" : b.slice(at, at + 1500));
+  } catch (e) { console.log(""); }
+});' 2>/dev/null)"
+if [ -z "$_notes" ]; then
+  log "  ★ 读不到 release notes（网络不通，或这个 tag 没有 release）"
+  if [ "$SKIP_NOTES" = "1" ]; then
+    log "  --skip-notes ⇒ 继续（日志里记下你跳过了）"
+  else
+    log "  ⇒ 停下。修好网络再跑，或显式加 --skip-notes 表示「我知道我在不知道改了什么的情况下升级」"
+    exit 3
+  fi
+else
+  printf '%s\n' "$_notes" | sed 's/^/  │ /'
+fi
 
 # ── 1 备份 ─────────────────────────────────────────────────────────────────
 BK="${HOME}/.dsh/dsh-upgrade-backup-$(date +%Y%m%d_%H%M%S)"
@@ -205,7 +287,7 @@ if [ -n "$_TRACK" ] && [ "$_TRACK" != "$TARGET" ]; then
     [ -n "$_stale" ] || continue
     while IFS= read -r _spec; do
       [ -n "$_spec" ] || continue
-      log "  $prof: $_spec"
+      log "  ${_prof}: ${_spec}"
       if dsh plugin --profile "$_prof" add "$_spec" >/tmp/dsh-plugin-add-$$.log 2>&1; then
         log "     ✓ 已升"
       else
@@ -260,6 +342,40 @@ else
 fi
 
 # ── 6 总结 ─────────────────────────────────────────────────────────────────
+# ── 6b ★★★ 验：新实例的启动日志里【不该有新增的】插件禁用行 ────────────────
+#
+# ★ 判据（两个方向都能失败）
+#   升完重启之后，读【当前那份】启动日志里的 `disabling profile plugin row`：
+#     · 日志被截断（变小）⇒ 整份都是本次启动 ⇒ 条数必须是 0
+#     · 日志没截断        ⇒ 条数必须【等于】升级前记下的基线
+#   任一不满足 ⇒ 这次升级【不算成功】，哪怕 npm 说装好了。
+#
+#   为什么要有它：那个脚本原来把"装上了 + 补丁打上了"当成成功，
+#   而 2026-10-16 那次的坏消息【就印在启动日志第一行】，脚本看都没看。
+sleep 6
+log "════ 6b/6 验证新实例 ════"
+_after_count="$(grep -c 'disabling profile plugin row' "$_dsh_core_log" 2>/dev/null || echo 0)"
+_after_size="$(stat -c%s "$_dsh_core_log" 2>/dev/null || echo 0)"
+_before_count="$(cat /tmp/dsh-upgrade-notes-before-count 2>/dev/null || echo 0)"
+_before_size="$(cat /tmp/dsh-upgrade-notes-before-size  2>/dev/null || echo 0)"
+log "  禁用行: 升级前 $_before_count ⇒ 现在 $_after_count   （日志 $_before_size ⇒ $_after_size 字节）"
+_upgrade_ok=1
+if [ "$_after_size" -lt "$_before_size" ]; then
+  [ "$_after_count" -eq 0 ] || _upgrade_ok=0
+  log "  日志被截断 ⇒ 整份属于本次启动 ⇒ 条数必须是 0"
+else
+  [ "$_after_count" -le "$_before_count" ] || _upgrade_ok=0
+  log "  日志未截断 ⇒ 条数不该超过基线"
+fi
+if [ "$_upgrade_ok" = "0" ]; then
+  log "  ★★ 有新被禁用的插件行 —— 这次升级【不算成功】"
+  grep -a 'disabling profile plugin row' "$_dsh_core_log" 2>/dev/null | tail -4 | sed 's/^/     /'
+  log "  多半是 profile 里钉的插件版本没跟上核心（见本脚本 4b 步）"
+  log "  回退: rm -rf $LIVE && cp -r $BK/dsh-before $LIVE && bash ${HERE}/restart-dsh-web-detached.sh"
+else
+  log "  ✓ 没有新被禁用的插件行"
+fi
+
 log "════ 6/6 总结 ════"
 log "  版本      $(dsh --version 2>/dev/null || echo unknown)"
 log "  dsh web   $(pgrep -f 'dsh web .*--port 3080' | head -1 || echo '★ 没起来')"
