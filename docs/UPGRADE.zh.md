@@ -115,3 +115,36 @@ grep -c 'disabling profile plugin row' /tmp/dsh-web.log               # ③ 只�
 ss -ltnp | grep -E ':3080|:3081'                                      # ⑤ 谁的 cgroup
 # ⑤ 心跳：%USERPROFILE%\dsh-ui-watcher.log 的最后写入时间 < 3 分钟
 ```
+
+### 4. 经 `wsl.exe` 传的 bash 命令里不要放引号
+
+`wsl.exe` 的参数在 PowerShell 侧会被重新拼成命令行，**内嵌的双引号会被吃掉**，
+于是 bash 收到一条残缺的命令 —— 而症状是**挂住**，不是报错。
+
+```
+同一个 curl：
+  带引号  'curl --noproxy "*" -w "%{http_code}" …'   ⇒ TIMEOUT
+  无引号  'curl --noproxy 127.0.0.1 -w %{http_code} …' ⇒ 401
+```
+
+⇒ 要传引号就用别的方式（写进脚本文件、或用不含引号的等价写法）。
+
+### 5. 保活件有【两份】，改一份不够
+
+同一份 `dsh-ui-watcher.ps1` 存在两处：
+
+```
+$KIT/bootstrap/windows/dsh-ui-watcher.ps1     ← 启动文件夹的 .lnk 现在指这里
+~/.dsh/tray/dsh-ui-watcher.ps1                ← 更早的副本，历史上曾被 .lnk 指着
+```
+
+`.lnk` 的目标**被改过不只一次**（有会话记录到当时活的是 tray 那份）。
+⇒ 改保活件时**两份一起改**，否则哪天 `.lnk` 指回另一份，修复就静默失效。
+
+★ 判据（不是看文件，是看在跑的那个）：
+```powershell
+Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" |
+  Where-Object { $_.CommandLine -like '*dsh-ui-watcher*' -and
+                 $_.CommandLine -notlike '*Get-CimInstance*' } |
+  Select-Object ProcessId, CommandLine
+```

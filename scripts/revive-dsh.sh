@@ -232,7 +232,27 @@ if [[ "$NO_START" == "1" ]]; then
   say "  （--no-start：跳过，不动正在跑的服务）"
 else
   if [[ -f "$RESTARTER" ]]; then
-    bash "$RESTARTER" >>"$LOG" 2>&1 || warn "restart-dsh-web.sh 返回非 0（继续看端口）"
+    # ★★★ 已经在服务就别再起第二份（2026-10-16 实测过一次"两套抢同一个端口"）
+    #
+    #   这个脚本有两个入口，而它们会同时来：
+    #     · systemd 的 dsh-web.service 在开机时跑 restart-dsh-web.sh
+    #     · 桌面「DSH WSL」按钮经 wsl.exe 跑本脚本（进程挂在 /init.scope，systemd 管不到）
+    #   两边都起 ⇒ 一个抢到端口、另一个的进程死掉，而服务那边只剩一个中继
+    #   指着别人的进程 —— 看着是好的，其实没有东西在管它。
+    #
+    #   判据（事后怎么认出来）：`ss -ltnp | grep :3080` 拿到的 pid，
+    #   它的 cgroup 若不是 …/dsh-web.service，就说明抢过。
+    #
+    #   而按钮要的本来就是"打开界面"，不是"再起一份"。
+    #   两个端口都应答 ⇒ 什么也不用起；任一个不应答 ⇒ 照旧（中继会一起被拉起来）。
+    _c="$(curl --noproxy '*' -s -o /dev/null -w '%{http_code}' --max-time 3 "http://127.0.0.1:${WEB}/" 2>/dev/null || echo 000)"
+    _r="$(curl --noproxy '*' -s -o /dev/null -w '%{http_code}' --max-time 3 "http://127.0.0.1:${RELAY}/" 2>/dev/null || echo 000)"
+    if dsh_http_up "$_c" && dsh_http_up "$_r"; then
+      say "  ✓ 已经在服务（:${WEB} ${_c} · :${RELAY} ${_r}）⇒ 不再起第二份"
+    else
+      bash "$RESTARTER" >>"$LOG" 2>&1 || warn "restart-dsh-web.sh 返回非 0（继续看端口）"
+    fi
+    unset _c _r
   else
     warn "找不到 restart-dsh-web.sh"
   fi
