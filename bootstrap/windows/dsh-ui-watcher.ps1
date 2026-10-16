@@ -38,7 +38,9 @@ if (Test-Path $envFile) {
 }
 
 $urlFile  = '/tmp/dsh-ui-url'
-$interval = 2
+# ★ 2026-10-16: 2 秒一次 ⇒ 每次都要起一个 job 进程（见 Invoke-WslCat），太费。
+#   token 只在 dsh 重启时变一次，等 6 秒完全够；心跳仍是每 60 秒一行。
+$interval = 6
 
 function Write-Log([string]$msg) {
   try {
@@ -46,9 +48,61 @@ function Write-Log([string]$msg) {
   } catch { }
 }
 
+# ★★★ 2026-10-16: 给 wsl.exe 加超时 —— 它是这个脚本唯一的对外调用，而原来没有超时。
+#
+# 实测（2026-10-16）：心跳在 13:09:29 停写，而日志里【一行错误都没有】。
+#   WSL 那一刻停摆，`& wsl.exe ...` 就永远挂住 ⇒ while($true) 卡死在那一行，
+#   连 catch 都进不去（根本没抛异常）⇒ WSL 13:15:18 回来之后它也不会自己醒
+#   ⇒ 浏览器永不自动重开 ⇒ 人等了 54 分钟，只能手点桌面按钮。
+#
+# 判据：改成子进程 + WaitForExit(超时)，超时就 Kill 并记一行 TIMEOUT。
+#   之后循环一定能继续 ⇒ 心跳一定继续 ⇒ 停摆会【看得见】，而不是变成沉默。
+function Invoke-WslCat([string]$path, [int]$timeoutSec = 15) {
+  # ★★★ 为什么必须是 Start-Job（2026-10-16 实测三种写法，只有这一种能用）
+  #
+  #   A  & wsl.exe ... | Out-String
+  #      ⇒ 能拿到内容（HAS_TOKEN），但**没有超时**：WSL 停摆时它永远挂住，
+  #        while($true) 卡死在这一行，连 catch 都进不去（不抛异常）
+  #        ⇒ 实测 13:09:29 心跳停写、日志一行错误都没有；WSL 13:15:18 回来它也没醒
+  #        ⇒ 浏览器永不自动重开（人等了 54 分钟只能手点桌面）
+  #
+  #   B  Start-Process -RedirectStandardOutput + WaitForExit(ms)
+  #      ⇒ ★ 拿不到内容：非交互 + 重定向下 wsl.exe 没有控制台，直接把中文错误
+  #        写进 stdout（实测 first16 = 0d 4e 58 5b … = UTF-16LE「不存在…」），
+  #        116 字节全部不是 URL
+  #
+  #   C  System.Diagnostics.Process + RedirectStandardOutput + WaitForExit(ms)
+  #      ⇒ 同样拿不到（同样没有控制台），实测 NO_TOKEN(len=108)
+  #
+  #   D  Start-Job + Wait-Job -Timeout + Stop-Job   ← 只有这个同时满足两点
+  #      ⇒ 子进程里的 & wsl.exe 照旧能拿到内容（HAS_TOKEN）
+  #      ⇒ 而主循环不会被它挂住；超时就 Stop-Job 扔掉，循环继续
+  #
+  # 代价：每次轮询起一个短命 PowerShell。所以把轮询间隔放宽（见 $interval）。
+  $job = $null
+  try {
+    $job = Start-Job -ScriptBlock {
+      param($d, $f)
+      (& wsl.exe -d $d -- bash -lc "cat $f 2>/dev/null" 2>$null | Out-String).Trim()
+    } -ArgumentList $distro, $path
+
+    if (Wait-Job $job -Timeout $timeoutSec) {
+      return [string](Receive-Job $job)
+    }
+    Write-Log "wsl.exe TIMEOUT ${timeoutSec}s -> job stopped (WSL 停摆?)"
+    return ''
+  } catch {
+    Write-Log "wsl.exe call failed: $_"
+    return ''
+  } finally {
+    if ($job) { Stop-Job $job -ErrorAction SilentlyContinue
+                Remove-Job $job -Force -ErrorAction SilentlyContinue }
+  }
+}
+
 function Get-DshUrl {
   try {
-    $raw = (& wsl.exe -d $distro -- bash -lc "cat $urlFile 2>/dev/null" 2>$null | Out-String)
+    $raw = (Invoke-WslCat $urlFile | Out-String)
     $raw = ($raw -replace "`0", '').Trim()
     if ($raw -match 'token=') { return $raw }
   } catch { }
