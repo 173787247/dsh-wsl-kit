@@ -97,7 +97,7 @@ description of the destination, not a second route to it.
 
 Sibling checkout versions on **2026-09-18**. Floors enforced by [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) are the minimum, not this snapshot.
 
-Local dsh line: **`0.2.0-rc.2`** (npm `@next`, 2026-09-29). npm `latest` still points at the `0.1.7` line; `@next` carries `0.2.0`. Scripts still assume dsh **≥0.1.2**.
+Local dsh line: **`0.2.1-alpha.5`** (npm, 2026-10-16). npm `latest` still points at the `0.1.7` line; `@next` carries `0.2.0`. Scripts still assume dsh **≥0.1.2**.
 
 ### Daily
 
@@ -170,7 +170,7 @@ Shared helper [dsh-wsl-common](https://github.com/173787247/dsh-wsl-common) `0.1
 
 | Piece | Status |
 |-------|--------|
-| **dsh** | Verified against **`0.2.1-alpha.2`** (2026-10-09). ⚠️ That release has breaking changes — see the section below. Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). **Upgrading to alpha.2 requires one plugin code change**: the `{{cwd}}` variable in [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) (already fixed). The remaining plugins' `lib/` entry points and the offline smoke set pass on alpha.2. |
+| **dsh** | Verified against **`0.2.1-alpha.5`** (2026-10-16). ⚠️ The releases before it — alpha.2, alpha.3, alpha.4 — have breaking changes; see the sections below. Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). **Upgrading to alpha.2 requires one plugin code change**: the `{{cwd}}` variable in [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) (already fixed). The remaining plugins' `lib/` entry points and the offline smoke set pass on alpha.2. |
 | **DeepSeek V4.1 Flash** | Official API model id is **`deepseek-flash`**. Legacy `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` temporarily route to V4.1 Flash. **Not configured by this kit** — set under `llm-deepseek` / default model in `~/.dsh/settings.yaml`. |
 | **Agent Teams** | Opt-in experimental package (`@deepseek-ai/dsh-experimental-agent-team-profile`, same line as your dsh). **Not** part of `install.sh`. Expect longer “Deep diving” turns; use a fresh non-Teams session to smoke-test models. |
 | **Plugins** | Snapshot: [Plugin versions](#plugin-versions) (sibling checkouts 2026-09-16). Floor: [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh). Daily includes [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**. |
@@ -214,7 +214,28 @@ grep 'disabling profile plugin row' /tmp/dsh-web.log     # a plugin was disabled
 The log is appended across restarts, so count the lines **before** upgrading and compare
 afterwards — a bare `grep -c` reports every past start as well.
 
-### Plugin README policy
+### ⚠️ dsh 0.2.1-alpha.5 (released 2026-10-16)
+
+**No breaking change.** Its "Other changes" adds one slot,
+`conversation.input.model.label`, for plugins that relabel the composer's model
+selector. Nothing in this kit is affected.
+
+Recorded so the next upgrade does not have to re-derive it — and because the two
+releases before it *did* break things.
+
+### Upgrading, and what keeps the UI reachable
+
+Use `scripts/upgrade-dsh-full.sh`; it reads the target release's notes before it
+installs anything, and `docs/UPGRADE.zh.md` describes the layers and the traps.
+
+Two scripts exist so a broken UI does not need a person at the keyboard:
+
+| | |
+|---|---|
+| `scripts/dsh-web-watchdog.sh` | Probes the port on a timer and revives only when it is down; anything already answering is left alone |
+| `scripts/dsh-rescue.sh` | Last resort. Assumes neither systemd nor the rest of this kit is intact, falls back to starting dsh directly |
+
+### Plugin README policy### Plugin README policy
 
 - **This Compatibility section is the suite matrix.** Each plugin README has a matching **Compatibility** table (EN + ZH): minimum dsh **≥0.1.2**, pointer here for **latest verified**, kit set, and notes that cloud Flash / Agent Teams are not owned by WSL plugins.
 - When dsh ships a new line (e.g. `0.1.5` GA or `0.1.6`), **update this kit table first**, then refresh plugin “currently …” lines (or re-run the suite doc sync). Do not invent per-plugin “verified” dates without a smoke pass.
@@ -226,7 +247,7 @@ No kit code change is required solely for V4.1 Flash — update model ids in set
 
 ## 60-second start (recommended: Daily set)
 
-**Prereq:** `dsh` works inside WSL (profile usually `web`). Prefer `0.2.0-rc.2` (`@next`) or newer from the same train.
+**Prereq:** `dsh` works inside WSL (profile usually `web`). Prefer `0.2.1-alpha.5` or newer from the same train.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh \
