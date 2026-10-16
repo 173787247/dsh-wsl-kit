@@ -148,3 +148,34 @@ Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" |
                  $_.CommandLine -notlike '*Get-CimInstance*' } |
   Select-Object ProcessId, CommandLine
 ```
+
+### 6. `-WindowStyle Hidden` 不等于「没有窗口」—— 那个窗口里就是保活件
+
+Windows 会把 `-WindowStyle Hidden` 起的 PowerShell **托管进一个 Windows Terminal 窗口**
+（最小化，标题是 `Windows PowerShell`）。所以桌面上会看到这样一个窗口，
+而**关掉它 = 关掉保活件**。
+
+它很难被发现，因为：
+
+```
+· 窗口属于 WindowsTerminal 的宿主进程，不是 powershell.exe 的 pid
+· 里面的 shell 挂在 OpenConsole.exe 下面，不是 WindowsTerminal 的直接子进程
+  ⇒ 用 ParentProcessId=<WT 的 pid> 查子进程会得到「没有子进程」，
+    于是误判成「空壳窗口」，放心关掉 —— 保活件就这样被关掉过一次
+```
+
+**关任何 `Windows PowerShell` 窗口之前，先跑这个**：
+
+```powershell
+Get-CimInstance Win32_Process |
+  Where-Object { $_.CommandLine -like '*dsh-ui-watcher*' -and
+                 $_.CommandLine -notlike '*Get-CimInstance*' -and
+                 $_.CommandLine -notlike '*-like*' } |
+  Select-Object ProcessId, ParentProcessId, CommandLine
+```
+
+有输出 ⇒ 那个窗口里是保活件，**不要关**。
+
+★ 想让它彻底不占窗口：改用任务计划程序而不是启动文件夹 ——
+  见 `bootstrap/windows/dsh-ui-watcher.ps1` 头部推荐的那条 `schtasks` 命令。
+  任务计划程序跑在非交互会话里，不产生窗口。
