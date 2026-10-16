@@ -31,7 +31,7 @@ bash ~/src/dsh-wsl-kit/scripts/apply-local-patches.sh --check  # 只检查，不
 ```
 cordis-4.0.4.patch                 ✓ 仍能重打
 cordis-plugin-timer-1.1.6.patch    ✓ 仍能重打
-cordis-plugin-loader-1.0.5.patch   ★ 打不上 —— 新版 cordis 的代码变了，需要重新适配
+cordis-plugin-loader-1.0.5.patch   ★ 打不上 —— 但它【仍然需要】，见下
 ```
 
 **而 `apply-local-patches.sh --check` 照样报「全部本地定制都已生效」** ✗ ——
@@ -40,12 +40,43 @@ cordis-plugin-loader-1.0.5.patch   ★ 打不上 —— 新版 cordis 的代码�
 ⇒ **这是"检查没覆盖那件事"的又一个实例**：升级日志里两次点名这个补丁失败，
 而检查说没事。**看检查的绿灯，不等于每一处都被验过。**
 
+### 为什么打不上：版本漂移，不是上游修好了
+
+```
+补丁针对: cordis-plugin-loader【1.0.5】
+实际装的: cordis-plugin-loader【1.0.6】     ← 差一个小版本 ⇒ 上下文行对不上
+```
+
+**而缺陷在 1.0.6 里依然存在**（2026-10-16 实测装的这一份）：
+
+```
+grep -c 'Promise.all(ids.map('                    lib/index.js  ⇒ 1 处   ← 补丁要删掉的旧写法还在
+grep -c 'for (const id of ids) if (!newMap[id])'  lib/index.js  ⇒ 0 处   ← 补丁要加的新写法没有
+grep -c 'async _patchContext'                     lib/index.js  ⇒ 0 处
+grep -c '_initTask?: Promise<void> | undefined'   lib/index.js  ⇒ 0 处
+```
+
+真实代码（`lib/index.js` 88-92 行）仍是：
+
+```js
+if (newMap[id]) await this.create(newMap[id]).catch((error) => {
+    this.ctx.logger.error(error);
+});
+else this.remove(id);
+}));                       // ← Promise.all(ids.map(…)) 并发跑，一处抛出即整体 reject
+```
+
+⇒ **不要把补丁移走** —— 它要修的东西还在。
+
+★ **一个还没有证据的联想**：那个缺陷的形状是"异常逃逸成 unhandled rejection"，
+而 2026-10-16 晚观察到的现象是"dsh 每隔几分钟就不应答一次"。
+**形状相同，但没有证明是它造成的** —— 查这件事要有它自己的判据（例如抓那个 rejection 的现场）。
+
 ### 该怎么办
 
-1. **先确认它还需不需要** —— 那个补丁当初修的是"插件在 update 时抛异常会逃逸成 unhandled rejection"。
-   上游 cordis 后来可能自己修了 ⇒ **需要重新差分验证**（`~/src/cordis-dsh-audit/` 里有当时的做法）。
-2. 若仍需要 ⇒ **按新版 cordis 的代码重新做适配**，而不是继续用这个对不上的补丁。
-3. 若不再需要 ⇒ **从 backport 目录里移走**（留着只会每次升级都报一次失败）。
+1. ★ **已经确认：仍然需要**（上面那四条 grep 就是判据）。所以不是"移走"，是**重新适配**。
+2. **按 1.0.6 的代码重新做适配** —— 改动只有几处（见补丁的 hunk），把上下文行对上即可。
+3. 适配完把补丁名改成对应版本（`…-1.0.6.patch`），旧的删掉 —— 免得下次又对不上。
 
 ★ 在那之前：**升级日志里出现这一行是预期的，不代表升级失败。**
 
