@@ -11,7 +11,7 @@ pkill -f 'node.*/dsh web' 2>/dev/null || true
 sleep 1
 
 echo "Starting dsh web..."
-nohup dsh web --no-open > /tmp/dsh-web.log 2>&1 &
+nohup dsh web --no-open >> /tmp/dsh-web.log 2>&1 &
 sleep 6
 PID="$(pgrep -n -f 'node.*/dsh web' || true)"
 echo "PID=${PID:-none}"

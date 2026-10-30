@@ -34,14 +34,18 @@ mkdir -p "$LOGDIR"
 code="$(curl --noproxy '*' -s -o /dev/null -w '%{http_code}' --max-time 5 \
         "http://127.0.0.1:${PORT}/" 2>/dev/null)"
 code="${code:-000}"
+ts="$(date '+%F %T')"
 case "$code" in
-  200|301|302|303|401) exit 0 ;;      # 活着 —— 常态，不写日志
+  200|301|302|303|401)                # 活着 —— 也记一行，否则看不出它跑过
+    printf '%s  :%s => %s => 活着\n' "$ts" "$PORT" "$code" >> "$LOG"
+    exit 0 ;;
 esac
 
 now="$(date +%s)"
 if [[ -f "$STAMP" ]]; then
   last="$(cat "$STAMP" 2>/dev/null || echo 0)"
   if [[ "$((now - last))" -lt "$BACKOFF" ]]; then
+    printf '%s  :%s => %s => 退避中(%ss)\n' "$(date '+%F %T')" "$PORT" "$code" "$((now - last))" >> "$LOG"
     exit 0                            # 刚试过，退避中
   fi
 fi

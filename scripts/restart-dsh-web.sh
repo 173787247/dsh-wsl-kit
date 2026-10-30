@@ -112,6 +112,11 @@ pkill -f "dsh web .*--port ${DSH_WEB_PORT}([^0-9]|\$)" 2>/dev/null || true
 pkill -f "dsh-port-relay.*${DSH_RELAY_PORT}" 2>/dev/null || true
 sleep 1
 
+# 2026-10-18: 重启前保住上一次运行的末尾输出（崩溃现场）。
+#   日志曾被 start-dsh-debug.sh / start-dsh-lan.sh 的 > 截断，事后无从追溯。
+if [ -s "${DSH_WEB_LOG}" ]; then
+  tail -n 800 "${DSH_WEB_LOG}" > "${DSH_WEB_LOG}.prev" 2>/dev/null || true
+fi
 setsid nohup dsh web --no-open --port "${DSH_WEB_PORT}" \
   --trusted-host "127.0.0.1:${DSH_RELAY_PORT}" \
   >> "${DSH_WEB_LOG}" 2>&1 < /dev/null &

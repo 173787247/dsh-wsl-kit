@@ -115,7 +115,9 @@ if [ "$DRY" = 1 ]; then log "  ★ --dry：到此为止"; exit 0; fi
 #   "不知道改了什么就往下装"正是出事的那条路。
 log "════ 0/6 读 $TARGET 的 release notes ════"
 _dsh_core_log="$(dsh --version >/dev/null 2>&1; echo "${DSH_WEB_LOG:-/tmp/dsh-web.log}")"
-_NOTES_BEFORE_COUNT="$(grep -c 'disabling profile plugin row' "$_dsh_core_log" 2>/dev/null || echo 0)"
+# 2026-10-18: 同 402 行 —— grep -c 无匹配时退出码 1，`|| echo 0` 会多输出一个 0。
+_NOTES_BEFORE_COUNT="$(grep -c 'disabling profile plugin row' "$_dsh_core_log" 2>/dev/null || true)"
+[ -z "$_NOTES_BEFORE_COUNT" ] && _NOTES_BEFORE_COUNT=0
 _NOTES_BEFORE_SIZE="$(stat -c%s "$_dsh_core_log" 2>/dev/null || echo 0)"
 echo "$_NOTES_BEFORE_COUNT" > /tmp/dsh-upgrade-notes-before-count
 echo "$_NOTES_BEFORE_SIZE"  > /tmp/dsh-upgrade-notes-before-size
@@ -399,7 +401,11 @@ fi
 #   而 2026-10-16 那次的坏消息【就印在启动日志第一行】，脚本看都没看。
 sleep 6
 log "════ 6b/6 验证新实例 ════"
-_after_count="$(grep -c 'disabling profile plugin row' "$_dsh_core_log" 2>/dev/null || echo 0)"
+# 2026-10-18: grep -c 匹配 0 条时退出码为 1，原来的 `|| echo 0` 会再追加一个 0，
+#   变量变成 "0\n0"，后面的 [ -eq ] 直接报 integer expression expected，
+#   于是升级被判"不算成功"（实际是误报）。
+_after_count="$(grep -c 'disabling profile plugin row' "$_dsh_core_log" 2>/dev/null || true)"
+[ -z "$_after_count" ] && _after_count=0
 _after_size="$(stat -c%s "$_dsh_core_log" 2>/dev/null || echo 0)"
 _before_count="$(cat /tmp/dsh-upgrade-notes-before-count 2>/dev/null || echo 0)"
 _before_size="$(cat /tmp/dsh-upgrade-notes-before-size  2>/dev/null || echo 0)"

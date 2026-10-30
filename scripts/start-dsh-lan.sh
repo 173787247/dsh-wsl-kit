@@ -11,7 +11,7 @@ if [[ -z "$HOST_IP" ]]; then
   HOST_IP="$(hostname -I | awk '{print $1}')"
 fi
 echo "Trying --host ${HOST_IP}"
-nohup dsh web --no-open --host "$HOST_IP" --port 3080 > /tmp/dsh-web.log 2>&1 &
+nohup dsh web --no-open --host "$HOST_IP" --port 3080 >> /tmp/dsh-web.log 2>&1 &
 sleep 5
 cat /tmp/dsh-web.log
 ss -tlnp | grep 3080 || true
