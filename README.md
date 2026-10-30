@@ -247,7 +247,7 @@ No kit code change is required solely for V4.1 Flash — update model ids in set
 
 ## 60-second start (recommended: Daily set)
 
-**Prereq:** `dsh` works inside WSL (profile usually `web`). Prefer `0.2.1-alpha.5` or newer from the same train.
+**Prereq:** `dsh` works inside WSL (profile usually `web`). Prefer `0.2.1-rc.5` or newer from the same train.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh \
