@@ -97,7 +97,7 @@ description of the destination, not a second route to it.
 
 Sibling checkout versions on **2026-09-18**. Floors enforced by [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) are the minimum, not this snapshot.
 
-Local dsh line: **`0.2.1-alpha.5`** (npm, 2026-10-16). npm `latest` still points at the `0.1.7` line; `@next` carries `0.2.0`. Scripts still assume dsh **≥0.1.2**.
+Local dsh line: **`0.2.1-rc.5`** (npm, 2026-10-30). The `0.2.1` line carries the web UI; scripts still assume dsh **≥0.1.2**.
 
 ### Daily
 
@@ -170,7 +170,7 @@ Shared helper [dsh-wsl-common](https://github.com/173787247/dsh-wsl-common) `0.1
 
 | Piece | Status |
 |-------|--------|
-| **dsh** | Verified against **`0.2.1-alpha.5`** (2026-10-16). ⚠️ The releases before it — alpha.2, alpha.3, alpha.4 — have breaking changes; see the sections below. Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). **Upgrading to alpha.2 requires one plugin code change**: the `{{cwd}}` variable in [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) (already fixed). The remaining plugins' `lib/` entry points and the offline smoke set pass on alpha.2. |
+| **dsh** | Verified against **`0.2.1-rc.5`** (2026-10-30). The release notes for rc.5 are UI-only; the breaking changes in alpha.2–alpha.4 still matter if you are coming from an older line. Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). The `{{cwd}}` placeholder in [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) is gone. On rc.5 all 71 plugin `lib/` entry points import, the tracked floor versions are unchanged, and the upgrade kept zero disabled plugin rows. |
 | **DeepSeek V4.1 Flash** | Official API model id is **`deepseek-flash`**. Legacy `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` temporarily route to V4.1 Flash. **Not configured by this kit** — set under `llm-deepseek` / default model in `~/.dsh/settings.yaml`. |
 | **Agent Teams** | Opt-in experimental package (`@deepseek-ai/dsh-experimental-agent-team-profile`, same line as your dsh). **Not** part of `install.sh`. Expect longer “Deep diving” turns; use a fresh non-Teams session to smoke-test models. |
 | **Plugins** | Snapshot: [Plugin versions](#plugin-versions) (sibling checkouts 2026-09-16). Floor: [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh). Daily includes [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**. |
