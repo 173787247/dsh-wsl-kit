@@ -30,12 +30,24 @@ read -r -d '' VERIFY_JS <<'JS' || true
 const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const DSH = process.env.DSH;
 const checks = [
-  { name: 'undici 7.18.2',
-    fn: () => require(path.join(DSH, 'node_modules/undici/package.json')).version === '7.18.2' },
+  // 2026-10-18: 不再钉死 7.18.2。判据改成【与 Node 内置版本一致】——
+  //   跨大版本的 dispatcher 才是不兼容的根因；同版本就不需要移花接木。
+  //   Node 26.12.0 内置 8.11.2 = dsh rc.2 自带 8.11.2，天然匹配。
+  { name: `undici 与 Node 内置一致 (${process.versions.undici})`,
+    fn: () => require(path.join(DSH, 'node_modules/undici/package.json')).version === process.versions.undici },
   { name: 'cordis 补丁',
-    fn: () => crypto.createHash('md5')
-      .update(fs.readFileSync(path.join(DSH, 'node_modules/@deepseek-ai/cordis/lib/index.js')))
-      .digest('hex').slice(0, 8) === '2e0212db' },
+    fn: () => {
+      const src = fs.readFileSync(path.join(DSH, 'node_modules/@deepseek-ai/cordis/lib/index.js'), 'utf8');
+      // 行为标记而不是 bundle 的 md5：cordis 4.0.5 换了 bundle，md5 会随版本变。
+      return src.includes('unshift(value)') && src.includes('[Circular]')
+        && src.includes('next() called multiple times');
+    } },
+  { name: 'loader 补丁',
+    fn: () => {
+      const src = fs.readFileSync(path.join(DSH, 'node_modules/@deepseek-ai/cordis-plugin-loader/lib/index.js'), 'utf8');
+      return src.includes('trackDetached') && src.includes('config => this.update(config)')
+        && src.includes('if (this.fiber?.uid) return');
+    } },
   { name: 'native-command WSL 脚本路径',
     fn: () => {
       const src = fs.readFileSync(path.join(DSH, 'node_modules/@deepseek-ai/dsh-native-command/lib/index.js'), 'utf8');
