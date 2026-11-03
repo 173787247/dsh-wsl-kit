@@ -19,66 +19,15 @@ bash ~/src/dsh-wsl-kit/scripts/apply-local-patches.sh --check  # 只检查，不
 
 | # | 脚本 | 改什么 | 为什么 |
 |---|---|---|---|
-| 01 | `01-undici-7.18.2.sh` | dsh 内嵌的 undici `8.11.0` → `7.18.2` | Node 24 内置 fetch 是 undici 7.x；跨大版本的 ProxyAgent 作全局 dispatcher 会丢响应头 → `web_search` 的 brotli 响应不解压 → JSON.parse 失败。**Cursor 于 2026-09-26 修复** |
-| 02 | `02-cordis-backports.sh` | 三个 cordis 补丁 | 线上 cordis 的真实缺陷：插件在 update 时抛异常会逃逸成 unhandled rejection 打死进程。**2026-09-28 差分验证过** |
+| 01 | `01-undici-7.18.2.sh.disabled-for-signin` | 已停用：不再把 undici 打回 7.18.2 | dsh 0.2.2-alpha.3 的登录线需要 undici **8.11.2**；Node 24 内置 7.18.2，不能再拿「与 Node 内置一致」当判据。实测 alpha.3 + 8.11.2 的 `web_search` 正常 |
+| 02 | `02-cordis-backports.sh` | 四个 cordis 补丁（含按 1.0.7 重新适配的 loader 卸载等待） | 线上 cordis 的真实缺陷：插件在 update 时抛异常会逃逸成 unhandled rejection 打死进程；loader 的 `remove()` 不等待 teardown。**2026-09-28 差分验证，2026-11-03 适配 alpha.3** |
 | 03 | `03-wsl-powershell-script-path.sh` | `dsh-native-command` 里交给 `powershell.exe -File` 的脚本路径改成 `wslpath -w` 的结果 | 从 `/mnt/<盘>` 下的 cwd 启动时，Windows 子进程把 Linux 路径解析到自己盘符下 ⇒ 脚本没跑、`powershell` 只打印横幅并退出 0 ⇒ 调用方 `JSON.parse` 炸 ⇒ 文件卡片「用应用打开」永远 `Could not load applications`。配套：`scripts/restart-dsh-web.sh` 里的 `cd "${DSH_WEB_CWD:-$HOME}"` |
 
-## ⚠️ 一个已知打不上的补丁（2026-10-16）
+## 2026-11-03 alpha.3 适配
 
-`02-cordis-backports.sh` 会遍历 `~/src/cordis-dsh-audit/backport/*.patch` 里的三个补丁。
-其中：
-
-```
-cordis-4.0.4.patch                 ✓ 仍能重打
-cordis-plugin-timer-1.1.6.patch    ✓ 仍能重打
-cordis-plugin-loader-1.0.5.patch   ★ 打不上 —— 但它【仍然需要】，见下
-```
-
-**而 `apply-local-patches.sh --check` 照样报「全部本地定制都已生效」** ✗ ——
-因为它验的是 `cordis` 那一处（`name: 'cordis 补丁'`），**不是 loader 这一处**。
-
-⇒ **这是"检查没覆盖那件事"的又一个实例**：升级日志里两次点名这个补丁失败，
-而检查说没事。**看检查的绿灯，不等于每一处都被验过。**
-
-### 为什么打不上：版本漂移，不是上游修好了
-
-```
-补丁针对: cordis-plugin-loader【1.0.5】
-实际装的: cordis-plugin-loader【1.0.6】     ← 差一个小版本 ⇒ 上下文行对不上
-```
-
-**而缺陷在 1.0.6 里依然存在**（2026-10-16 实测装的这一份）：
-
-```
-grep -c 'Promise.all(ids.map('                    lib/index.js  ⇒ 1 处   ← 补丁要删掉的旧写法还在
-grep -c 'for (const id of ids) if (!newMap[id])'  lib/index.js  ⇒ 0 处   ← 补丁要加的新写法没有
-grep -c 'async _patchContext'                     lib/index.js  ⇒ 0 处
-grep -c '_initTask?: Promise<void> | undefined'   lib/index.js  ⇒ 0 处
-```
-
-真实代码（`lib/index.js` 88-92 行）仍是：
-
-```js
-if (newMap[id]) await this.create(newMap[id]).catch((error) => {
-    this.ctx.logger.error(error);
-});
-else this.remove(id);
-}));                       // ← Promise.all(ids.map(…)) 并发跑，一处抛出即整体 reject
-```
-
-⇒ **不要把补丁移走** —— 它要修的东西还在。
-
-★ **一个还没有证据的联想**：那个缺陷的形状是"异常逃逸成 unhandled rejection"，
-而 2026-10-16 晚观察到的现象是"dsh 每隔几分钟就不应答一次"。
-**形状相同，但没有证明是它造成的** —— 查这件事要有它自己的判据（例如抓那个 rejection 的现场）。
-
-### 该怎么办
-
-1. ★ **已经确认：仍然需要**（上面那四条 grep 就是判据）。所以不是"移走"，是**重新适配**。
-2. **按 1.0.6 的代码重新做适配** —— 改动只有几处（见补丁的 hunk），把上下文行对上即可。
-3. 适配完把补丁名改成对应版本（`…-1.0.6.patch`），旧的删掉 —— 免得下次又对不上。
-
-★ 在那之前：**升级日志里出现这一行是预期的，不代表升级失败。**
+- **01 undici 补丁停用**：改名为 `01-undici-7.18.2.sh.disabled-for-signin`，不再参与重打。alpha.3 的登录线需要 **undici 8.11.2**；Node 24 内置 7.18.2，继续按「与 Node 内置一致」检查会把正确的 8.11.2 判成失败。
+- **02 loader 补丁重新适配**：按 `cordis-plugin-loader@1.0.7-alpha.2` 新增 `cordis-plugin-loader-1.0.7-teardown.patch`，让 `EntryGroup.remove()` 把 dispose task 交给 `EntryTree.trackDetached()`，并让 `update()` await 它。旧的 `cordis-plugin-loader-1.0.6-teardown.patch` 与 `cordis-4.0.4.patch` 已移入 `~/src/cordis-dsh-audit/backport/archive/`。
+- **检查覆盖**：`apply-local-patches.sh --check` 现在验 undici 8.11.2、cordis、loader、native-command 四处；alpha.3 上全绿。
 
 ## 不受升级影响的东西（不用重打）
 

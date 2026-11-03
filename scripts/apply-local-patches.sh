@@ -33,8 +33,8 @@ const checks = [
   // 2026-10-18: 不再钉死 7.18.2。判据改成【与 Node 内置版本一致】——
   //   跨大版本的 dispatcher 才是不兼容的根因；同版本就不需要移花接木。
   //   Node 26.12.0 内置 8.11.2 = dsh rc.2 自带 8.11.2，天然匹配。
-  { name: `undici 与 Node 内置一致 (${process.versions.undici})`,
-    fn: () => require(path.join(DSH, 'node_modules/undici/package.json')).version === process.versions.undici },
+  { name: 'undici 8.11.2（dsh 0.2.2-alpha.3 登录线）',
+    fn: () => require(path.join(DSH, 'node_modules/undici/package.json')).version === '8.11.2' },
   { name: 'cordis 补丁',
     fn: () => {
       const src = fs.readFileSync(path.join(DSH, 'node_modules/@deepseek-ai/cordis/lib/index.js'), 'utf8');
@@ -42,11 +42,10 @@ const checks = [
       return src.includes('unshift(value)') && src.includes('[Circular]')
         && src.includes('next() called multiple times');
     } },
-  { name: 'loader 补丁',
+  { name: 'loader 卸载等待补丁',
     fn: () => {
       const src = fs.readFileSync(path.join(DSH, 'node_modules/@deepseek-ai/cordis-plugin-loader/lib/index.js'), 'utf8');
-      return src.includes('trackDetached') && src.includes('config => this.update(config)')
-        && src.includes('if (this.fiber?.uid) return');
+      return src.includes('trackDetached') && src.includes('await this.remove(id)');
     } },
   { name: 'native-command WSL 脚本路径',
     fn: () => {
@@ -65,7 +64,6 @@ process.exit(bad === 0 ? 0 : 1);
 JS
 
 PATCHES=(
-  "01-undici-7.18.2.sh|dsh 内嵌 undici → 7.18.2（web_search 修复）"
   "02-cordis-backports.sh|三个 cordis 补丁（进程不再被未捕获拒绝打死）"
   "03-wsl-powershell-script-path.sh|powershell -File 的脚本路径翻成 Windows 路径（文件卡片「用应用打开」）"
 )
