@@ -95,7 +95,7 @@ kit 路径在常见位置里找。要覆盖就设 `DSH_WSL_DISTRO` / `DSH_WSL_US
 systemd-run --user --collect --unit=dsh-upgrade-$(date +%H%M%S) \
   --property=KillMode=process \
   /bin/bash ~/src/dsh-wsl-kit/scripts/upgrade-dsh-full.sh \
-  https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.0-rc.2
+  https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.2-rc.1
 
 # 重启（浏览器会自己回来）
 bash ~/src/dsh-wsl-kit/scripts/restart-dsh-web.sh
