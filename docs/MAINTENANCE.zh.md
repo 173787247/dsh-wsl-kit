@@ -438,6 +438,11 @@ done
 71 个检出 import 全通过、冒烟全绿、地板版本未变 —— 于是只动了文档声明。
 2026-11-05 升到 `0.2.2-rc.1` 结论相同：71 个插件 import 全过、`smoke-verticals` 全绿、
 17 个 tracked 插件版本 OK；只更新了文档里的兼容性声明。
+
+2026-11-12 升到 `0.2.2-rc.2`（源码构建，npm 尚未发布）：71 个插件 import 全过，
+完整 `web` profile 启动零禁用行；`vendor/cordis` 与 rc.1 完全相同（4.1.0），
+无需 Cordis 迁移。rc.2 退役 `dsh-experimental-agent-team-profile`，三个固定版本的
+官方插件改为本地 rc.2 源码链接；只更新文档与兼容性声明。
 **先跑测试，才知道该改什么。**
 
 ### 8.4 别忘的收尾

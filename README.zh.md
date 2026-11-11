@@ -94,7 +94,7 @@ pnpm 不允许"以 git 解析的依赖"再出现在"另一个以 git 解析的�
 
 下面是 **2026-09-18** 本机兄弟仓的 `package.json`。[`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) 里的地板是下限，不是这份快照。
 
-当天本机 dsh 是 **`0.2.2-rc.1`**（npm，2026-11-05）。`0.2.2` 线承载 Web UI；脚本仍按 dsh **≥0.1.2** 编写。
+当天本机 dsh 是 **`0.2.2-rc.2`**（源码构建，2026-11-12；npm 尚未发布）。`0.2.2` 线承载 Web UI；脚本仍按 dsh **≥0.1.2** 编写。
 
 ### 日常
 
@@ -167,9 +167,9 @@ pnpm 不允许"以 git 解析的依赖"再出现在"另一个以 git 解析的�
 
 | 项 | 现状 |
 |----|------|
-| **dsh** | 针对 **`0.2.2-rc.1`**（2026-11-05）验证。rc.1 同步 Cordis Core 4.1.0、Loader 1.1.0、Include 1.1.0。WSL 插件套件不需要改源码：71 个插件的 `lib/` 入口在 rc.1 下全部可导入，完整 `web` profile 启动时所有 bundle 正常装载、没有兼容性错误。`dsh-experimental-tool-worktree` 仍并入「变更请求与工作树」，profile 的 bundles 里若还保留它要移除。脚本按 dsh **≥0.1.2** 的 UI 一次性 `?token=`（`:3081`）编写。[dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) 的 `{{cwd}}` 占位符已去掉。 |
+| **dsh** | 针对 **`0.2.2-rc.2`**（源码构建，2026-11-12；npm 尚未发布）验证。rc.2 的 Cordis Core 4.1.0、Loader 1.1.0、Include 1.1.0 均未变；WSL 插件套件不需要改源码：71 个插件的 `lib/` 入口在 rc.2 下全部可导入，完整 `web` profile 启动时所有 bundle 正常装载、没有兼容性错误。rc.2 退役 `@deepseek-ai/dsh-experimental-agent-team-profile`：从 profile 的依赖和 bundles 里移除它，`agent-team` 配置只保留 `maxTasks`，由核心 Team 支持接管。脚本按 dsh **≥0.1.2** 的 UI 一次性 `?token=`（`:3081`）编写。[dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) 的 `{{cwd}}` 占位符已去掉。 |
 | **DeepSeek V4.1 Flash** | 官方 API 模型 id 为 **`deepseek-flash`**。旧名 `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` 暂时会路由到 V4.1 Flash。**本 kit 不写死模型**——在 `~/.dsh/settings.yaml` 的 `llm-deepseek` / 默认模型里改。 |
-| **Agent Teams** | 可选实验包（`@deepseek-ai/dsh-experimental-agent-team-profile`，与 dsh 同版本线）。**不在** `install.sh` 里。开了 Teams 会出现更长的 “Deep diving”；测模型请先用普通新会话。 |
+| **Agent Teams** | rc.2 由核心支持（具名子代理 + 共享任务板）。旧包 `@deepseek-ai/dsh-experimental-agent-team-profile` 已**退役**：从 profile 依赖与 bundles 里删掉，`agent-team` 配置只留 `maxTasks`，按 Session 开启 Team 模式。开了 Teams 会出现更长的 “Deep diving”；测模型请先用普通新会话。 |
 | **插件** | 快照见上文 [插件版本](#插件版本)（2026-09-16 兄弟仓）。地板见 [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh)。日常套件含 [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**。 |
 
 ### ⚠️ dsh 0.2.1-alpha.2 的破坏性变更（2026-10-09 发布）
@@ -201,7 +201,7 @@ pnpm 不允许"以 git 解析的依赖"再出现在"另一个以 git 解析的�
 
 ## 60 秒上手（推荐：日常套件）
 
-**前提：** WSL 里已能运行 `dsh`（通常 profile = `web`）。建议 `0.2.2-rc.1` 或同系列更新。
+**前提：** WSL 里已能运行 `dsh`（通常 profile = `web`）。建议 `0.2.2-rc.2` 或同系列更新。
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh \

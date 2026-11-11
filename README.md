@@ -97,7 +97,7 @@ description of the destination, not a second route to it.
 
 Sibling checkout versions on **2026-09-18**. Floors enforced by [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh) are the minimum, not this snapshot.
 
-Local dsh line: **`0.2.2-rc.1`** (npm, 2026-11-05). The `0.2.2` line carries the web UI; scripts still assume dsh **≥0.1.2**.
+Local dsh line: **`0.2.2-rc.2`** (source build, 2026-11-12; npm not yet published). The `0.2.2` line carries the web UI; scripts still assume dsh **≥0.1.2**.
 
 ### Daily
 
@@ -170,9 +170,9 @@ Shared helper [dsh-wsl-common](https://github.com/173787247/dsh-wsl-common) `0.1
 
 | Piece | Status |
 |-------|--------|
-| **dsh** | Verified against **`0.2.2-rc.1`** (2026-11-05). rc.1 syncs Cordis Core 4.1.0, Loader 1.1.0, and Include 1.1.0. The WSL plugin suite needs no source change: all 71 plugin `lib/` entry points import under rc.1, and the full `web` profile boots with every bundle enabled and no compatibility errors. `dsh-experimental-tool-worktree` remains merged into change requests/worktrees; remove it from profile bundles if present. Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). The `{{cwd}}` placeholder in [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) is gone. |
+| **dsh** | Verified against **`0.2.2-rc.2`** (source build, 2026-11-12; npm not yet published). rc.2 keeps Cordis Core 4.1.0, Loader 1.1.0, and Include 1.1.0 unchanged; the WSL plugin suite needs no source change: all 71 plugin `lib/` entry points import under rc.2, and the full `web` profile boots with every bundle enabled and no compatibility errors. rc.2 retires `@deepseek-ai/dsh-experimental-agent-team-profile`; remove it from profile dependencies/bundles, keep `agent-team` config to `maxTasks` only, and let the core Team support load. Kit scripts assume dsh **≥0.1.2** UI launch tokens (`?token=` on `:3081`). The `{{cwd}}` placeholder in [dsh-wsl-env](https://github.com/173787247/dsh-wsl-env) is gone. |
 | **DeepSeek V4.1 Flash** | Official API model id is **`deepseek-flash`**. Legacy `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` temporarily route to V4.1 Flash. **Not configured by this kit** — set under `llm-deepseek` / default model in `~/.dsh/settings.yaml`. |
-| **Agent Teams** | Opt-in experimental package (`@deepseek-ai/dsh-experimental-agent-team-profile`, same line as your dsh). **Not** part of `install.sh`. Expect longer “Deep diving” turns; use a fresh non-Teams session to smoke-test models. |
+| **Agent Teams** | Core support in rc.2 (named subagents + shared task board). The old `@deepseek-ai/dsh-experimental-agent-team-profile` is **retired**: remove it from profile dependencies and bundles, keep `agent-team` config at `maxTasks` only, and enable Team mode per Session. Expect longer “Deep diving” turns; use a fresh non-Teams session to smoke-test models. |
 | **Plugins** | Snapshot: [Plugin versions](#plugin-versions) (sibling checkouts 2026-09-16). Floor: [`scripts/check-plugin-versions.sh`](./scripts/check-plugin-versions.sh). Daily includes [dsh-wsl-fetch](https://github.com/173787247/dsh-wsl-fetch) **≥0.1.1**. |
 
 ### ⚠️ Breaking changes in dsh 0.2.1-alpha.2 (released 2026-10-09)
@@ -247,7 +247,7 @@ No kit code change is required solely for V4.1 Flash — update model ids in set
 
 ## 60-second start (recommended: Daily set)
 
-**Prereq:** `dsh` works inside WSL (profile usually `web`). Prefer `0.2.2-rc.1` or newer from the same train.
+**Prereq:** `dsh` works inside WSL (profile usually `web`). Prefer `0.2.2-rc.2` or newer from the same train.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/173787247/dsh-wsl-kit/master/install.sh \

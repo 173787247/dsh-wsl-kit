@@ -9,8 +9,8 @@ from pathlib import Path
 import os as _os
 # ★ 检出根目录可覆盖 —— 这套仓在 Windows 侧的检出里，不在 ~/src
 ROOT = Path(_os.environ.get("DSH_BUMP_ROOT") or Path(__file__).resolve().parents[2])
-OLD = _os.environ.get("DSH_BUMP_OLD", "0.2.2-alpha.3")
-NEW = _os.environ.get("DSH_BUMP_NEW", "0.2.2-rc.1")
+OLD = _os.environ.get("DSH_BUMP_OLD", "0.2.2-rc.1")
+NEW = _os.environ.get("DSH_BUMP_NEW", "0.2.2-rc.2")
 DRY = _os.environ.get("DSH_BUMP_DRY") == "1"
 SKIP = {"dsh-wsl-kit", "dsh-wsl-common"}
 
