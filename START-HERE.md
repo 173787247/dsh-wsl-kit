@@ -7,6 +7,11 @@
 ---
 
 > Node.js 最低版本：**24.9**（0.2.2 起）。Cordis Core 4.1.0 / Loader 1.1.0 / Include 1.1.0。
+>
+> **2026-11-14 · 0.2.2-rc.3 安装形态**：线上运行的是 `npm` 包
+> `~/.local/lib/node_modules/@deepseek-ai/dsh`，`~/.local/bin/dsh` 指向它的 `lib/bin.js`；
+> `~/src/deepseek-harness-rc2` 只是 rc.3 源码检出，不参与运行。重启与保活仍走 kit 的
+> `restart-dsh-web-detached.sh` / `revive-dsh.sh`，Windows 侧中继固定在 `:3081`。
 
 ## 一、这个仓是什么
 

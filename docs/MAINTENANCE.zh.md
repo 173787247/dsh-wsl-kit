@@ -443,6 +443,11 @@ done
 完整 `web` profile 启动零禁用行；`vendor/cordis` 与 rc.1 完全相同（4.1.0），
 无需 Cordis 迁移。rc.2 退役 `dsh-experimental-agent-team-profile`，三个固定版本的
 官方插件改为本地 rc.2 源码链接；只更新文档与兼容性声明。
+2026-11-14 升到 `0.2.2-rc.3`（npm 包，2026-11-13 发布）：rc.3 只新增实验性
+DeepSeek 会话导入插件并修复 Windows 桌面更新，Cordis Core/Loader/Include 未变；
+完整 `web` profile 启动零禁用行，71 个插件入口正常加载。升级后保留了 kit 的
+cordis/loader/native-command 本地补丁，`:3080` 与 Windows 中继 `:3081` 均健康。
+
 **先跑测试，才知道该改什么。**
 
 ### 8.4 别忘的收尾
