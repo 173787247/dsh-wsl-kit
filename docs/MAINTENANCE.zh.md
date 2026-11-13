@@ -308,6 +308,38 @@ ps -o pid,ppid,lstart,cmd -p $(pgrep -f '[d]sh web --no-open --port 3080')
 并报出各自的归属。
 
 
+### 6.8 已验证的 rc.3 升级顺序（2026-11-14）
+
+这次 rc.2 → rc.3 没有走「直接覆盖线上 `npm install -g`」，顺序如下，可复用：
+
+1. **先读 release notes**：破坏性变更、退役包、引擎要求。
+2. **装到临时 prefix**，不要碰线上：
+   ```sh
+   npm install --prefix /tmp/dsh-rc3 @deepseek-ai/dsh@<version>
+   ```
+   npm 镜像可能很慢；必须确认 `lib/bin.js`、`package.json` 和依赖树都在，不能拿半装树替换。
+3. **用同一 profile 在备用端口启动**，确认能拿到 token、没有
+   `disabling profile plugin row`，再继续：
+   ```sh
+   dsh web --no-open --port 3090
+   ```
+4. **备份线上包**，把临时 prefix 的 dsh 包与依赖替进去，并重建
+   `~/.local/bin/dsh` 软链。
+5. **重打本地补丁**：
+   ```sh
+   bash scripts/apply-local-patches.sh
+   bash scripts/apply-local-patches.sh --check
+   ```
+6. **交给 Windows 侧重启**：
+   ```sh
+   bash scripts/restart-dsh-web-detached.sh
+   ```
+7. **验收**：`dsh --version`、`:3080`/`:3081`、启动日志零禁用行、看门狗心跳正常。
+8. 最后才更新 kit 与插件 README 的兼容声明；升级与文档不要反过来。
+
+关键原则：**先在隔离 prefix 证明新 dsh 能带着现有 profile 起来，再替换线上。**
+'
+
 ## 七、重启之后，浏览器怎么自己回来
 
 ### 7.1 那一环为什么难
