@@ -340,6 +340,12 @@ ps -o pid,ppid,lstart,cmd -p $(pgrep -f '[d]sh web --no-open --port 3080')
 关键原则：**先在隔离 prefix 证明新 dsh 能带着现有 profile 起来，再替换线上。**
 '
 
+### 6.9 已验证的 rc.4 升级（2026-11-18）
+
+rc.4 只修复模型异常响应处理与桌面 LiveShare；Cordis Core/Loader/Include 未变。
+升级后 71 个插件入口加载、完整 web profile 启动无兼容性禁用行；
+kit 与插件 README 的 verified 版本已更新到 `0.2.2-rc.4`。
+
 ## 七、重启之后，浏览器怎么自己回来
 
 ### 7.1 那一环为什么难
