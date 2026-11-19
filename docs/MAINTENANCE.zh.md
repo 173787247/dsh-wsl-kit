@@ -346,6 +346,12 @@ rc.4 只修复模型异常响应处理与桌面 LiveShare；Cordis Core/Loader/I
 升级后 71 个插件入口可导入、离线 smoke 通过，完整 web profile 已重启并提供 UI；
 kit 与插件 README 的 verified 版本已更新到 `0.2.2-rc.4`。
 
+### 6.10 已验证的 rc.5 升级（2026-11-19）
+
+rc.5 主要优化 DeepSeek 服务端搜索；Cordis Core/Loader/Include 未变。
+升级采用临时 prefix 预装、离线 smoke、备份替换和失败回滚；
+完整 web profile 重启后提供 UI，kit 与插件 README 已更新到 `0.2.2-rc.5`。
+
 ## 七、重启之后，浏览器怎么自己回来
 
 ### 7.1 那一环为什么难
